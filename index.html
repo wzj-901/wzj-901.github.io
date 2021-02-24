@@ -1,0 +1,949 @@
+<html>
+<meta charset="UTF-8">
+<style>#body {
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	font-family: "Exo", sans-serif;
+	color: #fff;
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradientBG 15s ease infinite;
+}
+#body2{display:none}
+#body2{
+	position:absolute;
+	left:0;
+	right:0;
+	width: 100%;
+	height: 100vh;
+}
+@keyframes gradientBG {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+#signin0{
+	left:calc(50vw - 150px);
+	top:calc(50vh - 200px);
+	width:300px;
+	height:400px;
+	position:absolute;
+	background-color:white;
+	border-radius:5px;
+	box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.4);
+}
+#signin1{
+	padding:5px 10px;
+	font-size:20px;
+	font-style:bold;
+	background-color:rgb(50,50,50);
+}
+#signin2{
+	margin-top:30px;
+}
+#signin3{
+	margin-top:30px;
+	color:rgb(50,50,50);
+	margin-left:20px;
+	float:left;
+}
+#signin4{
+	padding:5px 20px;
+	background-color:silver;
+	text-decoration:none;
+	text-decoration:bold;
+	color:white;
+	position:absolute;
+	bottom:20px;
+	left:20px;
+	right:20px;
+	text-align:center;
+	transition:background-color 1s;
+}
+#signin5{
+	left:calc(50vw - 67px);
+	bottom:10px;
+	position:absolute;
+	z-index:10px;
+	font-size:10px;
+	color:rgba(50,50,50,0.4);
+}
+#signin6{
+	color:rgb(150,150,150);
+	position:absolute;
+	right:30px;
+	top:380px;
+	font-size:10px;
+}
+#signin6:hover{
+	color:rgb(100,100,100);
+}
+#signin7{
+	top:50px;
+	position:absolute;
+	padding:20px;
+	opacity:0;
+	height:400px;
+	transition:1s;
+}
+#signin7 p,#signin7 b{
+color:rgb(50,50,50);
+}
+</style>
+<script>
+function signin(x){
+switch(x){
+case 1:
+	var a=document.getElementById('signin2').value;
+	if(a){
+	document.getElementById('signin4').style.cssText="background-color:green";
+	}else{
+	document.getElementById('signin4').style.cssText="background-color:silver";
+	};
+	break;
+case 2:
+	var a=document.getElementById('signin2').value;
+	if(a=="123456"){
+	document.getElementById('body').style.cssText="display:none";
+	document.getElementById('body2').style.cssText="display:block"}
+	break;
+case 3:
+	break;
+}}
+</script>
+<div id="body">
+<div id="signin0">
+	<p id="signin1">登录</p>
+	<p id="signin3">提取码：</p><input id="signin2" title="此项必填" onkeyup="signin(1)"> 
+	<div id="signin7"><b></b><p></p></p></div><!-- 使用须知 -->
+	<a href="javascript:void(0);" id="signin4" onclick="signin(2)">点击进入</a>
+	<a id="signin6" href="javascript:void(0);" onclick="signin(3)">使用须知</a>
+</div>
+<p id="signin5">———— 使 用 愉 快 ————</p>
+</div>
+<div id="body2"><html>
+<meta charset="UTF-8">
+<head>
+	<title>Hello World</title>
+</head>
+<script>
+    var title1on="a1";
+	//函数
+    function show1(x){
+        document.getElementById(x).style.display="block";
+		document.getElementById(x).style.opacity="1";
+    }
+    function show0(x){
+		document.getElementById(x).style.opacity="0";
+        document.getElementById(x).style.display="none";
+    }
+	function scrollid(x){
+		var element = document.getElementById(x);
+		element.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});}
+	function title10(x){
+	document.getElementById(x).style.cssText="border-left: 3px solid rgba(0, 0, 0, 0);color: #808080;display: block;font-family: 'Lucida Console';font-size: 18px;line-height: 54px;padding: 0 25px;text-decoration: none;text-transform: uppercase;"
+	}
+	function title11(x){
+	document.getElementById(x).style.cssText='border-radius: 5px 0 0 0;border-left: 3px solid #bdfff3;color: #bdfff3;';
+	}
+	function bodychange(x,y){
+		x=x+"div"+y
+		
+	}
+	function icon1(x){
+	show0('icon'+x);show0('icon'+x+'helper');show0('divmenu'+x);show1('icon'+x+'0');show1('icon'+x+'0helper')
+	}
+	function icon0(x){
+	show1('icon'+x);show1('icon'+x+'helper');show1('divmenu'+x);show0('icon'+x+'0');show0('icon'+x+'0helper')
+	}
+</script>
+<style>
+/* 标题 */
+.a {
+	top: 0px;
+	left: 0%;
+	padding-bottom: 20px;
+	border-bottom: 1px solid black;
+	width: 100%;
+	background: linear-gradient(to right, #4ac29a, #bdfff3);
+	position: fixed;
+	z-index: 9999;
+}
+	/* 特殊任务覆盖层 */
+.window{
+	z-index: 10000;
+	position: fixed;
+	bottom:0;
+	right:0;
+	width:100%;
+	height:0;
+	background:linear-gradient(to bottom,rgba(0,0,0,0.6),rgba(0,0,0,0.9));
+	transition:all 1s ease-out;
+}
+.window p{
+	color: rgba(255,255,255,0.8);
+	margin: 0 auto;
+	text-align: center;
+}
+.windowclose{
+	font-size:30px;float:right;top:0px;padding:0px 4px;margin:2px;
+}
+.windowclose:hover{
+	color:#cccccc;background-color:red;
+}
+.windowtitle{
+	font-size: 70px;
+	margin: 50px auto;
+	text-align: center;
+	font-family: "Lucida Console", Monaco, monospace;
+	color: rgba(255,255,255,0.8);
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	font-style: oblique;
+}
+.windowbody{position:absolute;
+	top:200px;left:calc(50vw - 50vh + 150px);
+	width:calc(100vh - 300px);
+	height:calc(100vh - 300px);
+	background: linear-gradient(to bottom,rgba(255,255,255,0.7),rgba(255,255,255,0.7));
+}
+.windowlt,.windowrt{
+	position:absolute;
+	top:200px;
+}
+.windowlt b,.windowrt b {
+	background-image: linear-gradient( 135deg, rgb(150,150,150) 10%, rgb(100,100,100) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-size:25px;
+	border:solid 3px;
+	border-radius:3px;
+	border-color:rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0) green;
+	padding-left:5px;
+}
+.windowlt{
+	left:20px;
+}
+.windowrt{
+	left:calc(50vw + 50vh - 130px);
+}
+.windowfoot{
+	top:calc(100vh - 60px);
+	background-image: linear-gradient( 135deg, rgb(100,100,100) 10%, rgb(50,50,50) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: bold;
+	font-size: 15px;
+	position:absolute;
+	left:calc(50vw - 50px);
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+	/* 专栏 */
+#a1div,#a2div,#a3div,#a4div,#a5div,#a6div {
+	top: 119px;
+	left: 0px;
+	width: 100%;
+	position: absolute;
+	z-index: 0;
+}
+
+.bodydiv {
+	padding: 10px;
+	position: relative;
+	border-radius: 10px;
+	margin-left: 530px;
+	margin-right: 10px;
+	box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
+	margin-bottom: 20px;
+}
+
+.bodytitle {
+	background-image: linear-gradient( 135deg, #81FBB8 10%, #28C76F 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: bold;
+	font-size: 30px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #81fbb8 white;
+	padding: 0px 10px;
+	float: left;
+}
+
+.bodyhelper {
+	position: absolute;
+	float: top;
+}
+
+.bodydocument {
+	color: rgb(20,20,20);
+	margin-top: 80px;
+}
+	/* 主页分栏 */
+.b2 {
+	background: #F7971E;
+	background: -webkit-linear-gradient(to left, #FFD200, #F7971E);
+	background: linear-gradient(to left, #FFD200, #F7971E);
+	width: 500px;
+	height: 100px;
+	margin-bottom: 100px;
+	box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+	border-radius: 0 10px 10px 0;
+	float: left;
+}
+
+.b2a {
+	border-radius: 40px;
+	font-size: 40px;
+	display: block;
+	padding: 20px;
+	margin: 10px 10px 10px 40px;
+	color: white;
+	text-decoration: none;
+	border-width: 1px;
+	border-color: rgba(0,0,0,0);
+	border-style: solid;
+	transition: all 1s;
+}
+
+.b2a:hover {
+	text-decoration: underline;
+	border-width: 1px;
+	border-color: white;
+}
+	/* 主页标题 */
+.title1,.title2 {
+	font-size: 150px;
+	margin: 0 auto;
+	text-align: center;
+	font-family: "Lucida Console", Monaco, monospace;
+	color: rgba(255,255,255,1);
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	background: rgb(255,255,255);
+	text-shadow: 4px 4px 6px rgba(255,123,0,1);
+	font-style: oblique;
+	margin-top: 200px;
+	margin-bottom: 50px;
+}
+
+.title2 {
+	color: #bdfff3;
+	background-image: -webkit-linear-gradient(bottom,red,#fd8403,yellow);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.title1mark {
+	right: calc(50% - 440px);
+	top: 320px;
+	padding: 10px;
+	background-color: #fe8c00;
+	border-radius: 5px;
+	position: absolute;
+	box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+	text-overflow: ellipsis;
+	color: white;
+}
+	/* 底部 */
+#z {
+	bottom: 0px;
+	left: 0px;
+	height: 40px;
+	width: 100%;
+	z-index: 9999;
+	padding-left: 30px;
+	padding-right: 30px;
+	position: fixed;
+}
+    /* 图标 */
+.icon1 {
+	z-index: 50;
+	margin: 10px 7px;
+	border-radius: 1px;
+	width: 16px;
+	height: 0;
+	color: black;
+	box-shadow: 0px 8px 0 2px ,0px 0 0 2px ,0px 16px 0 2px;
+	transition: 0.5s
+	position: absolute;
+}
+.iconhelper{
+	background-color: rgba(0,255,0,0);
+	z-index: 100;
+	top: 0px;
+	left: 0px;
+	width: 30px;
+	height: 35px;
+	position: absolute;
+}
+	/* 主页多级菜单 */
+.bodyoul a,#bodylink1,#bodylink2 {
+	color: rgb(0,200,150);
+	font-family: '宋体';
+	text-decoration: none;
+	transition: all 1s;
+}
+
+.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover {
+	text-decoration: underline;
+	background-color: rgb(230,230,230);
+}
+</style>
+<style>
+.a6list
+{
+	line-height: 1.6em;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 45px;
+	width: 480px;
+	border-collapse: collapse;
+	text-align: left;
+}
+.a6list th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+.a6list td
+{
+	color: #669;
+	padding: 9px 8px 0px 8px;
+}
+.a6list tbody tr:hover td
+{
+	color: #009;
+}
+</style>
+<style>
+/* 菜单样式 */
+.container {
+	margin: 20px 10%;
+	width: 90%;
+}
+
+/* 通用样式 */
+.menu, .menu ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.menu {
+	height: 58px;
+}
+
+.menu li {
+	background: -moz-linear-gradient(#292929, #252525);
+	background: -ms-linear-gradient(#292929, #252525);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #292929), color-stop(100%, #252525));
+	background: -webkit-linear-gradient(#292929, #252525);
+	background: -o-linear-gradient(#292929, #252525);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#292929', endColorstr='#252525');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#292929', endColorstr='#252525')";
+	background: linear-gradient(#292929, #252525);
+	border-bottom: 2px solid #181818;
+	border-top: 2px solid #303030;
+	min-width: 160px;
+}
+
+.menu > li {
+	display: block;
+	float: left;
+	position: relative;
+}
+
+.menu > li:first-child {
+	border-radius: 5px 0 0;
+}
+
+.menu a {
+	border-left: 3px solid rgba(0, 0, 0, 0);
+	color: #808080;
+	display: block;
+	font-family: 'Lucida Console';
+	font-size: 18px;
+	line-height: 54px;
+	padding: 0 25px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+/* 悬停时的样式 */
+.menu li:hover {
+	background-color: #1c1c1c;
+	background: -moz-linear-gradient(#1c1c1c, #1b1b1b);
+	background: -ms-linear-gradient(#1c1c1c, #1b1b1b);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #1c1c1c), color-stop(100%, #1b1b1b));
+	background: -webkit-linear-gradient(#1c1c1c, #1b1b1b);
+	background: -o-linear-gradient(#1c1c1c, #1b1b1b);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1c1c1c', endColorstr='#1b1b1b');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#1c1c1c', endColorstr='#1b1b1b')";
+	background: linear-gradient(#1c1c1c, #1b1b1b);
+	border-bottom: 2px solid #222222;
+	border-top: 2px solid #1B1B1B;
+}
+
+.menu li:hover > a {
+	border-radius: 5px 0 0 0 !important;
+	border-left: 3px solid #C4302B !important;
+	color: #C4302B;
+}
+
+/* 子菜单样式 */
+.submenu {
+	left: 0;
+	max-height: 0;
+	position: absolute;
+	top: 100%;
+	z-index: 0;
+	-webkit-perspective: 400px;
+	-moz-perspective: 400px;
+	-ms-perspective: 400px;
+	-o-perspective: 400px;
+	perspective: 400px;
+}
+
+.submenu li {
+	opacity: 0;
+	-webkit-transform: rotateY(90deg);
+	-moz-transform: rotateY(90deg);
+	-ms-transform: rotateY(90deg);
+	-o-transform: rotateY(90deg);
+	transform: rotateY(90deg);
+	-webkit-transition: opacity .4s, -webkit-transform .5s;
+	-moz-transition: opacity .4s, -moz-transform .5s;
+	-ms-transition: opacity .4s, -ms-transform .5s;
+	-o-transition: opacity .4s, -o-transform .5s;
+	transition: opacity .4s, transform .5s;
+}
+
+.menu .submenu li:hover a {
+	border-left: 3px solid #454545;
+	border-radius: 0;
+	color: #ffffff;
+}
+
+.menu > li:hover .submenu, .menu > li:focus .submenu {
+	max-height: 2000px;
+	z-index: 10;
+}
+
+.menu > li:hover .submenu li, .menu > li:focus .submenu li {
+	opacity: 1;
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+}
+
+/* CSS3 过渡效果的延迟 */
+.menu li:hover .submenu li:nth-child(1) {
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-ms-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+}
+
+.menu li:hover .submenu li:nth-child(2) {
+	-webkit-transition-delay: 50ms;
+	-moz-transition-delay: 50ms;
+	-ms-transition-delay: 50ms;
+	-o-transition-delay: 50ms;
+	transition-delay: 50ms;
+}
+
+.menu li:hover .submenu li:nth-child(3) {
+	-webkit-transition-delay: 100ms;
+	-moz-transition-delay: 100ms;
+	-ms-transition-delay: 100ms;
+	-o-transition-delay: 100ms;
+	transition-delay: 100ms;
+}
+
+.menu li:hover .submenu li:nth-child(4) {
+	-webkit-transition-delay: 150ms;
+	-moz-transition-delay: 150ms;
+	-ms-transition-delay: 150ms;
+	-o-transition-delay: 150ms;
+	transition-delay: 150ms;
+}
+
+.menu li:hover .submenu li:nth-child(5) {
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
+	-ms-transition-delay: 200ms;
+	-o-transition-delay: 200ms;
+	transition-delay: 200ms;
+}
+
+.menu li:hover .submenu li:nth-child(6) {
+	-webkit-transition-delay: 250ms;
+	-moz-transition-delay: 250ms;
+	-ms-transition-delay: 250ms;
+	-o-transition-delay: 250ms;
+	transition-delay: 250ms;
+}
+
+.menu li:hover .submenu li:nth-child(7) {
+	-webkit-transition-delay: 300ms;
+	-moz-transition-delay: 300ms;
+	-ms-transition-delay: 300ms;
+	-o-transition-delay: 300ms;
+	transition-delay: 300ms;
+}
+
+.menu li:hover .submenu li:nth-child(8) {
+	-webkit-transition-delay: 350ms;
+	-moz-transition-delay: 350ms;
+	-ms-transition-delay: 350ms;
+	-o-transition-delay: 350ms;
+	transition-delay: 350ms;
+}
+
+.submenu li:nth-child(1) {
+	-webkit-transition-delay: 350ms;
+	-moz-transition-delay: 350ms;
+	-ms-transition-delay: 350ms;
+	-o-transition-delay: 350ms;
+	transition-delay: 350ms;
+}
+
+.submenu li:nth-child(2) {
+	-webkit-transition-delay: 300ms;
+	-moz-transition-delay: 300ms;
+	-ms-transition-delay: 300ms;
+	-o-transition-delay: 300ms;
+	transition-delay: 300ms;
+}
+
+.submenu li:nth-child(3) {
+	-webkit-transition-delay: 250ms;
+	-moz-transition-delay: 250ms;
+	-ms-transition-delay: 250ms;
+	-o-transition-delay: 250ms;
+	transition-delay: 250ms;
+}
+
+.submenu li:nth-child(4) {
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
+	-ms-transition-delay: 200ms;
+	-o-transition-delay: 200ms;
+	transition-delay: 200ms;
+}
+
+.submenu li:nth-child(5) {
+	-webkit-transition-delay: 150ms;
+	-moz-transition-delay: 150ms;
+	-ms-transition-delay: 150ms;
+	-o-transition-delay: 150ms;
+	transition-delay: 150ms;
+}
+
+.submenu li:nth-child(6) {
+	-webkit-transition-delay: 100ms;
+	-moz-transition-delay: 100ms;
+	-ms-transition-delay: 100ms;
+	-o-transition-delay: 100ms;
+	transition-delay: 100ms;
+}
+
+.submenu li:nth-child(7) {
+	-webkit-transition-delay: 50ms;
+	-moz-transition-delay: 50ms;
+	-ms-transition-delay: 50ms;
+	-o-transition-delay: 50ms;
+	transition-delay: 50ms;
+}
+
+.submenu li:nth-child(8) {
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-ms-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+}
+</style>
+<div class="a">
+<div class="container">
+	<ul class="menu">
+		<li><a href="#" id="a1" onclick="show0(title1on+'div');show1('a1div');title10(title1on);title11('a1');title1on='a1';title1click=0;bodychange(title1on,title1click);">主页</a></li>
+		<li><a href="#" id="a2" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=0;bodychange(title1on,title1click);">小程序</a>
+			<ul class="submenu">
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=1;bodychange(title1on,title1click);scrollid('a2div1');">贪吃蛇</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=2;bodychange(title1on,title1click);scrollid('a2div2');">俄罗斯方块</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=3;bodychange(title1on,title1click);scrollid('a2div3');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=4;bodychange(title1on,title1click);scrollid('a2div4');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=5;bodychange(title1on,title1click);scrollid('a2div5');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=6;bodychange(title1on,title1click);scrollid('a2div6');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=7;bodychange(title1on,title1click);scrollid('a2div7');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a2div');title10(title1on);title11('a2');title1on='a2';title1click=8;bodychange(title1on,title1click);scrollid('a2div8');">制作中……</a></li>
+			</ul>
+		</li>
+		<li><a href="#" id="a3" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=0;bodychange(title1on,title1click);">文献</a>
+			<ul class="submenu">
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=1;bodychange(title1on,title1click);scrollid('a3div1');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=2;bodychange(title1on,title1click);scrollid('a3div2');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=3;bodychange(title1on,title1click);scrollid('a3div3');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=4;bodychange(title1on,title1click);scrollid('a3div4');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=5;bodychange(title1on,title1click);scrollid('a3div5');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=6;bodychange(title1on,title1click);scrollid('a3div6');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=7;bodychange(title1on,title1click);scrollid('a3div7');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=8;bodychange(title1on,title1click);scrollid('a3div8');">制作中……</a></li>
+			</ul>
+		</li>
+		<li><a href="#" id="a4" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=0;bodychange(title1on,title1click);">加密项目</a>
+			<ul class="submenu">
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=1;bodychange(title1on,title1click);scrollid('a4div1');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=2;bodychange(title1on,title1click);scrollid('a4div2');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=3;bodychange(title1on,title1click);scrollid('a4div3');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=4;bodychange(title1on,title1click);scrollid('a4div4');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=5;bodychange(title1on,title1click);scrollid('a4div5');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=6;bodychange(title1on,title1click);scrollid('a4div6');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=7;bodychange(title1on,title1click);scrollid('a4div7');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a4div');title10(title1on);title11('a4');title1on='a4';title1click=8;bodychange(title1on,title1click);scrollid('a4div8');">制作中……</a></li>
+			</ul>
+		</li>
+		<li><a href="#" id="a5" onclick="show0(title1on+'div');show1('a5div');title10(title1on);title11('a5');title1on='a5';title1click=0;bodychange(title1on,title1click);">更多</a></li>
+		<li><a href="#" id="a6" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=0;bodychange(title1on,title1click);">设置</a>
+			<ul class="submenu">
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=1;bodychange(title1on,title1click);scrollid('a6div1');">布局/样式</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=2;bodychange(title1on,title1click);scrollid('a6div2');">cookie</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=3;bodychange(title1on,title1click);scrollid('a6div3');">版本信息</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=4;bodychange(title1on,title1click);scrollid('a6div4');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=5;bodychange(title1on,title1click);scrollid('a6div5');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=6;bodychange(title1on,title1click);scrollid('a6div6');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=7;bodychange(title1on,title1click);scrollid('a6div7');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a6div');title10(title1on);title11('a6');title1on='a6';title1click=8;bodychange(title1on,title1click);scrollid('a6div8');">制作中……</a></li>
+			</ul>
+		</li>
+	</ul>
+</div>
+</div>
+
+
+<div id="a1div">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	
+    <h1 class="title1">HOMEPAGE</h1>
+	<div class="title1mark">801</div>
+	<div class="b2" id="divmenu1" style="height:100%;">
+		<a href="#a1001" class="b2a" onclick="scrollid('a1div1')">公告</a>
+		<a href="#a1002" class="b2a" onclick="scrollid('a1div2')">目录</a>
+		<a href="#a1003" class="b2a" onclick="scrollid('a1div3')">加入我们</a>
+	</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon1"></div><div title="显示/隐藏侧栏" id="icon1helper" class="iconhelper" onmouseover="icon1(1);" onmouseleave="icon0(1);" onclick="icon1(1);"></div><div class="icon1" style="color:white;display:none;" id="icon10"></div><div title="显示/隐藏侧栏" id="icon10helper" style="display:none;" class="iconhelper" onmouseover="icon0(1);" onmouseleave="icon1(1);" onclick="icon0(1);"></div></div>
+	<div class="bodydiv" id="a1div1"><div class="bodyhelper"><p class="bodytitle">公告</p></div><p class="bodydocument">欢迎访问！<br/><br/>推荐使用<b title="Microsoft edge浏览器;谷歌浏览器;QQ浏览器;360浏览器;搜狗浏览器等">webkit内核</b>浏览器查看<br/>其他浏览器可能出现动画和响应错误，请确保兼容!<br/><br/>（鉴于部分内容只向学生展示，特设登录密码）</p></div>
+	<div class="bodydiv" id="a1div2"><div class="bodyhelper"><p class="bodytitle">目录</p></div><div class="bodydocument"><p>在此处，你可以跳转页面与改变页面</p><ol class="bodyoul"><li><a href="javascript:void(0);">登录</a></li><li><a href="javascript:void(0);">主站</a></li><ul><li><a href="javascript:void(0);">主页</a></li><li><a href="javascript:void(0);">小程序</a></li><li><a href="javascript:void(0);">文献</a></li><li><a href="javascript:void(0);">更多</a></li><li><a href="javascript:void(0);">加密项目</a></li><li><a href="javascript:void(0);">设置</a></li></ul></ol></div></div>
+	<div class="bodydiv" id="a1div3"><div class="bodyhelper"><p class="bodytitle">加入我们</p></div><p class="bodydocument">方式：私聊</p></div>
+</div>
+
+
+
+
+<div id="a2div" style="display:none;">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	
+    <h1 class="title1">小程序</h1>
+	<div class="b2" id="divmenu2" style="height:100%;">
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div1')">贪吃蛇</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div2')">俄罗斯方块</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div3')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div4')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div5')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div6')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div7')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a2div8')">制作中……</a>
+	</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon2"></div><div title="显示/隐藏侧栏" id="icon2helper" class="iconhelper" onmouseover="icon1(2);" onmouseleave="icon0(2);" onclick="icon1(2);"></div><div class="icon1" style="color:white;display:none;" id="icon20"></div><div title="显示/隐藏侧栏" id="icon20helper" style="display:none;" class="iconhelper" onmouseover="icon0(2);" onmouseleave="icon1(2);" onclick="icon0(2);"></div></div>
+	<div class="bodydiv" id="a2div1"><div class="bodyhelper"><p class="bodytitle">贪吃蛇</p></div><br/><div class="bodydocument" onclick="document.getElementById('window1').style.height='100%';"><a href="javascript:void(0)" id="bodylink1">点击此处开始</a></div></div>
+	<div class="bodydiv" id="a2div2"><div class="bodyhelper"><p class="bodytitle">俄罗斯方块</p></div><br/><div class="bodydocument" onclick="document.getElementById('window2').style.height='100%';"><a href="javascript:void(0)" id="bodylink2">点击此处开始</a></div></div>
+	<div class="bodydiv" id="a2div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a2div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a2div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a2div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a2div7"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a2div8"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+</div>
+
+
+
+
+<div id="a3div" style="display:none;">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	
+    <h1 class="title1">文献</h1>
+	<div class="b2" id="divmenu3" style="height:100%;">
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div1')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div2')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div3')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div4')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div5')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div6')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div7')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div8')">制作中……</a>
+	</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon3"></div><div title="显示/隐藏侧栏" id="icon3helper" class="iconhelper" onmouseover="icon1(3);" onmouseleave="icon0(3);" onclick="icon1(3);"></div><div class="icon1" style="color:white;display:none;" id="icon30"></div><div title="显示/隐藏侧栏" id="icon30helper" style="display:none;" class="iconhelper" onmouseover="icon0(3);" onmouseleave="icon1(3);" onclick="icon0(3);"></div></div>
+	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div7"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div8"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+</div>
+
+
+
+
+<div id="a4div" style="display:none;">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	
+    <h1 class="title1">加密项目</h1>
+	<div class="b2" id="divmenu4" style="height:100%;">
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div1')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div2')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div3')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div4')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div5')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div6')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div7')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a4div8')">制作中……</a>
+		</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon4"></div><div title="显示/隐藏侧栏" id="icon4helper" class="iconhelper" onmouseover="icon1(4);" onmouseleave="icon0(4);" onclick="icon1(4);"></div><div class="icon1" style="color:white;display:none;" id="icon40"></div><div title="显示/隐藏侧栏" id="icon40helper" style="display:none;" class="iconhelper" onmouseover="icon0(4);" onmouseleave="icon1(4);" onclick="icon0(4);"></div></div>
+	<div class="bodydiv" id="a4div1"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div7"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a4div8"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+</div>
+
+
+
+
+<div id="a5div" style="display:none;">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	
+    <h1 class="title1">更多</h1>
+	<div class="b2" id="divmenu5" style="height:100%;">
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a5div1')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a5div2')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a5div3')">制作中……</a>
+	</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon5"></div><div title="显示/隐藏侧栏" id="icon5helper" class="iconhelper" onmouseover="icon1(5);" onmouseleave="icon0(5);" onclick="icon1(5);"></div><div class="icon1" style="color:white;display:none;" id="icon50"></div><div title="显示/隐藏侧栏" id="icon50helper" style="display:none;" class="iconhelper" onmouseover="icon0(5);" onmouseleave="icon1(5);" onclick="icon0(5);"></div></div>
+	<div class="bodydiv" id="a5div1"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div7"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a5div8"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+</div>
+
+
+
+
+<div id="a6div" style="display:none;">
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;"当前版本：v1.0</h2></div>
+	
+    <h1 class="title2">设置</h1>
+	<div class="b2" id="divmenu6" style="height:100%;">
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div1')">布局/样式</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div2')">cookie</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div3')">版本信息</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div4')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div5')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div6')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div7')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a6div8')">制作中……</a>
+	</div>
+	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
+	<div class="icon1" id="icon6"></div><div title="显示/隐藏侧栏" id="icon6helper" class="iconhelper" onmouseover="icon1(6);" onmouseleave="icon0(6);" onclick="icon1(6);"></div><div class="icon1" style="color:white;display:none;" id="icon60"></div><div title="显示/隐藏侧栏" id="icon60helper" style="display:none;" class="iconhelper" onmouseover="icon0(6);" onmouseleave="icon1(6);" onclick="icon0(6);"></div></div>
+	<div class="bodydiv" id="a6div1"><div class="bodyhelper"><p class="bodytitle">布局/样式</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
+	<thead><tr><th scope="col">布局/样式</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">代码</th></tr></thead><tbody>
+	<tr><td>背景</td><td>纯白</td><td>-</td><td>Background-color:white;</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p>可选：</p><input><p>代码：</p><input></div></div></div>
+	<div class="bodydiv" id="a6div2"><div class="bodyhelper"><p class="bodytitle">cookie</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
+	<thead><tr><th scope="col">cookie</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">值</th></tr></thead><tbody>
+	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table></div></div>
+	<div class="bodydiv" id="a6div3"><div class="bodyhelper"><p class="bodytitle">版本信息</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
+	<thead><tr><th scope="col">版本信息</th><th scope="col">更新日期</th><th scope="col">版本信息</th><th scope="col">更新日期</th></tr></thead><tbody>
+	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>-</td><td>-</td><td>1.0</td><td>-</td></tr></tbody></table></div></div>
+	<div class="bodydiv" id="a6div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a6div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a6div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a6div7"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a6div8"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+</div>
+
+
+
+
+<div class="window" id="window1">
+	<a class="windowclose" onclick="document.getElementById('window1').style.height='0';" title="关闭">×</a>
+	<p class="windowtitle">贪吃蛇</p>
+	<div class="windowbody"><div id="tcc"></div></div>
+	<div class="windowlt"><b title="游戏控制">游戏控制：</b><div></div></div>
+	<div class="windowrt"><b title="界面控制">界面控制：</b><div></div></div>
+	<p class="windowfoot">-- 使用愉快 --</p>
+	
+</div>
+<div class="window" id="window2">
+	<a class="windowclose" onclick="document.getElementById('window2').style.height='0';" title="关闭">×</a>
+	<p class="windowtitle">俄罗斯方块</p>
+	<div class="windowbody"><div id="elsfk"></div></div>
+	<div class="windowlt"><b title="游戏控制">游戏控制：</b><div></div></div>
+	<div class="windowrt"><b title="界面控制">界面控制：</b><div></div></div>
+	<p class="windowfoot">-- 使用愉快 --</p>
+	
+</div>
+
+
+
+<script>//执行项目
+	show0(title1on+'div');show1('a1div');title10(title1on);title11('a1');title1on='a1';title1click=0;
+</script>
+<!-- ______________________________________结束______________________________________________  -->
+<div id="z" style="">
+    <p style="color:silver;font-size:12px;margin: 0 auto; text-align: center;z-index:9999">—— —— 内部交流，禁止转载 —— ——</p>
+</div>
+</html></div>
+</html>
