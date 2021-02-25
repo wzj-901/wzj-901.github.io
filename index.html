@@ -130,7 +130,8 @@ case 3:
 </div>
 <p id="signin5">———— 使 用 愉 快 ————</p>
 </div>
-<div id="body2"><html>
+<div id="body2">
+<html>
 <meta charset="UTF-8">
 <head>
 	<title>Hello World</title>
@@ -167,6 +168,14 @@ case 3:
 	}
 </script>
 <style>
+/* 背景 */
+#backimage{
+background:url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbbsfiles.vivo.com.cn%2Fvivobbs%2Fattachment%2Fforum%2F201408%2F15%2F182607y3wt83g2cccgyryd.jpg&amp;refer=http%3A%2F%2Fbbsfiles.vivo.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1616765908&amp;t=7571d6dd69c13868c3dd4591231c0857")no-repeat;
+}
+#background{
+top:0;bottom:0;left:0;right:0;
+position:fixed;
+}
 /* 标题 */
 .a {
 	top: 0px;
@@ -265,6 +274,7 @@ case 3:
 	margin-right: 10px;
 	box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
 	margin-bottom: 20px;
+	background-color:rgba(255,255,255,0.1);
 }
 
 .bodytitle {
@@ -275,7 +285,7 @@ case 3:
 	font-size: 30px;
 	border-style: solid;
 	border-width: 2px;
-	border-color: #81fbb8 white;
+	border-color: #81fbb8 rgba(0,0,0,0);
 	padding: 0px 10px;
 	float: left;
 }
@@ -297,7 +307,7 @@ case 3:
 	width: 500px;
 	height: 100px;
 	margin-bottom: 100px;
-	box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
+	box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.3);
 	text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 	border-radius: 0 10px 10px 0;
 	float: left;
@@ -328,7 +338,7 @@ case 3:
 	margin: 0 auto;
 	text-align: center;
 	font-family: "Lucida Console", Monaco, monospace;
-	color: rgba(255,255,255,1);
+	color: rgba(255,255,255,0.7);
 	-o-text-overflow: ellipsis;
 	text-overflow: ellipsis;
 	background: rgb(255,255,255);
@@ -336,6 +346,7 @@ case 3:
 	font-style: oblique;
 	margin-top: 200px;
 	margin-bottom: 50px;
+	background-color:rgba(0,0,0,0);
 }
 
 .title2 {
@@ -405,18 +416,18 @@ case 3:
 <style>
 .a6list
 {
-	line-height: 1.6em;
+	line-height: 1.9em;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-	font-size: 12px;
-	background: #fff;
+	font-size: 14px;
+	background: rgba(0,0,0,0);
 	margin: 45px;
-	width: 480px;
+	width: 600px;
 	border-collapse: collapse;
 	text-align: left;
 }
 .a6list th
 {
-	font-size: 14px;
+	font-size: 18px;
 	font-weight: normal;
 	color: #039;
 	padding: 10px 8px;
@@ -430,6 +441,16 @@ case 3:
 .a6list tbody tr:hover td
 {
 	color: #009;
+}
+.a6set,.a6set2{
+	float:left;
+}
+.a6set{
+	margin-left:20px;
+}
+.a6set2{
+	margin-top:18px;
+	background-color:rgba(0,0,0,0);
 }
 </style>
 <style>
@@ -741,9 +762,9 @@ case 3:
 </div>
 </div>
 
-
+<div id="background"><img width="1500px" id="backimage" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbbsfiles.vivo.com.cn%2Fvivobbs%2Fattachment%2Fforum%2F201408%2F15%2F182607y3wt83g2cccgyryd.jpg&amp;refer=http%3A%2F%2Fbbsfiles.vivo.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1616765908&amp;t=7571d6dd69c13868c3dd4591231c0857"><div style="background-color:white;height:50px;left:0px;top:1100px;width:100%;position:absolute;"></div></div>
 <div id="a1div">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY WZJ</h2></div>
 	
     <h1 class="title1">HOMEPAGE</h1>
 	<div class="title1mark">801</div>
@@ -755,7 +776,7 @@ case 3:
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon1"></div><div title="显示/隐藏侧栏" id="icon1helper" class="iconhelper" onmouseover="icon1(1);" onmouseleave="icon0(1);" onclick="icon1(1);"></div><div class="icon1" style="color:white;display:none;" id="icon10"></div><div title="显示/隐藏侧栏" id="icon10helper" style="display:none;" class="iconhelper" onmouseover="icon0(1);" onmouseleave="icon1(1);" onclick="icon0(1);"></div></div>
 	<div class="bodydiv" id="a1div1"><div class="bodyhelper"><p class="bodytitle">公告</p></div><p class="bodydocument">欢迎访问！<br/><br/>推荐使用<b title="Microsoft edge浏览器;谷歌浏览器;QQ浏览器;360浏览器;搜狗浏览器等">webkit内核</b>浏览器查看<br/>其他浏览器可能出现动画和响应错误，请确保兼容!<br/><br/>（鉴于部分内容只向学生展示，特设登录密码）</p></div>
-	<div class="bodydiv" id="a1div2"><div class="bodyhelper"><p class="bodytitle">目录</p></div><div class="bodydocument"><p>在此处，你可以跳转页面与改变页面</p><ol class="bodyoul"><li><a href="javascript:void(0);">登录</a></li><li><a href="javascript:void(0);">主站</a></li><ul><li><a href="javascript:void(0);">主页</a></li><li><a href="javascript:void(0);">小程序</a></li><li><a href="javascript:void(0);">文献</a></li><li><a href="javascript:void(0);">更多</a></li><li><a href="javascript:void(0);">加密项目</a></li><li><a href="javascript:void(0);">设置</a></li></ul></ol></div></div>
+	<div class="bodydiv" id="a1div2"><div class="bodyhelper"><p class="bodytitle">目录</p></div><div class="bodydocument"><p>在此处，你可以了解整个网页的内容分布</p><ol class="bodyoul"><li><a href="javascript:void(0);">登录</a></li><li><a href="javascript:void(0);">主站</a></li><ul><li><a href="javascript:void(0);">主页</a></li><li><a href="javascript:void(0);">小程序</a></li><li><a href="javascript:void(0);">文献</a></li><li><a href="javascript:void(0);">更多</a></li><li><a href="javascript:void(0);">加密项目</a></li><li><a href="javascript:void(0);">设置</a></li></ul><li><a href="javascript:void(0);">特殊窗口</a></li><ul><li><a href="javascript:void(0);">贪吃蛇</a></li><li><a href="javascript:void(0);">俄罗斯方块</a></li></ul></ol></div></div>
 	<div class="bodydiv" id="a1div3"><div class="bodyhelper"><p class="bodytitle">加入我们</p></div><p class="bodydocument">方式：私聊</p></div>
 </div>
 
@@ -763,7 +784,7 @@ case 3:
 
 
 <div id="a2div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
 	
     <h1 class="title1">小程序</h1>
 	<div class="b2" id="divmenu2" style="height:100%;">
@@ -792,7 +813,7 @@ case 3:
 
 
 <div id="a3div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
 	
     <h1 class="title1">文献</h1>
 	<div class="b2" id="divmenu3" style="height:100%;">
@@ -821,7 +842,7 @@ case 3:
 
 
 <div id="a4div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
 	
     <h1 class="title1">加密项目</h1>
 	<div class="b2" id="divmenu4" style="height:100%;">
@@ -850,7 +871,7 @@ case 3:
 
 
 <div id="a5div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
 	
     <h1 class="title1">更多</h1>
 	<div class="b2" id="divmenu5" style="height:100%;">
@@ -874,7 +895,7 @@ case 3:
 
 
 <div id="a6div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;"当前版本：v1.0</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
 	
     <h1 class="title2">设置</h1>
 	<div class="b2" id="divmenu6" style="height:100%;">
@@ -889,12 +910,12 @@ case 3:
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon6"></div><div title="显示/隐藏侧栏" id="icon6helper" class="iconhelper" onmouseover="icon1(6);" onmouseleave="icon0(6);" onclick="icon1(6);"></div><div class="icon1" style="color:white;display:none;" id="icon60"></div><div title="显示/隐藏侧栏" id="icon60helper" style="display:none;" class="iconhelper" onmouseover="icon0(6);" onmouseleave="icon1(6);" onclick="icon0(6);"></div></div>
-	<div class="bodydiv" id="a6div1"><div class="bodyhelper"><p class="bodytitle">布局/样式</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
+	<div class="bodydiv" id="a6div1" style="padding-bottom:60px;"><div class="bodyhelper"><p class="bodytitle">布局/样式</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
 	<thead><tr><th scope="col">布局/样式</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">代码</th></tr></thead><tbody>
-	<tr><td>背景</td><td>纯白</td><td>-</td><td>Background-color:white;</td></tr>
+	<tr><td>背景</td><td>图片</td><td>-</td><td title="src='https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbbsfiles.vivo.com.cn%2Fvivobbs%2Fattachment%2Fforum%2F201408%2F15%2F182607y3wt83g2cccgyryd.jpg&amp;refer=http%3A%2F%2Fbbsfiles.vivo.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1616765908&amp;t=7571d6dd69c13868c3dd4591231c0857'">src="https://gimg2.baidu.com/imag……"</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p>可选：</p><input><p>代码：</p><input></div></div></div>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p class="a6set" id="a6set1">可选：</p><input class="a6set2"><p class="a6set">代码：</p><input class="a6set2" id="a6set2"></div></div></div>
 	<div class="bodydiv" id="a6div2"><div class="bodyhelper"><p class="bodytitle">cookie</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
 	<thead><tr><th scope="col">cookie</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">值</th></tr></thead><tbody>
 	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
@@ -902,11 +923,11 @@ case 3:
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table></div></div>
 	<div class="bodydiv" id="a6div3"><div class="bodyhelper"><p class="bodytitle">版本信息</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
-	<thead><tr><th scope="col">版本信息</th><th scope="col">更新日期</th><th scope="col">版本信息</th><th scope="col">更新日期</th></tr></thead><tbody>
+	<thead><tr><th scope="col">版本信息</th><th scope="col" style="font-size:14px">日期（移入查看详情）</th><th scope="col">版本信息</th><th scope="col" style="font-size:14px">日期（移入查看详情）</th></tr></thead><tbody>
 	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-    <tr><td>-</td><td>-</td><td>1.0</td><td>-</td></tr></tbody></table></div></div>
+    <tr><td>-</td><td>-</td><td>1.1</td><td title="添加背景并配色；增大表单字体">2021/2/25</td></tr></tbody></table></div></div>
 	<div class="bodydiv" id="a6div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a6div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a6div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
@@ -943,7 +964,8 @@ case 3:
 </script>
 <!-- ______________________________________结束______________________________________________  -->
 <div id="z" style="">
-    <p style="color:silver;font-size:12px;margin: 0 auto; text-align: center;z-index:9999">—— —— 内部交流，禁止转载 —— ——</p>
+    <p style="color:silver;font-size:12px;margin: 0 auto; text-align: center;z-index:9999">—— —— 内部交流，请勿转载 —— ——</p>
 </div>
-</html></div>
+</html>
+</div>
 </html>
