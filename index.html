@@ -115,7 +115,9 @@ case 2:
 	if(y){a=y}
 	if(a=="123456"){
 	document.getElementById('body').style.cssText="display:none";
-	document.getElementById('body2').style.cssText="display:block"}
+	document.getElementById('body2').style.cssText="display:block";
+	lockopen();
+	}
 	break;
 case 3:
 	break;
@@ -918,7 +920,7 @@ position:fixed;
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p class="a6set" id="a6set1">可选：</p><input class="a6set2"><p class="a6set">代码：</p><input class="a6set2" id="a6set2"></div></div></div>
 	<div class="bodydiv" id="a6div2"><div class="bodyhelper"><p class="bodytitle">cookie</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
 	<thead><tr><th scope="col">cookie</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">值</th></tr></thead><tbody>
-	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+	<tr><td>密码</td><td>123456</td><td>-</td><td>password=123456;expires=……（这将会保存30天）</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table></div></div>
@@ -961,6 +963,9 @@ position:fixed;
 
 <script>//执行项目
 	show0(title1on+'div');show1('a1div');title10(title1on);title11('a1');title1on='a1';title1click=0;
+	function lockopen(){
+	setCookie("password","123456",30);
+	}
 </script>
 <!-- ______________________________________结束______________________________________________  -->
 <div id="z" style="">
@@ -969,6 +974,21 @@ position:fixed;
 </html>
 </div>
 <script>
-	signin(2,window.location.href.split("=")[1])
+signin(2,window.location.href.split("=")[1])
+//cookie
+function setCookie(cname,cvalue,exdays){
+	var d = new Date();
+	d.setTime(d.getTime()+(exdays*24*60*60*1000));
+	var expires = "expires="+d.toGMTString();
+	document.cookie = cname+"="+cvalue+"; "+expires;}
+function getCookie(cname){
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i].trim();
+		if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+	}
+	return "";}
+signin(2,getCookie("password"));
 </script>
 </html>
