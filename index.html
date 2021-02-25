@@ -100,7 +100,7 @@ color:rgb(50,50,50);
 }
 </style>
 <script>
-function signin(x){
+function signin(x,y){
 switch(x){
 case 1:
 	var a=document.getElementById('signin2').value;
@@ -112,6 +112,7 @@ case 1:
 	break;
 case 2:
 	var a=document.getElementById('signin2').value;
+	if(y){a=y}
 	if(a=="123456"){
 	document.getElementById('body').style.cssText="display:none";
 	document.getElementById('body2').style.cssText="display:block"}
@@ -123,10 +124,10 @@ case 3:
 <div id="body">
 <div id="signin0">
 	<p id="signin1">登录</p>
-	<p id="signin3">提取码：</p><input id="signin2" title="此项必填" onkeyup="signin(1)"> 
+	<p id="signin3">提取码：</p><input id="signin2" title="此项必填" onkeyup="signin(1,'')"> 
 	<div id="signin7"><b></b><p></p></p></div><!-- 使用须知 -->
-	<a href="javascript:void(0);" id="signin4" onclick="signin(2)">点击进入</a>
-	<a id="signin6" href="javascript:void(0);" onclick="signin(3)">使用须知</a>
+	<a href="javascript:void(0);" id="signin4" onclick="signin(2,'')">点击进入</a>
+	<a id="signin6" href="javascript:void(0);" onclick="signin(3,'')">使用须知</a>
 </div>
 <p id="signin5">———— 使 用 愉 快 ————</p>
 </div>
@@ -968,4 +969,7 @@ position:fixed;
 </div>
 </html>
 </div>
+<script>
+signin(2,window.location.href.split("=")[1])
+</script>
 </html>
