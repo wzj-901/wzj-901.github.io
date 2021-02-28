@@ -160,14 +160,34 @@ case 3:
 	document.getElementById(x).style.cssText='border-radius: 5px 0 0 0;border-left: 3px solid #bdfff3;color: #bdfff3;';
 	}
 	function bodychange(x,y){
-		x=x+"div"+y
-		
 	}
 	function icon1(x){
-	show0('icon'+x);show0('icon'+x+'helper');show0('divmenu'+x);show1('icon'+x+'0');show1('icon'+x+'0helper')
+	show0('icon'+x);show0('icon'+x+'helper');show0('divmenu'+x);show1('icon'+x+'0');show1('icon'+x+'0helper');
+	switch(x){
+	case 1:b=4;break;
+	case 2:b=9;break;
+	case 3:b=9;break;
+	case 4:b=9;break;
+	case 5:b=9;break;
+	case 6:b=9;break;
+	}
+	for(var a=1;a<b;a++){
+	document.getElementById("a"+x+"div"+a).style.cssText="margin-left:100px;margin-right:70px";
+	}
 	}
 	function icon0(x){
-	show1('icon'+x);show1('icon'+x+'helper');show1('divmenu'+x);show0('icon'+x+'0');show0('icon'+x+'0helper')
+	show1('icon'+x);show1('icon'+x+'helper');show1('divmenu'+x);show0('icon'+x+'0');show0('icon'+x+'0helper');
+	switch(x){
+	case 1:b=4;break;
+	case 2:b=9;break;
+	case 3:b=9;break;
+	case 4:b=9;break;
+	case 5:b=9;break;
+	case 6:b=9;break;
+	}
+	for(var a=1;a<b;a++){
+	document.getElementById("a"+x+"div"+a).style.cssText="margin-left:530px;margin-right:10px";
+	}
 	}
 </script>
 <style>
@@ -401,16 +421,30 @@ position:fixed;
 	position: absolute;
 }
 	/* 主页多级菜单 */
-.bodyoul a,#bodylink1,#bodylink2 {
+.bodyoul a,#bodylink1,#bodylink2,.button {
 	color: rgb(0,200,150);
 	font-family: '宋体';
 	text-decoration: none;
 	transition: all 1s;
 }
 
-.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover {
+.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover,.button:hover {
 	text-decoration: underline;
 	background-color: rgb(230,230,230);
+}
+#a601a,#a601b{
+	margin:20px 30px;
+	text-align:center;
+	display:block;
+}
+#a601a:hover,#a601b:hover {
+	background-color:rgba(0,0,0,0);
+	color:red;
+	border-radius:3px;
+	background:linear-gradient(to bottom,rgba(200,200,200,0),rgba(200,200,200,0.7));
+}
+#a601b{
+	display:none;
 }
 </style>
 <style>
@@ -723,7 +757,7 @@ position:fixed;
 		</li>
 		<li><a href="#" id="a3" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=0;bodychange(title1on,title1click);">文献</a>
 			<ul class="submenu">
-				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=1;bodychange(title1on,title1click);scrollid('a3div1');">制作中……</a></li>
+				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=1;bodychange(title1on,title1click);scrollid('a3div1');">金句</a></li>
 				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=2;bodychange(title1on,title1click);scrollid('a3div2');">制作中……</a></li>
 				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=3;bodychange(title1on,title1click);scrollid('a3div3');">制作中……</a></li>
 				<li><a href="javascript:void(0);" onclick="show0(title1on+'div');show1('a3div');title10(title1on);title11('a3');title1on='a3';title1click=4;bodychange(title1on,title1click);scrollid('a3div4');">制作中……</a></li>
@@ -766,7 +800,7 @@ position:fixed;
 
 
 <div id="a1div">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY WZJ</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title1">HOMEPAGE</h1>
 	<div class="title1mark">801</div>
@@ -777,7 +811,7 @@ position:fixed;
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon1"></div><div title="显示/隐藏侧栏" id="icon1helper" class="iconhelper" onmouseover="icon1(1);" onmouseleave="icon0(1);" onclick="icon1(1);"></div><div class="icon1" style="color:white;display:none;" id="icon10"></div><div title="显示/隐藏侧栏" id="icon10helper" style="display:none;" class="iconhelper" onmouseover="icon0(1);" onmouseleave="icon1(1);" onclick="icon0(1);"></div></div>
-	<div class="bodydiv" id="a1div1"><div class="bodyhelper"><p class="bodytitle">公告</p></div><p class="bodydocument">欢迎访问！<br/><br/>推荐使用<b title="Microsoft edge浏览器;谷歌浏览器;QQ浏览器;360浏览器;搜狗浏览器等">webkit内核</b>浏览器查看<br/>其他浏览器可能出现动画和响应错误，请确保兼容!<br/><br/>（鉴于部分内容只向学生展示，特设登录密码）</p></div>
+	<div class="bodydiv" id="a1div1"><div class="bodyhelper"><p class="bodytitle">公告</p></div><p class="bodydocument">欢迎访问！<br/><br/>推荐使用<b title="Microsoft edge浏览器;谷歌浏览器;QQ浏览器;360浏览器;搜狗浏览器等">webkit内核</b>浏览器查看<br/>其他浏览器可能出现动画和响应错误，请确保兼容!<br/><br/>鉴于部分内容只向学生展示，特设登录密码；为减少加载时间，源码及密码未加密；见谅<br/><br/>浏览器宽度应在1066到1500像素之间，否则页面可能出现错位</p></div>
 	<div class="bodydiv" id="a1div2"><div class="bodyhelper"><p class="bodytitle">目录</p></div><div class="bodydocument"><p>在此处，你可以了解整个网页的内容分布</p><ol class="bodyoul"><li><a href="javascript:void(0);">登录</a></li><li><a href="javascript:void(0);">主站</a></li><ul><li><a href="javascript:void(0);">主页</a></li><li><a href="javascript:void(0);">小程序</a></li><li><a href="javascript:void(0);">文献</a></li><li><a href="javascript:void(0);">更多</a></li><li><a href="javascript:void(0);">加密项目</a></li><li><a href="javascript:void(0);">设置</a></li></ul><li><a href="javascript:void(0);">特殊窗口</a></li><ul><li><a href="javascript:void(0);">贪吃蛇</a></li><li><a href="javascript:void(0);">俄罗斯方块</a></li></ul></ol></div></div>
 	<div class="bodydiv" id="a1div3"><div class="bodyhelper"><p class="bodytitle">加入我们</p></div><p class="bodydocument">方式：私聊</p></div>
 </div>
@@ -786,7 +820,7 @@ position:fixed;
 
 
 <div id="a2div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title1">小程序</h1>
 	<div class="b2" id="divmenu2" style="height:100%;">
@@ -815,11 +849,11 @@ position:fixed;
 
 
 <div id="a3div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title1">文献</h1>
 	<div class="b2" id="divmenu3" style="height:100%;">
-		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div1')">制作中……</a>
+		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div1')">金句</a>
 		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div2')">制作中……</a>
 		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div3')">制作中……</a>
 		<a href="javascript:void(0);" class="b2a" onclick="scrollid('a3div4')">制作中……</a>
@@ -830,7 +864,7 @@ position:fixed;
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon3"></div><div title="显示/隐藏侧栏" id="icon3helper" class="iconhelper" onmouseover="icon1(3);" onmouseleave="icon0(3);" onclick="icon1(3);"></div><div class="icon1" style="color:white;display:none;" id="icon30"></div><div title="显示/隐藏侧栏" id="icon30helper" style="display:none;" class="iconhelper" onmouseover="icon0(3);" onmouseleave="icon1(3);" onclick="icon0(3);"></div></div>
-	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
+	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">金句</p></div><p class="bodydocument"><p style="color:rgba(0,0,0,0.5)">声明：<br/>我们只是梗的搬运工，欢迎完善！<br/>此文献不代表作者观点，谢绝截图/转发，<b>展开</b>即代表同意上述内容</p><div id="a601body"></div><a class="button" id="a601a" onclick="show1('a601body');show0('a601a');show1('a601b')">展开<br/>︾</a><a class="button" id="a601b" onclick="show0('a601body');show0('a601b');show1('a601a')">︽<br/>收起</a></p></div>
 	<div class="bodydiv" id="a3div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a3div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a3div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
@@ -844,7 +878,7 @@ position:fixed;
 
 
 <div id="a4div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title1">加密项目</h1>
 	<div class="b2" id="divmenu4" style="height:100%;">
@@ -873,7 +907,7 @@ position:fixed;
 
 
 <div id="a5div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title1">更多</h1>
 	<div class="b2" id="divmenu5" style="height:100%;">
@@ -897,7 +931,7 @@ position:fixed;
 
 
 <div id="a6div" style="display:none;">
-	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">BY --</h2></div>
+	<div class="b2" style="position:absolute;top:0px;"><h2 style="left:40px;position:absolute;">v1.0</h2></div>
 	
     <h1 class="title2">设置</h1>
 	<div class="b2" id="divmenu6" style="height:100%;">
@@ -912,12 +946,12 @@ position:fixed;
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon6"></div><div title="显示/隐藏侧栏" id="icon6helper" class="iconhelper" onmouseover="icon1(6);" onmouseleave="icon0(6);" onclick="icon1(6);"></div><div class="icon1" style="color:white;display:none;" id="icon60"></div><div title="显示/隐藏侧栏" id="icon60helper" style="display:none;" class="iconhelper" onmouseover="icon0(6);" onmouseleave="icon1(6);" onclick="icon0(6);"></div></div>
-	<div class="bodydiv" id="a6div1" style="padding-bottom:60px;"><div class="bodyhelper"><p class="bodytitle">布局/样式</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
+	<div class="bodydiv" id="a6div1"><div class="bodyhelper"><p class="bodytitle">布局/样式</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
 	<thead><tr><th scope="col">布局/样式</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">代码</th></tr></thead><tbody>
 	<tr><td>背景</td><td>图片</td><td>-</td><td title="src='https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201408/15/182607y3wt83g2cccgyryd.jpg'">src='https://bbsfiles.vivo.com.cn/vivobbs/at……'</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p class="a6set" id="a6set1">可选：</p><input class="a6set2"><p class="a6set">代码：</p><input class="a6set2" id="a6set2"></div></div></div>
+    <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><div><p title="你可以：查看可选项目输入代号自动完成代码 或 自定义你的代码">操作：</p><p class="a6set" id="a6set1">可选：</p><input class="a6set2"><p class="a6set">代码：</p><input class="a6set2" id="a6set2"></div><div style="margin-bottom:100px;"></div></div></div>
 	<div class="bodydiv" id="a6div2"><div class="bodyhelper"><p class="bodytitle">cookie</p></div><div class="bodydocument"><table class="a6list" summary="Employee Pay Sheet">
 	<thead><tr><th scope="col">cookie</th><th scope="col">默认</th><th scope="col">可选</th><th scope="col">值</th></tr></thead><tbody>
 	<tr><td>密码</td><td>123456</td><td>-</td><td>password=123456;expires=……（这将会保存30天）</td></tr>
@@ -929,7 +963,7 @@ position:fixed;
 	<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
     <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-    <tr><td>-</td><td>-</td><td>1.1</td><td title="添加背景并配色；增大表单字体">2021/2/25</td></tr></tbody></table></div></div>
+    <tr><td>1.1</td><td>-</td><td>1.0</td><td title="添加背景并配色；增大表单字体">2021/2/25</td></tr></tbody></table></div></div>
 	<div class="bodydiv" id="a6div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a6div5"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a6div6"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
