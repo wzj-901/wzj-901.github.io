@@ -160,6 +160,7 @@ case 3:
 	document.getElementById(x).style.cssText='border-radius: 5px 0 0 0;border-left: 3px solid #bdfff3;color: #bdfff3;';
 	}
 	function bodychange(x,y){
+		setCookie("open",x,30);
 	}
 	function icon1(x){
 	show0('icon'+x);show0('icon'+x+'helper');show0('divmenu'+x);show1('icon'+x+'0');show1('icon'+x+'0helper');
@@ -996,7 +997,6 @@ position:fixed;
 
 
 <script>//执行项目
-	show0(title1on+'div');show1('a1div');title10(title1on);title11('a1');title1on='a1';title1click=0;
 	function lockopen(){
 	setCookie("password","123456",30);
 	}
@@ -1024,5 +1024,10 @@ function getCookie(cname){
 	}
 	return "";}
 signin(2,getCookie("password"));
+	open=getCookie("open");
+		title1on="a1";
+	if(open){
+		show0(title1on+'div');show1(open+'div');title10(title1on);title11(open);title1on=open;title1click=0;
+	}else{bodychange("a1",1);show1('a1div');title11('a1');title1on='a1';title1click=0;}
 </script>
 </html>
