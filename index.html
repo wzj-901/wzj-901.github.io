@@ -320,6 +320,56 @@ position:fixed;
 	color: rgb(20,20,20);
 	margin-top: 80px;
 }
+.a601bodylist{
+	border:solid 1px rgba(0,0,0,0);
+	padding:20px 4px;
+	border-radius:2px;
+	transition:.3s;
+}
+.a601bodylist:hover{
+	border:solid 1px rgba(255,255,255,0.2);
+}
+.a601bodylist>div>div{
+	position:relative;
+	overflow:hidden;
+}
+.a601bodylist>div>div>b{
+	color:rgba(0,0,0,0.2);
+	float:left;
+}
+.a601bodylist>div>div>h4{
+	color:silver;
+	margin-right:4px;
+	float:left;
+	line-height:0px;
+	position:relative;
+	top:-8px;
+	opacity:0.3;
+}
+.a601bodylist>div>div>p{
+	float:left;
+	position:relative;
+	top:-13px;
+	color:rgb(40,40,40);
+	word-break:break-all;
+	font-style: oblique;
+	font-family:楷体;
+}
+.a601bodylist>div>div>a{
+	margin-right:20px;
+	float:right;
+	margin-left:30px;
+	font-size:14px;
+	position:relative;
+	top:7px;
+	margin-bottom:5px;
+}
+.a601bodylist>div>div>b:after{
+	content: "：";
+}
+.a601bodylist h4{
+	text-align:center;
+}
 	/* 主页分栏 */
 .b2 {
 	background: #F7971E;
@@ -422,14 +472,14 @@ position:fixed;
 	position: absolute;
 }
 	/* 主页多级菜单 */
-.bodyoul a,#bodylink1,#bodylink2,.button {
+.a601bodymenu>p,.bodyoul a,#bodylink1,#bodylink2,.button,.a601bodylist>div>div>a {
 	color: rgb(0,200,150);
 	font-family: '宋体';
 	text-decoration: none;
 	transition: all 1s;
 }
 
-.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover,.button:hover {
+.a601bodymenu>p:hover,.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover,.button:hover,.a601bodylist>div>div>a:hover {
 	text-decoration: underline;
 	background-color: rgb(230,230,230);
 }
@@ -446,6 +496,13 @@ position:fixed;
 }
 #a601b{
 	display:none;
+}
+.a601bodymenu>p{
+	float:left;
+	position:relative;
+	top:-50px;
+	height:0px;
+	margin-left:10px;
 }
 </style>
 <style>
@@ -865,7 +922,9 @@ position:fixed;
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon3"></div><div title="显示/隐藏侧栏" id="icon3helper" class="iconhelper" onmouseover="icon1(3);" onmouseleave="icon0(3);" onclick="icon1(3);"></div><div class="icon1" style="color:white;display:none;" id="icon30"></div><div title="显示/隐藏侧栏" id="icon30helper" style="display:none;" class="iconhelper" onmouseover="icon0(3);" onmouseleave="icon1(3);" onclick="icon0(3);"></div></div>
-	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">金句</p></div><p class="bodydocument"><p style="color:rgba(0,0,0,0.5)">声明：<br/>我们只是梗的搬运工，欢迎完善！<br/>此文献不代表作者观点，谢绝截图/转发，<b>展开</b>即代表同意上述内容</p><div id="a601body"></div><a class="button" id="a601a" onclick="show1('a601body');show0('a601a');show1('a601b')">展开<br/>︾</a><a class="button" id="a601b" onclick="show0('a601body');show0('a601b');show1('a601a')">︽<br/>收起</a></p></div>
+	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">金句</p></div><p class="bodydocument"><p style="color:rgba(0,0,0,0.5)">声明：<br/>如有缺失欢迎完善！<br/>此文献不代表作者观点，谢绝截图/转发，<b>展开</b>即代表同意上述内容</p>
+	<div id="a601body" style="display:none;"><div style="position:relative;overflow:hidden;"><div class="a601bodymenu"><h3>目录<p style="position:relative;left:50px;top:-26px;font-size:12px;color:rgb(100,100,100)">按得分排序</p></h3><p onclick="scrollid('a601bodylist1')">数学</p><p onclick="scrollid('a601bodylist2')">英语</p><p onclick="scrollid('a601bodylist3')">寝室</p><p onclick="scrollid('a601bodylist4')">学生</p><p onclick="scrollid('a601bodylist5')">语文</p><p onclick="scrollid('a601bodylist6')">其他</p></div></div>
+	</div><iframe src="https://wzj-801.github.io/index-a601code.html" style="display:none;height:calc(100vh - 200px);width:calc(100% - 25px);z-index:50;border:0px;" id="a601divframe"></iframe><a class="button" id="a601a" onclick="show1('a601body');show1('a601divframe');show0('a601a');show1('a601b')">展开<br/>︾</a><a class="button" id="a601b" onclick="show0('a601body');show0('a601divframe');show0('a601b');show1('a601a')">︽<br/>收起</a></p></div>
 	<div class="bodydiv" id="a3div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a3div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a3div4"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
@@ -1023,11 +1082,16 @@ function getCookie(cname){
 		if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
 	}
 	return "";}
+	
+	
+	
 signin(2,getCookie("password"));
 	open=getCookie("open");
 		title1on="a1";
 	if(open){
 		show0(title1on+'div');show1(open+'div');title10(title1on);title11(open);title1on=open;title1click=0;
 	}else{bodychange("a1",1);show1('a1div');title11('a1');title1on='a1';title1click=0;}
+
+
 </script>
 </html>
