@@ -4,7 +4,7 @@
 html{
 	background-color:Transparent;
 }
-.a601bodylist>div div>a:hover {
+.a601bodymenu>p:hover,.a601bodylist>div div>a:hover {
 	text-decoration: underline;
 	background-color: rgb(230,230,230);
 }
@@ -17,7 +17,7 @@ html{
 .a601bodylist:hover{
 	border:solid 1px rgba(255,255,255,0.2);
 }
-.a601bodylist>div div>a {
+.a601bodymenu>p,.a601bodylist>div div>a {
 	color: rgb(0,200,150);
 	font-family: '宋体';
 	text-decoration: none;
@@ -72,6 +72,13 @@ html{
 	border-radius:5px;
 	transition:1s ease-in-out;
 }
+.a601bodymenu>p{
+	float:left;
+	position:relative;
+	top:-50px;
+	height:0px;
+	margin-left:10px;
+}
 </style>
 <script>
     function show1pluse(x){
@@ -80,9 +87,11 @@ html{
     function show0pluse(x){
 		document.getElementById(x).style.cssText="max-height:0";
     }
+	function scrollid(x){
+		var element = document.getElementById(x);
+		element.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});}
 </script>
-
-
+<div style="position:relative;overflow:hidden;"><div class="a601bodymenu"><h3>目录<p style="position:relative;left:50px;top:-26px;font-size:12px;color:rgb(100,100,100)">按得分排序</p></h3><p onclick="scrollid('a601bodylist1')">数学</p><p onclick="scrollid('a601bodylist2')">英语</p><p onclick="scrollid('a601bodylist3')">寝室</p><p onclick="scrollid('a601bodylist4')">学生</p><p onclick="scrollid('a601bodylist5')">语文</p><p onclick="scrollid('a601bodylist6')">其他</p></div></div>
 <div class="a601bodylist" id="a601bodylist1"><h4>数学</h4><div>
 	<div><h4 style="color:red;">1</h4><b title="character-001">数学</b><p>我从基层干起：先是数学老师，再当班主任，再当校长。</p><a onclick="show1pluse('a601-1-1')">一项关联</a></div>
 	<div id="a601-1-1" class="a601hidden">
@@ -98,6 +107,8 @@ html{
 	<div><h4>5</h4><b title="TEAC-001">数学</b><p>临场的应变，来源于平时的积淀</p></div>
 	<div><h4>6</h4><b title="TEAC-001">数学</b><p>嘎然而止————</p></div>
 	<div><h4>7</h4><b title="TEAC-001">数学</b><p>耶？————</p></div>
+	<div><h4>8</h4><b title="TEAC-001">数学</b><p>八一儿童欢乐多</p></div>
+	<div><h4>9</h4><b title="TEAC-001">数学</b><p>这次考试成绩很不好——现实，给了你一记响亮的耳光</p></div>
 </div></div>
 
 

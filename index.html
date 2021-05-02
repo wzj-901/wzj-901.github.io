@@ -1,5 +1,217 @@
 <html>
+<meta charset="UTF-8"><html>
 <meta charset="UTF-8">
+<style>
+html{left:0;top:0;width:100%;height:100%;overflow:hidden;}
+</style>
+<script>
+    function change(x,y){
+        document.getElementById(x).style.cssText=y;
+    }
+	window.onload=function(){
+		change("mainshow","transition:2s;transition-delay:6s;opacity:1;");
+	}
+</script>
+<body>
+
+
+<div id="firstshow">
+<html lang="en" >
+<head>
+
+  <meta charset="UTF-8">
+  
+  
+  
+  
+<style>
+#firstshow {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #222;
+  left:0;
+  right:0;
+  top:0;
+  botttom:0;
+  position:absolute;
+}
+
+.reveal {
+  position: relative;
+  display: flex;
+  color: #6ee1f5;
+  font-size: 2em;
+  font-family: Raleway, sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: pre;
+}
+.reveal span {
+  opacity: 0;
+  transform: scale(0);
+  animation: fadeIn 2.4s forwards;
+}
+.reveal::before, .reveal::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  transform: scale(0);
+}
+.reveal::before {
+  left: 50%;
+  animation: slideLeft 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+.reveal::after {
+  right: 50%;
+  animation: slideRight 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideLeft {
+  to {
+    left: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+@keyframes slideRight {
+  to {
+    right: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+  <div class="reveal">WZJ Github Page</div>
+  
+      <script id="rendered-js" >
+"use strict";
+let duration = 0.8;
+let delay = 0.3;
+let revealText = document.querySelector(".reveal");
+let letters = revealText.textContent.split("");
+revealText.textContent = "";
+let middle = letters.filter(e => e !== " ").length / 2;
+letters.forEach((letter, i) => {
+    let span = document.createElement("span");
+    span.textContent = letter;
+    span.style.animationDelay = `${delay + Math.abs(i - middle) * 0.1}s`;
+    revealText.append(span);
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+<html lang="en" >
+<style>
+.glow-In{
+  text-align: left;
+  line-height: 1.8;
+  font-family: Lora, serif;
+  margin: 0em 5em 4em 5em;
+}
+
+.glowIn {
+  color: white;
+}
+.glowIn span {
+  animation: glow-in 0.8s both;
+}
+
+@keyframes glow-in {
+  from {
+    opacity: 0;
+  }
+  65% {
+    opacity: 1;
+    text-shadow: 0 0 25px white;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.7;
+  }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+<p class="glowIn" style="position:relative;top:40px;right:280px;">养 浩 然 之 气 ， 做 永 信 之 人</p>
+
+  
+      <script id="rendered-js" >
+"use strict";
+let glowInTexts = document.querySelectorAll(".glowIn");
+glowInTexts.forEach(glowInText => {
+    let letters = glowInText.textContent.split("");
+    glowInText.textContent = "";
+    letters.forEach((letter, i) => {
+        let span = document.createElement("span");
+        span.textContent = letter;
+        span.style.animationDelay = `${i * 0.05 + 3}s`;
+        glowInText.append(span);
+    });
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+
+</body>
+
+</html>
+</body>
+</html>
+</div>
+ 
+</body>
+</html>
+<div id="mainshow" style="opacity:0">
 <style>#body {
 	position:fixed;
 	left:0;
@@ -217,7 +429,7 @@ position:fixed;
 	width:100%;
 	height:0;
 	background:linear-gradient(to bottom,rgba(0,0,0,0.6),rgba(0,0,0,0.9));
-	transition:all 1s ease-out;
+	transition:all .4s ease-out;
 }
 .window p{
 	color: rgba(255,255,255,0.8);
@@ -479,7 +691,7 @@ position:fixed;
 	transition: all 1s;
 }
 
-.a601bodymenu>p:hover,.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover,.button:hover,.a601bodylist>div>div>a:hover {
+.bodyoul a:hover,#bodylink1:hover,#bodylink2:hover,.button:hover,.a601bodylist>div>div>a:hover {
 	text-decoration: underline;
 	background-color: rgb(230,230,230);
 }
@@ -854,7 +1066,7 @@ position:fixed;
 </div>
 </div>
 
-<div id="background"><img width="1500px" id="backimage" src="https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201408/15/182607y3wt83g2cccgyryd.jpg"><div style="background-color:white;height:50px;left:0px;top:1100px;width:100%;position:absolute;"></div></div>
+<div id="background" style="background-image:url(https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201408/15/182607y3wt83g2cccgyryd.jpg);background-size:cover"></div>
 
 
 <div id="a1div">
@@ -922,8 +1134,7 @@ position:fixed;
 	</div>
 	<div style="background: #fe8c00;background: -webkit-linear-gradient(to bottom, #f83600, #fe8c00);background: linear-gradient(to bottom, #f83600, #fe8c00);width:30px;height:100%;z-index:2;top:0px;left:0px;position:absolute;">
 	<div class="icon1" id="icon3"></div><div title="显示/隐藏侧栏" id="icon3helper" class="iconhelper" onmouseover="icon1(3);" onmouseleave="icon0(3);" onclick="icon1(3);"></div><div class="icon1" style="color:white;display:none;" id="icon30"></div><div title="显示/隐藏侧栏" id="icon30helper" style="display:none;" class="iconhelper" onmouseover="icon0(3);" onmouseleave="icon1(3);" onclick="icon0(3);"></div></div>
-	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">金句</p></div><p class="bodydocument"><p style="color:rgba(0,0,0,0.5)">声明：<br/>如有缺失欢迎完善！<br/>此文献不代表作者观点，谢绝截图/转发，<b>展开</b>即代表同意上述内容</p>
-	<div id="a601body" style="display:none;"><div style="position:relative;overflow:hidden;"><div class="a601bodymenu"><h3>目录<p style="position:relative;left:50px;top:-26px;font-size:12px;color:rgb(100,100,100)">按得分排序</p></h3><p onclick="scrollid('a601bodylist1')">数学</p><p onclick="scrollid('a601bodylist2')">英语</p><p onclick="scrollid('a601bodylist3')">寝室</p><p onclick="scrollid('a601bodylist4')">学生</p><p onclick="scrollid('a601bodylist5')">语文</p><p onclick="scrollid('a601bodylist6')">其他</p></div></div>
+	<div class="bodydiv" id="a3div1"><div class="bodyhelper"><p class="bodytitle">金句</p></div><p class="bodydocument"><p style="color:rgba(0,0,0,0.5)">声明：<br/>如有缺失欢迎完善！<br/>此文献不代表作者观点，谢绝截图/转发，<b>展开</b>即代表同意上述内容</p><div id="a601body" style="display:none;">
 	</div><iframe src="https://wzj-801.github.io/index-a601code.html" style="display:none;height:calc(100vh - 200px);width:calc(100% - 25px);z-index:50;border:0px;" id="a601divframe"></iframe><a class="button" id="a601a" onclick="show1('a601body');show1('a601divframe');show0('a601a');show1('a601b')">展开<br/>︾</a><a class="button" id="a601b" onclick="show0('a601body');show0('a601divframe');show0('a601b');show1('a601a')">︽<br/>收起</a></p></div>
 	<div class="bodydiv" id="a3div2"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
 	<div class="bodydiv" id="a3div3"><div class="bodyhelper"><p class="bodytitle">制作中……</p></div><p class="bodydocument">暂无数据</p></div>
@@ -1094,4 +1305,5 @@ signin(2,getCookie("password"));
 
 
 </script>
+</div>
 </html>
