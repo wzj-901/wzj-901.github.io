@@ -1,0 +1,280 @@
+<html>
+<meta charset="UTF-8">
+<style>
+html{left:0;top:0;width:100%;height:100%;overflow:hidden;}
+</style>
+<script>
+    function change(x,y){
+        document.getElementById(x).style.cssText=y;
+    }
+	window.onload=function(){
+		change("page","transition:2s;transition-delay:6s;opacity:1;");
+	}
+</script>
+<body>
+
+
+<div id="firstshow">
+<html lang="en" >
+<head>
+
+  <meta charset="UTF-8">
+  
+  
+  
+  
+<style>
+#firstshow {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #222;
+  left:0;
+  right:0;
+  top:0;
+  botttom:0;
+  position:absolute;
+  z-index:-1;
+}
+
+.reveal {
+  position: relative;
+  display: flex;
+  color: #6ee1f5;
+  font-size: 2em;
+  font-family: Raleway, sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: pre;
+}
+.reveal span {
+  opacity: 0;
+  transform: scale(0);
+  animation: fadeIn 2.4s forwards;
+}
+.reveal::before, .reveal::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  transform: scale(0);
+}
+.reveal::before {
+  left: 50%;
+  animation: slideLeft 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+.reveal::after {
+  right: 50%;
+  animation: slideRight 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideLeft {
+  to {
+    left: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+@keyframes slideRight {
+  to {
+    right: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+  <div class="reveal">WZJ Github Page</div>
+  
+      <script>
+"use strict";
+let duration = 0.8;
+let delay = 0.3;
+let revealText = document.querySelector(".reveal");
+let letters = revealText.textContent.split("");
+revealText.textContent = "";
+let middle = letters.filter(e => e !== " ").length / 2;
+letters.forEach((letter, i) => {
+    let span = document.createElement("span");
+    span.textContent = letter;
+    span.style.animationDelay = `${delay + Math.abs(i - middle) * 0.1}s`;
+    revealText.append(span);
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+<html lang="en" >
+<style>
+.glow-In{
+  text-align: left;
+  line-height: 1.8;
+  font-family: Lora, serif;
+  margin: 0em 5em 4em 5em;
+}
+
+.glowIn {
+  color: white;
+}
+.glowIn span {
+  animation: glow-in 0.8s both;
+}
+
+@keyframes glow-in {
+  from {
+    opacity: 0;
+  }
+  65% {
+    opacity: 1;
+    text-shadow: 0 0 25px white;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.7;
+  }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+</head>
+
+<body translate="no" >
+<p class="glowIn" style="position:relative;top:40px;right:280px;">养 浩 然 之 气 ， 做 永 信 之 人</p>
+
+  
+      <script>
+"use strict";
+let glowInTexts = document.querySelectorAll(".glowIn");
+glowInTexts.forEach(glowInText => {
+    let letters = glowInText.textContent.split("");
+    glowInText.textContent = "";
+    letters.forEach((letter, i) => {
+        let span = document.createElement("span");
+        span.textContent = letter;
+        span.style.animationDelay = `${i * 0.05 + 3}s`;
+        glowInText.append(span);
+    });
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+
+</body>
+
+</html>
+</body>
+</html>
+</div>
+<style>
+	#main{
+		border:solid 1px rgba(255,255,255,0.3);
+	}
+	#main p{
+		color:white;
+		font-family:楷体;
+		float:left;
+	}
+	#main input{
+		float:left;
+		position:relative;
+		top:14px;
+		background-color:rgba(255,255,255,0.3);
+	}
+	#main>div{
+		overflow:hidden;
+	}
+	
+</style>
+<div id="page" style="opacity:0;">
+ <div style="width:100%;height:100%;top:0px;position:absolute;background-image:url('https://c-ssl.duitang.com/uploads/item/201703/14/20170314143522_f5vn8.jpeg');background-size:cover;">
+	<div style="margin:100px;">
+		<b style="color:rgb(255,102,0);font-size:30pxposition:relative;">本页仅提供临时存储作用，请及时保存！</b>
+		<div id="main">
+			<div><p>边长与半径比：</p><input id="a1" onkeyup="a()"></input></div>
+			<div><p>边数：</p><input id="a2" onkeyup="a()"></input></div>
+			<div><p>精度(当误差较大时结果可能有误)：</p><p id="out"></p></div>
+		</div>
+	</div>
+	<script>
+		function a(){
+			eval("b="+document.getElementById('a1').value);
+			b=b/2;
+			b1=Math.pow(b,2);
+			b2=Math.pow(1-b1,0.5);
+			b=b/b2;
+			k=b
+			d=parseInt(document.getElementById('a2').value);
+			c=1;
+			if(d<30){
+			if(d%2==0){
+				d=d/2;
+				do{
+					k=(k+b)/(1 - k*b);
+					c++;
+				}while(c!=d);
+				k=100*(k+k)/(1 - k*k);
+				
+			}else{
+				do{
+					k=(k+b)/(1 - k*b);
+					c++;
+				}while(c!=d);
+				k=100*k;
+			}
+			if(k<0){k=-1 * k};
+			k=100 -k;
+			if(k<0){k=0};
+			document.getElementById("out").innerHTML=k + "%";
+			
+			
+			}
+			
+		}
+	</script>
+	
+ </div>
+</div>
+</body>
+</html>
