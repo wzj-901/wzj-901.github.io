@@ -542,10 +542,10 @@ html{
 		b=document.getElementById("a").value;
 		b = b.replace(/\r\n/g,";");
 		b = b.replace(/\n/g,";");
-		b = b.replace("：",":");
-		b = b.replace("；",";");
+		b = b.replace(/：/g,":");
+		b = b.replace(/；/g,";");
 		x=b;
-		x = x.replace(";","；");
+		x = x.replace(/;/g,"；");
 		var c=b.split(";");
 		k=document.getElementById("main").innerHTML;
 		for(var d in c){
