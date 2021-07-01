@@ -3,6 +3,7 @@
 <style>
 html{
 	background-color:Transparent;
+	background-color:pink;
 }
 .a601bodymenu>p:hover,.a601bodylist>div div>a:hover {
 	text-decoration: underline;
@@ -61,6 +62,10 @@ html{
 .a601bodylist>div div>b:after{
 	content: "：";
 }
+.a601bodylist>div div>img{
+	height:100px;
+	margin-left:30px;
+}
 .a601bodylist h4{
 	text-align:center;
 }
@@ -79,52 +84,581 @@ html{
 	height:0px;
 	margin-left:10px;
 }
-</style>
+#start{
+	position:absolute;
+	right:40px;
+	margin:30px;
+	padding:6px 15px;
+	border:solid 1px rgb(50,50,50);
+	color:rgb(50,50,50);
+	border-radius:5px;
+	z-index:2;
+	transition:.1s;
+}
+#start2{
+	position:absolute;
+	right:40px;
+	margin:30px;
+	top:41px;
+	background-color:rgba(0,0,0,0);
+	height:10px;
+	width:64px;
+	z-index:2;
+	display:none;
+}
+#startall:hover #start2{
+	display:block;
+}
+#startall:hover #start{
+	color:white;
+	background-color:rgb(50,50,50);
+}
+#startall:hover #menu{
+	border:solid 1px rgb(50,50,50);
+	padding:3px 0;
+	transition:1s;
+	max-height:100px;
+	-webkit-box-shadow: 0px 0px 55px 15px rgba(194,194,194,0.75);
+	-moz-box-shadow: 0px 0px 55px 15px rgba(194,194,194,0.75);
+	box-shadow: 0px 0px 55px 15px rgba(194,194,194,0.75);
+}
+#menu{
+	max-height:0;
+	overflow:hidden;
+	position:absolute;
+	right:70px;
+	top:80px;
+	color:rgb(50,50,50);
+	background-color:white;
+	border-radius:5px;
+	z-index:2;
+}
+#menu > p{
+	padding:3px 15px;
+	margin:3px 0px;
+}
+#menu > p:hover{
+	background-color:rgb(3,102,214);
+	color:white;
+}
+</style><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style tpe="text/css">
+        /* ---------------------公共样式 -------------------*/
+        .none{
+            display: none;
+        }
+        .layout-content{
+            line-height: 44px;
+            font-weight: 300;
+            font-size: 1em;
+            color: #fff;
+            text-indent: 10px;
+        }
+
+        .layout-content .code{
+            line-height: 22px;
+            text-align: center;
+        }
+
+        p {
+            display: block;
+            -webkit-margin-before: 1em;
+            -webkit-margin-after: 1em;
+            -webkit-margin-start: 0px;
+            -webkit-margin-end: 0px;
+        }
+
+        a, button{
+            outline: none;
+        }
+
+        button {
+            border: none;
+            padding: 0.6em 1.2em;
+            background: #50b7c1;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            display: block;
+            margin: 3px auto;
+            border-radius: 2px;
+        }
+
+        button:hover, button:active, button:focus{
+            border: none;
+        }
+
+        /* ---------------------弹窗样式 -------------------*/
+        .dialog-face{
+            position: fixed;
+            background: #84bf96;
+            height: 100%;
+            width: 100%;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+
+            -webkit-animation-duration: 500ms;
+            -moz-animation-duration:500ms;
+            -o-animation-duration:500ms;
+            animation-duration: 500ms;
+        }
+
+        .dialog-face.slipBottom[opacity="0"]{
+            display: none;
+        }
+
+        .dialog-face.slipUp{
+            opacity: 0.7;
+            -webkit-animation-name: dialogFaceSlipToUp;
+            -moz-animation-name: dialogFaceSlipToUp;
+            -o-animation-name: dialogFaceSlipToUp;
+            animation-name: dialogFaceSlipToUp;
+        }
+
+        .dialog-face.slipBottom{
+            opacity: 0;
+            visibility: hidden;
+            -webkit-animation-name: dialogFaceSlipToBottom;
+            -moz-animation-name: dialogFaceSlipToBottom;
+            -o-animation-name: dialogFaceSlipToBottom;
+            animation-name: dialogFaceSlipToBottom;
+        }
+
+        .dialog-root{
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+
+            -webkit-animation-duration: 500ms;
+            -moz-animation-duration: 500ms;
+            -o-animation-duration: 500ms;
+            animation-duration: 500ms;
+            -webkit-perspective: 1300px;
+            -moz-perspective: 1300px;
+            perspective: 1300px;
+        }
+
+        .dialog-root.slipUp{
+            top: 50%;
+            opacity: 1;
+
+            -webkit-animation-name: dialogSlipToUp;
+            -moz-animation-name: dialogSlipToUp;
+            -o-animation-name: dialogSlipToUp;
+            animation-name: dialogSlipToUp;
+            -webkit-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .dialog-root.slipBottom{
+            top: 100%;
+            opacity: 0.3;
+            -webkit-animation-duration: 500ms;
+            -moz-animation-duration: 500ms;
+            -o-animation-duration: 500ms;
+            animation-duration: 500ms;
+            -webkit-animation-name: dialogSlipToBottom;
+            -moz-animation-name: dialogSlipToBottom;
+            -o-animation-name: dialogSlipToBottom;
+            animation-name: dialogSlipToBottom;
+            -webkit-transform: translate(-50%, 0);
+            -o-transform: translate(-50%, 0);
+            -moz-transform: translate(-50%, 0);
+            -ms-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
+        }
+
+        .dialog-wrapper{
+            background: #1d953f;
+            width: 635px;
+            height: 375px;
+            overflow: auto;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+
+            -webkit-animation-duration: 500ms;
+            -moz-animation-duration: 500ms;
+            -o-animation-duration: 500ms;
+            animation-duration: 500ms;
+            -webkit-transform-origin: 50% 100%;
+            -moz-transform-origin: 50% 100%;
+            -ms-transform-origin: 50% 100%;
+            -o-transform-origin:50% 100%;
+            transform-origin: 50% 100%;
+        }
+
+        .dialog-wrapper.slipUp{
+            -webkit-transform: rotateX(0deg);
+            -moz-transform: rotateX(0deg);
+            -ms-transform: rotateX(0deg);
+            -o-transform: rotateX(0deg);
+            transform: rotateX(0deg);
+            -webkit-animation-name: contentSlipToUp;
+            -moz-animation-name: contentSlipToUp;
+            -o-animation-name: contentSlipToUp;
+            animation-name: contentSlipToUp;
+        }
+
+        .dialog-wrapper.slipBottom{
+            -webkit-transform: rotateX(90deg);
+            -moz-transform: rotateX(90deg);
+            -ms-transform: rotateX(90deg);
+            -o-transform: rotateX(90deg);
+            transform: rotateX(90deg);
+            -webkit-animation-name: contentSlipToBottom;
+            -moz-animation-name: contentSlipToBottom;
+            -o-animation-name: contentSlipToBottom;
+            animation-name: contentSlipToBottom;
+        }
+
+        .dialog-header{
+            height: 75px;
+            background: #225a1f;
+            text-align: center;
+        }
+
+        .dialog-header span{
+            font-size: 28px;
+            line-height: 75px;
+            color:#cde6c7;
+        }
+
+        .dialog-content{
+            font-weight: 300;
+            font-size: 1.15em;
+            color: #fff;
+            padding: 15px 40px 20px 40px;
+            margin: 0;
+        }
+
+
+        .dialog-content p{
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .dialog-footer{
+			bottom:0;
+        }
+        /* ---------------------动画关键帧 -------------------*/
+
+        @keyframes dialogFaceSlipToUp  {
+            0%{
+               opacity: 0;
+            }
+            100%{
+                opacity: 0.7;
+            }
+        }
+        
+        @keyframes dialogFaceSlipToBottom {
+            0%{
+                opacity: 0.7;
+                visibility:visible;
+            }
+            100%{
+                visibility: hidden;
+                opacity: 0;
+            }
+        }
+
+        @keyframes dialogSlipToUp  {
+            0%{
+                top: 100%;
+                opacity: 0.3;
+            }
+            100%{
+                top: 50%;
+                opacity: 1;
+            }
+        }
+
+        @keyframes dialogSlipToBottom  {
+            0%{
+                top: 50%;
+                opacity: 1;
+                -webkit-transform: translate(-50%, -50%);
+                -moz-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                -o-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+            100%{
+                top: 100%;
+                opacity: 0.3;
+                -webkit-transform: translate(-50%, 0);
+                -moz-transform: translate(-50%, 0);
+                -ms-transform: translate(-50%, 0);
+                -o-transform: translate(-50%, 0);
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @keyframes contentSlipToUp  {
+            0%{
+                -webkit-transform: rotateX(90deg);
+                -moz-transform: rotateX(90deg);
+                -ms-transform: rotateX(90deg);
+                -o-transform: rotateX(90deg);
+                transform: rotateX(90deg);
+            }
+            100%{
+                -webkit-transform: rotateX(0deg);
+                -moz-transform: rotateX(0deg);
+                -ms-transform: rotateX(0deg);
+                -o-transform: rotateX(0deg);
+                transform: rotateX(0deg);
+            }
+        }
+
+        @keyframes contentSlipToBottom  {
+            0%{
+                -webkit-transform: rotateX(0deg);
+                -moz-transform: rotateX(0deg);
+                -ms-transform: rotateX(0deg);
+                -o-transform: rotateX(0deg);
+                transform: rotateX(0deg);
+            }
+            60%{
+                -webkit-transform: rotateX(60deg);
+                -moz-transform: rotateX(60deg);
+                -ms-transform: rotateX(60deg);
+                -o-transform: rotateX(60deg);
+                transform: rotateX(60deg);
+            }
+            100%{
+                -webkit-transform: rotateX(90deg);
+                -moz-transform: rotateX(90deg);
+                -ms-transform: rotateX(90deg);
+                -o-transform: rotateX(90deg);
+                transform: rotateX(90deg);
+            }
+        }
+.windowclose{
+	font-size:30px;float:right;top:0px;padding:0px 4px;margin:2px;
+}
+.windowclose:hover{
+	color:#cccccc;background-color:red;
+}
+    </style>
+</head>
+<body>
+    <div id="dialog-face" class="none">
+			<a class="windowclose" onclick="alert2(false)">×</a>
+    </div>
+    <div id="dialog" class="none">
+        <div id="dialog-wrapper">
+            <div class="dialog-header" id="alerttitle1">
+                <span id="alerttitle2"></span>
+            </div>
+            <div class="dialog-content" id="alertbody1">
+                <p id="alertbody2"></p>
+            </div>
+            <div class="dialog-footer" id="alertfoot1">
+                <button onclick="alert2(false)" id="alertfoot2">完成</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
 <script>
-    function show1pluse(x){
+    function show1plus(x){
         document.getElementById(x).style.cssText="max-height:100vh";
     }
-    function show0pluse(x){
+    function show0plus(x){
 		document.getElementById(x).style.cssText="max-height:0";
     }
+    function show1(x){
+        document.getElementById(x).style.display="block";
+		document.getElementById(x).style.opacity="1";
+    }
+    function show0(x){
+		document.getElementById(x).style.opacity="0";
+        document.getElementById(x).style.display="none";
+	}
+	function setCookie(cname,cvalue,exdays){
+		var d = new Date();
+		d.setTime(d.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+d.toGMTString();
+		document.cookie = cname+"="+cvalue+"; "+expires;}
+	function getCookie(cname){
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) {
+			var c = ca[i].trim();
+			if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+		}
+		return "";
+	}
+	function alert2(show){
+		var animationClass = show ? "slipUp" : "slipBottom";
+		var animation = function(){
+			var ele = document.getElementById("dialog-face");
+			ele.className = "dialog-face " + animationClass;
+			ele = document.getElementById("dialog");
+			ele.className = "dialog-root " + animationClass;
+			ele = document.getElementById("dialog-wrapper");
+			ele.className = "dialog-wrapper " + animationClass;
+		};
+		setTimeout(animation, 100);
+	}
+	function pagename(){
+		restart();
+		document.getElementById("alerttitle2").innerHTML="备注名(鼠标移过可查看)";
+		document.getElementById("alertbody1").innerHTML='<div style="overflow:hidden;"><p style="float:left;">控制码：</p><div id="out"></div></div><textarea id="a" style="width:100%;height:160px;" placeholder="示例：&#13;&#10;&#13;&#10;401:人1;&#13;&#10;404:障碍&#13;&#10;403:人3;abc:人n;" onkeyup="a()"></textarea>';
+		document.getElementById("alertfoot2").innerHTML="完成设置";
+		alert2(true);
+	}
+	function a(){
+		b=document.getElementById("a").value;
+		b = b.replace(/\r\n/g,";");
+		b = b.replace(/\n/g,";");
+		b = b.replace("：",":");
+		b = b.replace("；",";");
+		var c=b.split(";");
+		k="";
+		for(var d in c){
+			if(c[d]){
+				var e=c[d].split(":");
+				e1=e[0];
+				e2=e[1];
+				if(e1){
+					if(e2){
+						k=k+"<p style='color:rgb(255,100,0);float:left'>"+e1+"</p><p style='float:left'>:</p><p style='color:rgb(255,200,0);float:left'>"+e2+"</p><p style='float:left'>;</p>";
+					}
+				}
+			}
+		}
+		document.getElementById("out").innerHTML=k;
+	}
+	function a2(){
+		b=document.getElementById("a").value;
+		b = b.replace(/\r\n/g,";")
+		b = b.replace(/\n/g,";");
+		b = b.replace("：",":");
+		b = b.replace("；",";");
+		var c=b.split(";");
+		k=document.getElementById("main").innerHTML;
+		for(var d in c){
+			if(c[d]){
+			var e=c[d].split(":");
+			e1=e[0]
+			e2=e[1]
+			eval('k=k.replace(/-'+e1+'/g," "+e2)');
+			}
+		}
+		document.getElementById("main").innerHTML=k;
+		setCookie("main",document.getElementById("a").value,30)
+	}
+	function pagehelp(){
+		restart();
+		document.getElementById("alerttitle2").innerHTML="帮助";
+		document.getElementById("alertbody2").innerHTML='1.  如果你希望删除某一条，请联系作者并备注理由<br/>2.  我们不会发布含人身攻击的梗尤其是相关姓名，但请协助我们确保此页面仅在一班已登记的学生中传播<br><br>谢谢配合';
+		document.getElementById("alertfoot2").innerHTML="OK";
+		alert2(true);
+	}
+	function restart(){
+		document.getElementById("alerttitle1").innerHTML='<span id="alerttitle2"></span>';
+		document.getElementById("alertbody1").innerHTML='<p id="alertbody2"></p>';
+		document.getElementById("alertfoot1").innerHTML='<button onclick="alert2(false);a2()" id="alertfoot2">完成</button>';
+	}
 	function scrollid(x){
 		var element = document.getElementById(x);
 		element.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});}
+		
+	//cookie
+	window.onload=function(){restart();
+	document.getElementById("alertbody1").innerHTML='<div style="overflow:hidden;"><p style="float:left;">控制码：</p><div id="out"></div></div><textarea id="a" style="width:100%;height:160px;" placeholder="示例：&#13;&#10;&#13;&#10;401:人1;&#13;&#10;404:障碍&#13;&#10;403:人3;abc:人n;" onkeyup="a()"></textarea>';
+	document.getElementById("a").value=getCookie("main");
+	a2();}
 </script>
-<div style="position:relative;overflow:hidden;"><div class="a601bodymenu"><h3>目录<p style="position:relative;left:50px;top:-26px;font-size:12px;color:rgb(100,100,100)">按得分排序</p></h3><p onclick="scrollid('a601bodylist1')">数学</p><p onclick="scrollid('a601bodylist2')">英语</p><p onclick="scrollid('a601bodylist3')">寝室</p><p onclick="scrollid('a601bodylist4')">学生</p><p onclick="scrollid('a601bodylist5')">语文</p><p onclick="scrollid('a601bodylist6')">其他</p></div></div>
-<div class="a601bodylist" id="a601bodylist1"><h4>数学</h4><div>
-	<div><h4 style="color:red;">1</h4><b title="character-001">数学</b><p>我从基层干起：先是数学老师，再当班主任，再当校长。</p><a onclick="show1pluse('a601-1-1')">一项关联</a></div>
+<div id="startall" style="background-color:red"><div id="start">工具</div><div id="start2"></div><div id="menu"><p onclick="pagename()">备注名</p><p onclick="pagehelp()">帮助</p></div></div><div style="position:relative;overflow:hidden;"><div class="a601bodymenu"><h3>目录<p style="position:relative;left:50px;top:-26px;font-size:12px;color:rgb(100,100,100)">按得分排序</p></h3><p onclick="scrollid('a601bodylist1')">数学</p><p onclick="scrollid('a601bodylist2')">英语</p><p onclick="scrollid('a601bodylist3')">寝室</p><p onclick="scrollid('a601bodylist4')">学生</p><p onclick="scrollid('a601bodylist5')">语文</p><p onclick="scrollid('a601bodylist6')">其他</p></div></div>
+<div id="main"><div class="a601bodylist" id="a601bodylist1"><h4>数学</h4><div>
+	<div><h4 style="color:red;">1</h4><b title="师-001">数学</b><p>我从基层干起：先是数学老师，再当班主任，再当校长。</p><a onclick="show1plus('a601-1-1')">一项关联</a></div>
 	<div id="a601-1-1" class="a601hidden">
-		<div><b title="character-001">数学</b><p>我从基层干起：先是——</p></div>
-		<div><b title="character-101">学生</b><p>清洁部长！</p></div>
-		<div><b title="character-101">学生</b><p> #character-005(语文) 来了！</p></div>
-		<div><b title="404">学生</b><p>看错了……是清洁工</p></div>
-		<div><b title="character-101">学生</b><p> #character-001(数学) 来了！</p><a onclick="show0pluse('a601-1-1')">收起</a></div>
+		<div><b title="师-001">数学</b><p>我从基层干起：先是——</p></div>
+		<div><b title="学生-101">学生</b><p>清洁部长！</p></div>
+		<div><b title="学生-101">学生</b><p> #师-005来了！</p></div>
+		<div><b title="!-404">学生</b><p>看错了……是清洁工</p></div>
+		<div><b title="学生-101">学生</b><p> #师-001来了！</p><a onclick="show0plus('a601-1-1')">收起</a></div>
 	</div>
-	<div><h4 style="color:orange;">2</h4><b title="character-001">数学</b><p>基础不牢，地动山摇</p></div>
-	<div><h4 style="color:yellow;">3</h4><b title="character-001">数学</b><p>天网恢恢，疏而不漏；欠下的总是要还的</p></div>
-	<div><h4>4</h4><b title="TEAC-001">数学</b><p>人可以难道懒到什么程度？不要脸的程度。</p></div>
-	<div><h4>5</h4><b title="TEAC-001">数学</b><p>临场的应变，来源于平时的积淀</p></div>
-	<div><h4>6</h4><b title="TEAC-001">数学</b><p>嘎然而止————</p></div>
-	<div><h4>7</h4><b title="TEAC-001">数学</b><p>耶？————</p></div>
-	<div><h4>8</h4><b title="TEAC-001">数学</b><p>八一儿童欢乐多</p></div>
-	<div><h4>9</h4><b title="TEAC-001">数学</b><p>这次考试成绩很不好——现实，给了你一记响亮的耳光</p></div>
+	<div><h4 style="color:orange;">2</h4><b title="师-001">数学</b><p>基础不牢，地动山摇</p></div>
+	<div><h4 style="color:yellow;">3</h4><b title="师-001">数学</b><p>天网恢恢，疏而不漏；欠下的总是要还的</p></div>
+	<div><h4>4</h4><b title="师-001">数学</b><p>人可以难道懒到什么程度？不要脸的程度。</p></div>
+	<div><h4>5</h4><b title="师-001">数学</b><p>临场的应变，来源于平时的积淀</p></div>
+	<div><h4>6</h4><b title="师-001">数学</b><p>嘎然而止————</p></div>
+	<div><h4>7</h4><b title="师-001">数学</b><p>耶？————</p></div>
+	<div><h4>8</h4><b title="师-001">数学</b><p>八一儿童欢乐多</p></div>
+	<div><h4>9</h4><b title="师-001">数学</b><p>这次考试成绩很不好——现实，给了你一记响亮的耳光</p></div>
+	<div><h4>10</h4><b title="师-001">数学</b><p>@#学生-101 你有三大罪过：一，你不尊重师长；二，你破坏公物；三，你畏罪潜逃</p></div>
+	<div><h4>11</h4><b title="师-001">数学</b><p>简单问题复杂化，复杂问题简单化</p></div>
+	<div><h4>12</h4><b title="师-001">数学</b><p>说出来也不怕笑话：我每天管你们什么？管你们上厕所！</p><a onclick="show1plus('a601-1-2')">一项关联</a></div>
+	<div id="a601-1-2" class="a601hidden">
+		<div><b title="学生-101">学生</b><p>他们几个在厕所里唱歌，哦，#!-404 在拉屎，拉不出来了</p></div>
+		<div><b title="师-001">数学</b><p>在干什么？</p></div>
+		<div><b title="学生-101">学生</b><p>K歌！</p></div>
+		<div><b title="师-001">数学</b><p>说出来也不怕笑话：我每天管你们什么？管你们上厕所！</p><a onclick="show0plus('a601-1-2')">收起</a></div>
+	</div>
 </div></div>
 
 
-<div class="a601bodylist" id="a601bodylist2"><h4>英语</h4>
-	
-</div>
+<div class="a601bodylist" id="a601bodylist2"><h4>英语</h4><div>
+	<div><h4 style="color:red;">1</h4><b title="师-002">英语</b><p>now that careful</p></div>
+	<div><h4 style="color:orange;">2</h4><b title="师-002">英语</b><p>不要在底下啰啊啰的</p></div>
+	<div><h4 style="color:yellow;">3</h4><b title="师-002">英语</b><p>——<b>基本</b>所有同学听写都没改<br>——谁让你们把它发下去了</p></div>
+</div></div>
 
 
-<div class="a601bodylist" id="a601bodylist3"><h4>寝室</h4>
-	
-</div>
+<div class="a601bodylist" id="a601bodylist3"><h4>寝室</h4><div>
+	<div><h4 style="color:red;">1</h4><b title="师-003">寝室</b><p>自作孽，不可活</p><a onclick="show1plus('a601-3-1')">一项关联</a></div>
+	<div id="a601-3-1" class="a601hidden">
+		<div><b title="师-003">寝室</b><p>自作孽，不可活</p></div>
+		<div><b title="学生-103">学生</b><p>天作孽，犹可违</p><a onclick="show0plus('a601-3-1')">收起</a></div>
+	</div>
+	<div><h4 style="color:orange;">2</h4><b title="师-003">寝室</b><p>我跟你讲，以前我有个学生，它可以找到抛物线的最高点和最低点，拉伸，放缩……</p></div>
+	<div><h4 style="color:yellow;">3</h4><b title="师-003">寝室</b><p>别栀子花呀啊茉莉花</p></div>
+	<div><h4>4</h4><b title="师-003">寝室</b><p>常在河边走，哪有不湿鞋</p></div>
+	<div><h4>5</h4><b title="师-003">寝室</b><p>天天在那里盘你的**，你以为别个都没有是吧</p></div>
+	<div><h4>6</h4><b title="师-003">寝室</b><p>大浪淘沙的道理要懂啊</p></div>
+	<div><h4>7</h4><b title="师-003">寝室</b><p>老师永远叫不醒一个装睡的人</p></div>
+	<div><h4>8</h4><b title="师-003">寝室</b><p>人过留名，雁过留声</p></div>
+	<div><h4>9</h4><b title="师-003">寝室</b><p>天天打个蟑螂。这蟑螂在这里繁殖后代，子子孙孙无穷匮也</p></div>
+</div></div>
 
 
-<div class="a601bodylist" id="a601bodylist4"><h4>学生</h4>
-	
-</div>
+<div class="a601bodylist" id="a601bodylist4"><h4>学生</h4><div>
+	<div><h4 style="color:red;">1</h4><b title="学生-101">学生</b><p>好多条</p><a onclick="show1plus('a601-4-1')">一项关联</a></div>
+	<div id="a601-4-1" class="a601hidden">
+		<div><b title="师-001">数学</b><p>图中圆有几条弦？</p><img src="https://img.51wendang.com/pic/3e0e11b92b5f992fb0097582122302e86f3241db/1-486-png_6_0_0_369_961_186_118_892.979_1262.879-763-0-650-763.jpg"></div>
+		<div><b title="学生-101">学生</b><p> 好多条！</p></div>
+		<div><b title="师-001">数学</b><p>你怎么得到的？</p></div>
+		<div><b title="学生-101">学生</b><p> 看出来的！</p><a onclick="show0plus('a601-4-1')">收起</a></div>
+	</div>
+	<div><h4 style="color:orange;">2</h4><b title="学生-103">学生</b><p>我把屁放出了艺术</p></div>
+	<div><h4 style="color:yellow;">3</h4><b title="学生-103">学生</b><p>不要说智障，你个智障</p></div>
+	<div><h4>4</h4><b title="师-007">物理</b><p>为什么罐子会向回滚？</p><a onclick="show1plus('a601-4-2');show1plus('a601-4-3');show1plus('a601-4-4');">三项关联</a></div>
+	<div id="a601-4-2" class="a601hidden">
+		<div><b title="师-007">物理</b><p>如何避免电视机屏幕反光？</p></div>
+		<div><b title="!-404">学生</b><p>把它磨粗糙</p><a onclick="show0plus('a601-4-2')">收起</a></div>
+	</div>
+	<div id="a601-4-3" class="a601hidden">
+		<div><b title="师-007">物理</b><p>如何使棋子成像更清晰？</p></div>
+		<div><b title="!-404">学生</b><p>点燃它！</p><a onclick="show0plus('a601-4-3')">收起</a></div>
+	</div>
+	<div id="a601-4-4" class="a601hidden">
+		<div><b title="师-007">物理</b><p>为什么罐子会向回滚？</p></div>
+		<div><b title="学生-106">学生</b><p>罐子具有灵性</p></div>
+		<div><b title="学生-101">学生</b><p>罐子思念它的家乡！</p><a onclick="show0plus('a601-4-4')">收起</a></div>
+	</div>
+</div></div>
 
 
 <div class="a601bodylist" id="a601bodylist5"><h4>语文</h4>
@@ -132,9 +666,14 @@ html{
 </div>
 
 
-<div class="a601bodylist" id="a601bodylist6"><h4>其他</h4>
-	
+<div class="a601bodylist" id="a601bodylist6"><h4>其他</h4><div>
+	<div><h4 style="color:red;">1</h4><b title="师-004">地理</b><p>中国文化博大精深，如果想说一个人，会说“我说的不是指你啊”</p><a onclick="show1plus('a601-6-1')">一项关联</a></div>
+	<div id="a601-6-1" class="a601hidden">
+		<div><b title="师-005">语文</b><p> 你不要对号入座</p><a onclick="show0plus('a601-6-1')">收起</a></div>
+	</div>
+	<div><h4 style="color:orange;">2</h4><b title="师-009">美术</b><p>你们不要带水杯过来——不要走的时候在地上留一滩水</p></div>
+	<div><h4 style="color:yellow;">3</h4><b title="师-009">美术</b><p>不要在底下眉目传情啊</p></div>
+</div></div>
 </div>
-
 
 </html>
