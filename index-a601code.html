@@ -540,12 +540,12 @@ html{
 	}
 	function a2(){
 		b=document.getElementById("a").value;
-		x=b;
 		b = b.replace(/\r\n/g,";");
 		b = b.replace(/\n/g,";");
 		b = b.replace("：",":");
 		b = b.replace("；",";");
-		b = b.replace(";","；");
+		x=b;
+		x = x.replace(";","；");
 		var c=b.split(";");
 		k=document.getElementById("main").innerHTML;
 		for(var d in c){
