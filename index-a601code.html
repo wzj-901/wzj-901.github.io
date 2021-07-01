@@ -540,7 +540,8 @@ html{
 	}
 	function a2(){
 		b=document.getElementById("a").value;
-		b = b.replace(/\r\n/g,";")
+		x=b;
+		b = b.replace(/\r\n/g,";");
 		b = b.replace(/\n/g,";");
 		b = b.replace("：",":");
 		b = b.replace("；",";");
@@ -555,7 +556,7 @@ html{
 			}
 		}
 		document.getElementById("main").innerHTML=k;
-		setCookie("main",document.getElementById("a").value,30)
+		setCookie("main",x,30)
 	}
 	function pagehelp(){
 		restart();
