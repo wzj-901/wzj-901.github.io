@@ -31,8 +31,8 @@ html{
 <div id="main"></div>
 <script>
 	//格数
-	var x=31
-	var y=19
+	var x=21
+	var y=21
 	//属性
 	var own1='id="ax1by1"'
 	var dx=20
@@ -90,7 +90,7 @@ html{
 				s1do4=""
 				switch(a){
 					case 0:break;
-					case 1:alert("");break;
+					case 1:alert("你撞到墙死了");break;
 					case 2:
 						s1do1=false;
 						s1do3="s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
@@ -111,7 +111,7 @@ html{
 					s2()
 					pform(2,s1x,s1y)
 					print()
-					setTimeout("s1()",200)
+					setTimeout("s1()",300)
 				}
 				eval(s1do4)
 				break;
@@ -120,6 +120,9 @@ html{
 	function f1(){
 		f1x=Math.round(Math.random()*(x-1)+1)
 		f1y=Math.round(Math.random()*(y-1)+1)
+		//改变几率
+		if(f1y<9||f1y>11){f1x=Math.round(Math.random()*(x-1)+1);f1y=Math.round(Math.random()*(y-1)+1)}
+		if(f1y<9||f1y>11){f1x=Math.round(Math.random()*(x-1)+1);f1y=Math.round(Math.random()*(y-1)+1)}
 		if(gform(f1x,f1y)==0){
 			pform(4,f1x,f1y)
 		}else{f1()}
@@ -213,14 +216,18 @@ html{
 	
 	//绘制边框
 	function pborder(){
-		for(var temp0=1;temp0<y+1;temp0++){
-			pform(1,1,temp0)
-			pform(1,x,temp0)
+		for(var temp0=1;temp0<8;temp0++){
+			pform(1,10,temp0)
+		}
+		for(var temp0=11;temp0<22;temp0++){
+			pform(1,11,temp0)
 		}
 		for(var temp1=1;temp1<x+1;temp1++){
-			pform(1,temp1,1)
-			pform(1,temp1,y)
+			pform(1,temp1,8)
+			pform(1,temp1,11)
 		}
+		pform(0,11,8)
+		pform(0,12,8)
 	}
 	
 	window.onload=function(){
@@ -240,7 +247,7 @@ html{
 		
 		
 		
-		//pborder()
+		pborder()
 		
 		pform(2,mx-4,my)
 		pform(2,mx-3,my)
