@@ -159,6 +159,7 @@ html{
 					case 2:
 						s1do1=false;
 						s1do3="s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
+						alert("你撞到自己死了");s1lf--;
 						break;
 					case 3:break;
 					case 4:f1();pform(0,s1x,s1y);stop1++;s1l++;break;
@@ -284,7 +285,6 @@ html{
 		return form0[x0-1][y0-1]
 	}
 	
-	
 	//蛇1头
 	var s1x=mx-1;
 	var s1y=my;
@@ -368,7 +368,6 @@ html{
 	}
 	
 	window.onload=function(){
-		function change(x,y,mode){}
 		
 		temp3=""
 		for(var temp0=1;temp0<y+1;temp0++){
@@ -385,7 +384,7 @@ html{
 		
 		
 		
-		//pborder()
+		pborder()
 		
 		pform(2,mx-4,my)
 		pform(2,mx-3,my)

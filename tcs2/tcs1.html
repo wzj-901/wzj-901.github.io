@@ -125,6 +125,7 @@ html{
 	
 	function pform(b,x0,y0){
 		form[x0-1][y0-1]=b;
+		pdiv(b,x0,y0)
 	}
 	function gform(x0,y0){
 		return form[x0-1][y0-1]
@@ -180,7 +181,6 @@ html{
 					s1pt0++;
 					leftdiv()
 					setTimeout("s1()",200)
-					print()
 				}
 				eval(s1do4)
 				break;
