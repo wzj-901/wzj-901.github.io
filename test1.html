@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>演示</title>
+</head>
+<style>
+	.a{
+	margin:50px 100px;
+	position:relative;
+	}
+	#a div{
+	width:3px;
+	position:relative;
+	background-color:red;
+	height:400px;
+	float:left;
+	margin:0 7px;
+	}
+	#b div{
+	width:3px;
+	position:relative;
+	background-color:red;
+	height:400px;
+	float:left;
+	margin:0 5px;
+	
+	}
+	#b{transition:7s;}
+</style>
+<body>
+<div style="position:absolute">
+    <div id="a" class="a">
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+	</div></div>
+	<div id="b" class="a">
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+		<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+	</div>
+	<button style="position:absolute;left:30px" onclick='x()'>运动</button>
+</body>
+<script>function x(){document.getElementById("b").style.cssText+="margin-left:300px";}</script>
+</html>
