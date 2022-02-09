@@ -114,6 +114,8 @@ html::-webkit-scrollbar{
 	overflow:hidden;
 	transition:all 0.1s ease-out 0.9s;
 	perspective:1500px;
+	z-index:-1;
+	pointer-events:none;
 }
 #html1{
 	transform: rotateY(-89deg);
@@ -239,6 +241,7 @@ html::-webkit-scrollbar{
 	font-family:宋体;
 	color:rgb(95,95,0);
 	letter-spacing:2px;
+	margin-left:10;
 }
 .formfont1{
 	color: rgb(162 183 182);
@@ -308,6 +311,55 @@ body{
     box-shadow: 1px 2px 12px 0px #365a3f;
 	font-family:MV Boli;
 }
+#blood{
+	position:relative;
+	height:8px;
+	border-radius:4px;
+	background-color:rgba(100,100,100,0.5);
+	border:1px solid black;
+	top:-20px;
+	margin:0 15px;
+}
+#blood1{
+	position:relative;
+	height:8px;
+	background-color:red;
+	width:100%;
+	transition:2s ease-out;
+}
+#bloodset{
+	overflow:hidden;
+}
+.bloodset{
+	width:calc(50% - 30px);
+	float:left;
+	padding:5 10px;
+	transition:all 0.5s;
+	box-shadow: 0 4px 11px 0px rgb(0,0,0,40%);
+}
+.bloodset:hover{
+	box-shadow: 0 4px 11px 0px rgb(0,0,0,60%);
+}
+#bloodset1{
+	background-color:#f94949b5;
+	cursor:pointer;
+    color: white;
+	margin-left:10px;
+	border-radius:5px 0 0 5px;
+}
+#bloodset1:hover{
+	background-color:red;
+}
+#bloodset2{
+	cursor:pointer;
+	background-color:#fafaff47;
+	border-radius:0 5px 5px 0;
+    color: #e72a2a;
+}
+#bloodset2:hover{
+	background-color:white;
+	color:red;
+}
 </style>
 <body>
 <div id="firstshow"><div class="reveal">WZJ Github Page</div><p class="glowIn" style="position:relative;top:40px;right:280px;white-space: nowrap;">养 浩 然 之 气 ， 做 永 信 之 人</p></div>
@@ -350,6 +402,8 @@ body{
 <image id="s1head2" src="https://wzj-901.github.io/xzh/xzh1.png" style="user-select:none;"></image>
 </div></div>
 <div id="note">
+	<div id="blood"><div id="blood1"></div></div>
+	<div id="bloodset" style="user-select:none;"><p id="bloodset1" class="bloodset" onclick="diemsg('你杀死了XZH',1)">对XZH扣血</p><p id="bloodset2" class="bloodset" onclick="diemsg('',-1)">给XZH加血</p></div>
 	<p>ＸＺＨ享有其最高控制权，你可以通过方向键或W/A/S/D协助他，当且仅当他认为你没有坑他时他还会采纳你的路径</p>
 	<p><b style="color:red">WAIT！</b>ＸＺＨ死后会有更多内容展示</p>
 	<p>不要举报；任何需求可咨询链接提供者</p>
@@ -357,7 +411,7 @@ body{
 <div id="point"><p class="pta">长度：</p><p class="ptb" id="pt1">0</p><p class="pta">得分：</p><p class="ptb" id="pt2">0</p><p class="pta">步数：</p><p class="ptb" id="pt3">0</p><p class="pta">生命：</p><p class="ptb" id="pt4">0</p></div>
 
 </div>
-<div style="perspective:1500px;">
+<div style="perspective:1500px;pointer-events:none;" id="html3">
 <div id="html2">
 <div id="html1">
 <div style="box-shadow:4px 4px 12px 0px rgb(50,50,50);border-radius:5px;padding:10px 5px">
@@ -448,6 +502,7 @@ body{
 	
 	var stop1=0
 	var dieshow=0
+	var blood=100
 	
 	var temp0
 	var temp1
@@ -495,13 +550,17 @@ body{
 				s1do4=""
 				switch(a){
 					case 0:break;
-					case 1:die();msg("XZH撞到墙死了");s1lf--;break;
+					case 1:diemsg("XZH撞到墙死了",45);s1lf--;break;
 					case 2:
 						s1do1=false;
-						s1do3="die();msg('XZH撞到自己死了');s1lf--;s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;pform2(s1num,s1x,s1y);s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
+						s1do3="diemsg('XZH撞到自己死了',45);s1lf--;s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;pform2(s1num,s1x,s1y);s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
 						break;
 					case 3:break;
 					case 4:f1();console.log(f1x+"  "+f1y);autonumb=true;pform(0,s1x,s1y);stop1++;s1l++;break;
+				}
+				if(autoalways){
+					autonumb=true;
+					autoalways=false;
 				}
 				if(s1do1){
 					//操作数组
@@ -523,13 +582,21 @@ body{
 					if(autonumb==true){auto();autonumb=false}
 					setTimeout("s1()",100)
 				}
-				eval(s1do4)
+				eval(s1do4);
 				break;
 		}
 	}
 	
-	function msg(temp1){
-		alert(temp1);
+	function diemsg(msg,bloodcut){
+		blood-=bloodcut;
+		blood=Math.max(Math.min(blood,100),0);
+		document.getElementById("blood1").style.width=blood+"%";
+		if(blood==0&&dieshow==0){
+			//die
+			alert(msg);
+			die();
+		}
+		
 	}
 	//食物
 	function f1(){
@@ -549,6 +616,7 @@ body{
 	function die(){
 		document.getElementById("html").style.filter="grayscale(100%)";
 		document.getElementById("main0").style.opacity="0";
+		document.onkeydown=function(){};
 		setTimeout("die2()",3000)
 		s1do2=false;
 	}
@@ -563,6 +631,7 @@ body{
 	}
 	function die3(){
 		document.getElementById("html2").style.opacity="1";
+		change0("html3","pointer-events:unset;");
 		document.getElementById("html1").style.transform="rotateY(0deg)";
 		
 	}
@@ -706,6 +775,7 @@ body{
 	var autonumb0=true;
 	var autonum;
 	var autoform3=false;
+	var autoalways=false;
 	
 	var s1l=10;
 	var s1pt=1;
@@ -830,7 +900,8 @@ body{
 		auto2y=[f1y]
 		cform3();
 		if(gform1(f1x,f1y)==-1){
-		//msg("XZH找不到路径")
+			//diemsg("XZH找不到路径",0)
+			autoalways=true;
 		}
 		pform3(gform1(f1x,f1y),f1x,f1y);
 		autoform3=true
@@ -947,7 +1018,7 @@ body{
 		document.getElementById("main").style.left="calc(50% - "+(dx*x/2+40)+"px)";
 		document.getElementById("note").style.left="calc(50% - "+(dx*x/2+40)+"px)";
 		document.getElementById("html1").style.left="calc(50% - "+(dx*x/2+120)+"px)";
-		document.getElementById("note").style.top=dy*y/2+200;
+		document.getElementById("note").style.top=dy*y/2+186;
 		
 			
 		//setTimeout("die()",10000)
@@ -965,6 +1036,7 @@ body{
 		
 		
 		change0("firstshow","transition:2s;transition-delay:6s;pointer-events:none;opacity:0;");
+		setTimeout('change0("firstshow","display:none;");',8000)
 	}
 	document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -993,7 +1065,7 @@ body{
 			}
 		}
 		if(e && e.keyCode==80){//暂停
-			msg("你已暂停\n\n点击取消以继续")
+			alert("你已暂停\n\n点击取消以继续")
 		}if(e && e.keyCode==82){//重玩
 			location.reload()
 		}
