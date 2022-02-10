@@ -92,7 +92,24 @@
 @keyframes glow-in {
   from {opacity: 0;}65% {opacity: 1;text-shadow: 0 0 25px white;}75% {opacity: 1;}to {opacity: 0.7;}
 }
-
+#totop{
+	height: 30px;
+    width: 30px;
+    padding: 7px;
+    border-radius: 25px;
+    background-color: white;
+	position:fixed;
+	right:70px;
+	bottom:30vh;
+	cursor:pointer;
+	z-index:9;
+    box-shadow: 0 4px 10px 2px rgb(82 82 82 / 66%);
+	transition:all .3s;
+	opacity:0;
+}
+#totop:hover{
+	background-color:rgb(240,240,240);
+}
 
 
 
@@ -115,7 +132,6 @@ html::-webkit-scrollbar{
 	overflow:hidden;
 	transition:all 0.1s ease-out 0.9s;
 	perspective:1500px;
-	z-index:-1;
 	pointer-events:none;
 }
 #html1{
@@ -126,7 +142,7 @@ html::-webkit-scrollbar{
 	padding:0 0  15px 0;
 	border-radius:3px;
 	background-color:rgb(250,250,255);
-	z-index:-1;
+	z-index:1;
 }
 #html1 p{
 	text-align: center;
@@ -402,7 +418,14 @@ body{
 		});
 	});
 </script>
+<div id="totop" onclick="scrollid('topdiv')">
+<svg t="1644478909068" id="icontop" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2032" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30">
+<path d="M554.666667 268.8v601.6h-85.333334V268.8L337.066667 401.066667 277.333333 341.333333 512 106.666667 746.666667 341.333333l-59.733334 59.733334L554.666667 268.8z" fill="#444444" p-id="2033"></path>
+</svg>
+</div>
+<img src="https://wzj-901.github.io/xzh/xzh1.png" style="display:none;">
 
+<div style="top:0px" id="topdiv"></div>
 <div id="html0">
 <div id="html">
 
@@ -581,7 +604,7 @@ body{
 						s1do3="diemsg('XZH撞到自己死了',45);s1lf--;s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;pform2(s1num,s1x,s1y);s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
 						break;
 					case 3:break;
-					case 4:f1();console.log(f1x+"  "+f1y);autonumb=true;pform(0,s1x,s1y);stop1++;s1l++;break;
+					case 4:f1();autonumb=true;pform(0,s1x,s1y);stop1++;s1l++;break;
 				}
 				if(autoalways){
 					autonumb=true;
@@ -617,6 +640,7 @@ body{
 		blood=Math.max(Math.min(blood,100),0);
 		document.getElementById("blood1").style.width=blood+"%";
 		if(blood==0&&dieshow==0){
+			dieshow++;
 			//die
 			alert(msg);
 			die();
@@ -651,21 +675,21 @@ body{
 			case 2:
 				color2="rgb(175,175,135)";
 				color4="rgb(188,8,8)";
-				temp1="https://wzj-901.github.io/xzh/xzh4.png";
+				temp8="https://wzj-901.github.io/xzh/xzh4.png";
 			break;
 			case 3:
 				color2="rgb(81,214,117)";
 				color4="yellow";
-				temp1="https://wzj-901.github.io/xzh/xzh6.jpg";
+				temp8="https://wzj-901.github.io/xzh/xzh6.jpg";
 			break;
 			case 4:
 				color2="rgb(255,140,60)";
 				color4="rgb(81,212,103)";
-				temp1="https://wzj-901.github.io/xzh/xzh2.png";
+				temp8="https://wzj-901.github.io/xzh/xzh2.png";
 				backimg=1;
 			break;
 		}
-		change0("main","background-image:url("+temp1+");");
+		change0("main","background-image:url("+temp8+");");
 		print(false);
 	}
 	function die(){
@@ -678,14 +702,12 @@ body{
 	function die2(){
 		document.getElementById("html").style.transform="rotateY(90deg)";
 		die3();
-		if(dieshow==0){
-			dieshow++;
-			var date1=new Date();
-			document.getElementById("dietime").innerHTML+="<font style='color:rgb(138,8,8)'"+">今日"+date1.getHours().toString().padStart(2,"0")+":"+date1.getMinutes().toString().padStart(2,"0")+":"+date1.getSeconds().toString().padStart(2,"0")+"<"+"/font>";
-		}
+		var date1=new Date();
+		document.getElementById("dietime").innerHTML+="<font style='color:rgb(138,8,8)'"+">今日"+date1.getHours().toString().padStart(2,"0")+":"+date1.getMinutes().toString().padStart(2,"0")+":"+date1.getSeconds().toString().padStart(2,"0")+"<"+"/font>";
 	}
 	function die3(){
 		document.getElementById("html2").style.opacity="1";
+		change0("html2","pointer-events:unset;");
 		change0("html3","pointer-events:unset;");
 		document.getElementById("html1").style.transform="rotateY(0deg)";
 		
@@ -1011,8 +1033,7 @@ body{
 				if(s1dx==0){
 					if(gform3(crtx(s1x+1),s1y)==gform3(s1x,s1y)+1){s1dx=1;s1dy=0}
 					if(gform3(crtx(s1x-1),s1y)==gform3(s1x,s1y)+1){s1dx=-1;s1dy=0}
-				}
-				if(s1dy==0){
+				}else{
 					if(gform3(s1x,crty(s1y+1))==gform3(s1x,s1y)+1){s1dy=1;s1dx=0}
 					if(gform3(s1x,crty(s1y-1))==gform3(s1x,s1y)+1){s1dy=-1;s1dx=0}
 				}
@@ -1078,7 +1099,7 @@ body{
 			
 		//setTimeout("die()",10000)
 		setTimeout("s1()",6000)
-		
+		gst();
 		
 		//pborder()
 		pform(2,mx-4,my)
@@ -1088,11 +1109,11 @@ body{
 		f1()
 		//s1()
 		//alert()
-		backimg=getCookie("xzhbgimg")*1;
-		if(backimg!=0){hfu()}else{backimg=1};
-		
+		temp6=getCookie("xzhbgimg")*1;
+		if(isNaN(temp6)||temp6==0){}else{backimg=temp6;hfu()};
 		change0("firstshow","transition:2s;transition-delay:6s;pointer-events:none;opacity:0;");
 		setTimeout('change0("firstshow","display:none;");',8000)
+		setTimeout('scrollid("topdiv");',6000)
 	}
 	document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -1101,32 +1122,54 @@ body{
 				s1dx=0;
 				s1dy=-1;
 			}
+			return false;
 		}
 		if((e && e.keyCode==37)||(e && e.keyCode==65)){//左
 			if(s1dy2){
 				s1dx=-1;
 				s1dy=0;
 			}
+			return false;
 		}
 		if((e && e.keyCode==40)||(e && e.keyCode==83)){//下
 			if(s1dx2){
 				s1dx=0;
 				s1dy=1;
 			}
+			return false;
 		}
 		if((e && e.keyCode==39)||(e && e.keyCode==68)){//右
 			if(s1dy2){
 				s1dx=1;
 				s1dy=0;
 			}
+			return false;
 		}
 		if(e && e.keyCode==80){//暂停
-			alert("你已暂停\n\n点击取消以继续")
+			alert("你已暂停\n\n点击取消以继续");
+			return false;
 		}if(e && e.keyCode==82){//重玩
-			location.reload()
+			location.reload();
+			return false;
 		}
 	}; 
-
+	var scrollTop=0;
+	var topdv=0;
+	function gst(){
+		scrollTop=0;
+		if(document.documentElement&&document.documentElement.scrollTop){
+			scrollTop=document.documentElement.scrollTop;
+		}else if(document.body){
+			scrollTop=document.body.scrollTop;
+		}
+		if(topdv==1&&scrollTop<500){
+		topdv=0;change0("totop","opacity:0;");
+		}
+		if(topdv==0&&scrollTop>500){
+		topdv=1;change0("totop","opacity:1;");
+		}
+		setTimeout("gst()",1000);
+	}
 </script>
 
 
