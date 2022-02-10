@@ -18,6 +18,7 @@
   top:0;
   botttom:0;
   position:fixed;
+  user-select:none;
   z-index:1000;
 }
 .reveal {
@@ -360,6 +361,18 @@ body{
 	background-color:white;
 	color:red;
 }
+#pta5 {
+    border-top: 1px solid #787474;
+    padding: 1em 2px 0 2px;
+    cursor: pointer;
+	color: #00a1ff;
+	font-weight:700;
+	transition:.3s;
+	text-shadow: 0 0.5px 1px #505050;
+}
+#pta5:hover{
+    color:#205b7d;
+}
 </style>
 <body>
 <div id="firstshow"><div class="reveal">WZJ Github Page</div><p class="glowIn" style="position:relative;top:40px;right:280px;white-space: nowrap;">养 浩 然 之 气 ， 做 永 信 之 人</p></div>
@@ -408,7 +421,13 @@ body{
 	<p><b style="color:red">WAIT！</b>ＸＺＨ死后会有更多内容展示</p>
 	<p>不要举报；任何需求可咨询链接提供者</p>
 </div>
-<div id="point"><p class="pta">长度：</p><p class="ptb" id="pt1">0</p><p class="pta">得分：</p><p class="ptb" id="pt2">0</p><p class="pta">步数：</p><p class="ptb" id="pt3">0</p><p class="pta">生命：</p><p class="ptb" id="pt4">0</p></div>
+<div id="point">
+	<p class="pta">长度：</p><p class="ptb" id="pt1">0</p>
+	<p class="pta">得分：</p><p class="ptb" id="pt2">0</p>
+	<p class="pta">步数：</p><p class="ptb" id="pt3">0</p>
+	<p class="pta">生命：</p><p class="ptb" id="pt4">0</p>
+	<p class="pta" id="pta5" onclick="hfu()">换肤</p>
+</div>
 
 </div>
 <div style="perspective:1500px;pointer-events:none;" id="html3">
@@ -503,6 +522,7 @@ body{
 	var stop1=0
 	var dieshow=0
 	var blood=100
+	var backimg=1;
 	
 	var temp0
 	var temp1
@@ -525,16 +545,21 @@ body{
 	function gform(x0,y0){
 		return form[x0-1][y0-1]
 	}
+	var color0="rgba(0,0,0,0)";
+	var color1="rgb(80,80,80)"
+	var color2="rgb(255,140,60)"
+	var color3="rgb(255,170,100)"
+	var color4="rgb(81,212,103)"
 	function pdiv(b,x0,y0){
 		b=b*1
 		temp4=true;
 		temp5="white";
 		switch(b){
-			case 0:temp4=true;temp5="rgba(0,0,0,0)";break;
-			case 1:temp4=true;temp5="rgb(80,80,80)";break;
-			case 2:temp4=true;temp5="rgb(255,140,60)";break;
-			case 3:temp4=true;temp5="rgb(255,170,100)";break;
-			case 4:temp4=true;temp5="rgb(81,212,103)";break;
+			case 0:temp4=true;temp5=color0;break;
+			case 1:temp4=true;temp5=color1;break;
+			case 2:temp4=true;temp5=color2;break;
+			case 3:temp4=true;temp5=color3;break;
+			case 4:temp4=true;temp5=color4;break;
 		}
 		if(temp4){
 			document.getElementById("a"+x0+"b"+y0).style.cssText+="background-color:"+temp5
@@ -613,6 +638,36 @@ body{
 			s1pt1=Math.abs(f1x-s1x)+Math.abs(f1y-s1y)
 		}else{f1()}
 	}
+	
+	//0:空
+	//1:边框
+	//2:蛇1
+	//3:蛇1头
+	//4:食物
+	function hfu(){
+		setCookie("xzhbgimg",backimg,30);
+		backimg++;
+		switch(backimg){
+			case 2:
+				color2="rgb(175,175,135)";
+				color4="rgb(188,8,8)";
+				temp1="https://wzj-901.github.io/xzh/xzh4.png";
+			break;
+			case 3:
+				color2="rgb(81,214,117)";
+				color4="yellow";
+				temp1="https://wzj-901.github.io/xzh/xzh6.jpg";
+			break;
+			case 4:
+				color2="rgb(255,140,60)";
+				color4="rgb(81,212,103)";
+				temp1="https://wzj-901.github.io/xzh/xzh2.png";
+				backimg=1;
+			break;
+		}
+		change0("main","background-image:url("+temp1+");");
+		print(false);
+	}
 	function die(){
 		document.getElementById("html").style.filter="grayscale(100%)";
 		document.getElementById("main0").style.opacity="0";
@@ -620,13 +675,13 @@ body{
 		setTimeout("die2()",3000)
 		s1do2=false;
 	}
-	var date=new Date();
 	function die2(){
 		document.getElementById("html").style.transform="rotateY(90deg)";
 		die3();
 		if(dieshow==0){
 			dieshow++;
-			document.getElementById("dietime").innerHTML+="<font style='color:rgb(138,8,8)'"+">今日"+date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0")+":"+date.getSeconds().toString().padStart(2,"0")+"<"+"/font>";
+			var date1=new Date();
+			document.getElementById("dietime").innerHTML+="<font style='color:rgb(138,8,8)'"+">今日"+date1.getHours().toString().padStart(2,"0")+":"+date1.getMinutes().toString().padStart(2,"0")+":"+date1.getSeconds().toString().padStart(2,"0")+"<"+"/font>";
 		}
 	}
 	function die3(){
@@ -653,10 +708,10 @@ body{
 	function leftdiv(){
 		temp8=(Math.floor(s1stp/10))*10;
 		if(temp8==0){
-		temp8=s1stp
+		temp8=s1stp;
 		}
 		if(temp8==s1stp){
-			s1pt+=3
+			s1pt+=3;
 		}
 		if((Math.floor(s1stp/30))*30==s1stp&&s1stp>9){
 			temp1=Math.round(Math.random())
@@ -702,10 +757,10 @@ body{
 	//4:食物
 	temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="0,";}temp2="["+temp2+"0]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("var form="+temp3);
 	//打印表格x*y
-	function print(){
+	function print(temp2){
 		for(var temp0=1;temp0<y+1;temp0++){
 			for(var temp1=1;temp1<x+1;temp1++){
-				pdiv(gform(temp1,temp0),temp1,temp0)
+				if(temp2||gform(temp1,temp0)!=0){pdiv(gform(temp1,temp0),temp1,temp0)}
 			}
 		}
 	}
@@ -999,9 +1054,9 @@ body{
 		return "";
 	}
 	window.onload=function(){
+		var date=new Date();
 		setCookie("xzhvst1",getCookie("xzhvst1")+"x"+(date.getMonth()+1).toString().padStart(2,"0")+":"+date.getDate().toString().padStart(2,"0")+":"+date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0"),30)
 		//alert((date.getMonth()+1).toString().padStart(2,"0")+":"+date.getDate().toString().padStart(2,"0")+":"+date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0"))
-
 		
 		temp3=""
 		for(var temp0=1;temp0<y+1;temp0++){
@@ -1033,7 +1088,8 @@ body{
 		f1()
 		//s1()
 		//alert()
-		
+		backimg=getCookie("xzhbgimg");
+		if(backimg){hfu()}else{backimg=1};
 		
 		change0("firstshow","transition:2s;transition-delay:6s;pointer-events:none;opacity:0;");
 		setTimeout('change0("firstshow","display:none;");',8000)
@@ -1078,7 +1134,7 @@ body{
 
 <script>
     function change0(x,y){
-        document.getElementById(x).style.cssText=y;
+        document.getElementById(x).style.cssText+=y;
     }
 </script>
 <script type="text/javascript" color="18,230,222" opacity='0.7' zIndex="2" count="99">
