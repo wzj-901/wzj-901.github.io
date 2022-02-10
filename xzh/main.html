@@ -1088,8 +1088,8 @@ body{
 		f1()
 		//s1()
 		//alert()
-		backimg=getCookie("xzhbgimg");
-		if(backimg){hfu()}else{backimg=1};
+		backimg=getCookie("xzhbgimg")*1;
+		if(backimg!=0){hfu()}else{backimg=1};
 		
 		change0("firstshow","transition:2s;transition-delay:6s;pointer-events:none;opacity:0;");
 		setTimeout('change0("firstshow","display:none;");',8000)
