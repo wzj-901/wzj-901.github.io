@@ -225,10 +225,10 @@ html{
 				s1do4=""
 				switch(a){
 					case 0:break;
-					case 1:msg("s1撞到墙死了");s1lf--;break;
+					case 1:msg("s1撞到墙死了");aform0(1,s1x,s1y);aform0(2,s1x,s1y);s1lf--;break;
 					case 2:
 						s1do1=false;
-						s1do3="s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;s1rgb.push(0);if(form0[s1x-1][s1y-1].length==0){aform0(2,s1x,s1y);}aform0(2,s1x,s1y)"
+						s1do3="s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;s1rgb.push(0);if(form0[s1x-1][s1y-1].length==0){aform0(2,s1x,s1y);}aform0(2,s1x,s1y);"
 						
 						break;
 					case 5:
@@ -271,7 +271,7 @@ html{
 				s3do4=""
 				switch(a){
 					case 0:break;
-					case 1:msg("s2撞到墙死了");
+					case 1:msg("s2撞到墙死了");aform0(1,s3x,s3y);aform0(5,s3x,s3y);
 					s3lf--;break;
 					case 2:
 						s3do1=false;
@@ -564,9 +564,9 @@ html{
 		}else{
 			s2x+=s1arrx[s1num-s1l-1];
 			s2y+=s1arry[s1num-s1l-1];
-			temp6=s1rgb[s1num-s1l-1];
-			temp7=gform0(2,s2x,s2y);
-			if(temp7||temp7==[]){temp6=temp7;form0[s2x-1][s2y-1]=[];pform(temp7,s2x,s2y)}
+			temp6=0
+			if(form0[s2x-1][s2y-1]!=[]){temp6=gform0(2,s2x,s2y);}
+			if(isNaN(temp6)){temp6=0}
 		}
 		if(s2x>0&&s2y>0&&s2x<x+1&&s2y<y+1){
 			pform(temp6,s2x,s2y)
@@ -575,7 +575,9 @@ html{
 			stop1--;
 		}
 	}
-	
+	function isArray(obj) {
+		return Object.prototype.toString.call(obj) == '[object Array]';
+	}
 	//蛇3尾
 	var s4x=mx-s3l-1;
 	var s4y=my+2;
@@ -590,9 +592,9 @@ html{
 		}else{
 			s4x+=s3arrx[s3num-s3l-1];
 			s4y+=s3arry[s3num-s3l-1];
-			temp6=s3rgb[s3num-s3l-1];
-			temp7=gform0(5,s4x,s4y);
-			if(temp7||temp7==[]){temp6=temp7;form0[s4x-1][s4y-1]=[];pform(temp7,s4x,s4y)}
+			temp6=0
+			if(form0[s4x-1][s4y-1]!=[]){temp6=gform0(5,s4x,s4y);}
+			if(isNaN(temp6)){temp6=0}
 		}
 		if(s4x>0&&s4y>0&&s4x<x+1&&s4y<y+1){
 			pform(temp6,s4x,s4y)
