@@ -240,6 +240,10 @@ html{
 					case 3:break;
 					case 4:f1("s1");autonumb=true;pform(0,s1x,s1y);stop1++;s1l++;break;
 				}
+				if(autoalways){
+					autonumb=true;
+					autoalways=false;
+				}
 				if(s1do1){
 					//操作数组
 					s1arrx.push(s1dx0)
@@ -256,8 +260,8 @@ html{
 					s1stp++;
 					s1pt0++;
 					leftdiv()
-					//if(autonumb==true){auto();autonumb=false}
-					setTimeout("s1()",100)
+					if(autonumb==true){auto();autonumb=false}
+					setTimeout("s1()",200)
 				}
 				eval(s1do4)
 				break;
@@ -288,10 +292,6 @@ html{
 					case 3:break;
 					case 4:f1("s3");autonumb=true;pform(0,s3x,s3y);stop1++;s3l++;break;
 				}
-				if(autoalways){
-					autonumb=true;
-					autoalways=false;
-				}
 				if(s3do1){
 					//操作数组
 					s3arrx.push(s3dx0)
@@ -308,8 +308,7 @@ html{
 					s3stp++;
 					s3pt0++;
 					leftdivs3()
-					if(autonumb==true){auto();autonumb=false}
-					setTimeout("s3()",100)
+					setTimeout("s3()",200)
 				}
 				eval(s3do4)
 				break;
@@ -463,7 +462,6 @@ html{
 	}
 	
 	
-	
 	//辅助表格1
 	//temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("var form1="+temp3);
 	function cform1(){temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("form1="+temp3);}
@@ -508,8 +506,8 @@ html{
 	var s1arry=new Array();
 	var s1rgb=new Array();
 	var s1num=0;
-	var autonumb=false;
-	var autonumb0=true;
+	var autonumb=true;
+	var autonumb0=false;
 	var autonum;
 	var autoform3=false;
 	var autoalways=false;
@@ -608,13 +606,11 @@ html{
 			s2y+=s2dy;
 			temp6=0;
 		}else{
-			if(autonumb==false&&autonumb0==true){autonumb=true;autonumb0=false}
-			
 			s2x+=s1arrx[s1num-s1l-1];
 			s2y+=s1arry[s1num-s1l-1];
-			temp6=s1rgb[s1num-s1l-1];
-			temp7=gform0(2,s2x,s2y);
-			if(temp7||temp7==[]){temp6=temp7;form0[s2x-1][s2y-1]=[];pform(temp7,s2x,s2y)}
+			temp6=0
+			if(form0[s2x-1][s2y-1]!=[]){temp6=gform0(2,s2x,s2y);}
+			if(isNaN(temp6)){temp6=0}
 		}
 		if(s2x>0&&s2y>0&&s2x<x+1&&s2y<y+1){
 			pform(temp6,s2x,s2y)
@@ -623,7 +619,9 @@ html{
 			stop1--;
 		}
 	}
-	
+	function isArray(obj) {
+		return Object.prototype.toString.call(obj) == '[object Array]';
+	}
 	//蛇3尾
 	var s4x=mx-s3l-1;
 	var s4y=my+2;
@@ -638,9 +636,9 @@ html{
 		}else{
 			s4x+=s3arrx[s3num-s3l-1];
 			s4y+=s3arry[s3num-s3l-1];
-			temp6=s3rgb[s3num-s3l-1];
-			temp7=gform0(5,s4x,s4y);
-			if(temp7||temp7==[]){temp6=temp7;form0[s4x-1][s4y-1]=[];pform(temp7,s4x,s4y)}
+			temp6=0
+			if(form0[s4x-1][s4y-1]!=[]){temp6=gform0(5,s4x,s4y);}
+			if(isNaN(temp6)){temp6=0}
 		}
 		if(s4x>0&&s4y>0&&s4x<x+1&&s4y<y+1){
 			pform(temp6,s4x,s4y)
@@ -649,7 +647,6 @@ html{
 			stop1--;
 		}
 	}
-	
 	
 	//自动
 	var auto1=0 
@@ -718,10 +715,10 @@ html{
 	}
 	function auto2divfst(x,y){
 		auto2num=gform1(x,y)-1
-		if(s1dx!=0||s1dy!=-1){auto2div0(auto2num,x,crty(y+1))}
-		if(s1dx!=0||s1dy!=1){auto2div0(auto2num,x,crty(y-1))}
-		if(s1dx!=1||s1dy!=0){auto2div0(auto2num,crtx(x-1),y)}
-		if(s1dx!=-1||s1dy!=0){auto2div0(auto2num,crtx(x+1),y)}
+		autodiv0(auto2num,x,crty(y+1))
+		autodiv0(auto2num,x,crty(y-1))
+		autodiv0(auto2num,crtx(x-1),y)
+		autodiv0(auto2num,crtx(x+1),y)
 	}
 	function crtx(a){return ((a-1)%x+x)%x+1}
 	function crty(a){return ((a-1)%y+y)%y+1}
@@ -832,35 +829,27 @@ html{
 		pform(5,mx-2,my+2)
 		pform(5,mx-1,my+2)
 		f1(false)
-		s1()
-		setTimeout("s3()",90)
+		s3()
+		setTimeout("s1()",90)
 		//alert()
 	}
 	document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
 		if((e && e.keyCode==38)||(e && e.keyCode==87)){//上
-			if(s3dx2){
 				s3dx=0;
 				s3dy=-1;
-			}
 		}
 		if((e && e.keyCode==37)||(e && e.keyCode==65)){//左
-			if(s3dy2){
 				s3dx=-1;
 				s3dy=0;
-			}
 		}
 		if((e && e.keyCode==40)||(e && e.keyCode==83)){//下
-			if(s3dx2){
 				s3dx=0;
 				s3dy=1;
-			}
 		}
 		if((e && e.keyCode==39)||(e && e.keyCode==68)){//右
-			if(s3dy2){
 				s3dx=1;
 				s3dy=0;
-			}
 		}
 		if(e && e.keyCode==80){//暂停
 			alert("你已暂停\n\n点击取消以继续")
