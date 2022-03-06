@@ -1,0 +1,1184 @@
+<html>
+<head><meta charset="UTF-8"><title>ＸＺＨ</title>
+<link rel="icon" type="image/png" sizes="144x144" href="https://wzj-901.github.io/xzh/xzh1.png"/>
+<link rel="apple-touch-icon" type="image/png" sizes="144x144" href="https://wzj-901.github.io/xzh/xzh1.png"/>
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+</head>
+<!-- from https://wzj-901.github.io -->
+<style>
+#firstshow {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #222;
+  left:0;
+  right:0;
+  top:0;
+  botttom:0;
+  position:fixed;
+  user-select:none;
+  z-index:1000;
+}
+.reveal {
+  position: relative;
+  display: flex;
+  color: #6ee1f5;
+  font-size: 2em;
+  font-family: Raleway, sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: pre;
+}
+.reveal span {
+  opacity: 0;
+  transform: scale(0);
+  animation: fadeIn 2.4s forwards;
+}
+.reveal::before, .reveal::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  transform: scale(0);
+}
+.reveal::before {
+  left: 50%;
+  animation: slideLeft 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+.reveal::after {
+  right: 50%;
+  animation: slideRight 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideLeft {
+  to {
+    left: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+@keyframes slideRight {
+  to {
+    right: -6%;
+    opacity: 1;
+    transform: scale(0.9);
+  }
+}
+.glow-In{
+  text-align: left;
+  line-height: 1.8;
+  font-family: Lora, serif;
+  margin: 0em 5em 4em 5em;
+}
+
+.glowIn {
+  color: white;
+}
+.glowIn span {
+  animation: glow-in 0.8s both;
+}
+@keyframes glow-in {
+  from {opacity: 0;}65% {opacity: 1;text-shadow: 0 0 25px white;}75% {opacity: 1;}to {opacity: 0.7;}
+}
+#totop{
+	height: 30px;
+    width: 30px;
+    padding: 7px;
+    border-radius: 25px;
+    background-color: white;
+	position:fixed;
+	right:70px;
+	bottom:30vh;
+	cursor:pointer;
+	z-index:9;
+    box-shadow: 0 4px 10px 2px rgb(82 82 82 / 66%);
+	transition:all .3s;
+	opacity:0;
+}
+#totop:hover{
+	background-color:rgb(240,240,240);
+}
+
+
+
+
+html{
+	background-color:rgb(245,245,245);
+}
+html::-webkit-scrollbar{ 
+	display: none; 
+}
+#html0{
+	perspective:1500px;
+	min-width:560px;
+}
+#html{
+	transition:1s ease-in;
+}
+#html2{
+	opacity:0;
+	overflow:hidden;
+	transition:all 0.1s ease-out 0.9s;
+	perspective:1500px;
+	pointer-events:none;
+}
+#html1{
+	transform: rotateY(-89deg);
+	transition:transform 1s ease-out 1s;
+	position:relative;
+	margin:20px 0;
+	padding:0 0  15px 0;
+	border-radius:3px;
+	background-color:rgb(250,250,255);
+	z-index:1;
+}
+#html1 p{
+	text-align: center;
+	line-height:23px;
+	letter-spacing:1px;
+}
+#html1 h3{
+	text-align: center;
+}
+#html1 h6{
+	text-align: center;
+}
+#main{
+	width:200px;
+	margin-top:20px;
+	background-color:white;
+	border:solid 10px rgb(200,200,200);
+	position:fixed;
+	border-radius:20px;
+	overflow:hidden;
+	background-image:url(https://wzj-901.github.io/xzh/xzh2.png);background-size:cover;
+}
+#point{
+	z-index:1000;
+	position:fixed;
+	background-color:rgba(200,200,200,0.4);
+	opacity:0.7;
+	padding:10px;
+	margin:40px 0 0 10px;
+	border-radius:10px;
+	user-select:none;
+}
+#point:hover{
+	background-color:rgba(200,200,200,0.7);
+	opacity:1;
+}
+#xshow,#yshow{
+	position:absolute !important;
+	left:0px;
+	top:0px;
+	z-index:10 !important;
+	border:solid 1px rgb(220,220,220) !important;
+	background-color:rgba(0,0,0,0) !important;
+}
+#s1head{
+	position:absolute !important;
+	left:0px;
+	top:0px;
+	height:18px !important;
+	width:18px !important;
+	z-index:20 !important;
+	margin:1px !important;
+	border:0px !important;
+	box-shadow: 0 0 40px #FFF;
+	background-color:rgb(255,170,100) !important;
+}
+#s1head2{
+	position:absolute !important;
+	left:0px;
+	top:0px;
+	height:40px !important;
+	width:35px !important;
+	z-index:21 !important;
+	margin:1px !important;
+	border:0px !important;
+}
+#s1point{
+	position:absolute !important;
+	left:0px;
+	top:0px;
+	height:100% !important;
+	width:100% !important;
+	z-index:-10 !important;
+	margin:10px 30px !important;
+	border:0px !important;
+	font-family:fantasy;
+	font-size:200px;
+	color:rgba(0,0,0,0.2);
+	transition:1s;
+	background-color:rgba(0,0,0,0) !important;
+	
+}
+#xshow{
+	height:18px !important;
+	width:100% !important;
+}
+#yshow{
+	width:18px !important;
+	height:100% !important;
+}
+#main0{
+	transition:3s;
+}
+#main0>div{
+	overflow:hidden;
+	position:relative;
+}
+#main0>div>div{
+	float:left;
+	position:relative;
+	background-color:rgba(0,0,0,0);
+	width:18px;
+	height:18px;
+	border:1px solid rgba(245,245,240,0.2);
+}
+#main0>div>div:hover{
+	background-color:red !important;
+}
+#note{
+	position:fixed;
+}
+#note>p{
+	font-family:宋体;
+	color:rgb(95,95,0);
+	letter-spacing:2px;
+	margin-left:10;
+}
+.formfont1{
+	color: rgb(162 183 182);
+    font-size: 14px;
+	width:70px;
+	user-select:none;
+}
+.formfont2{
+	
+}
+#xzh3 {
+    width: 100px;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+#br1 {
+    width: 330px;
+    background-color: #28372670;
+    height: 2px;
+    position: absolute;
+    top: 106px;
+    left: 50px;
+}
+#texts{
+	position:relative;
+	margin:3px 5px 0 5px;
+}
+.subtext {
+    position: relative;
+    border-left: 10px solid #12e6de;
+    left: -10px;
+    padding: 0 0 0 6;
+}
+.mntext{
+	position:relative;
+	text-align:left !important;
+    text-indent:35px;
+}
+.link{
+	color: #00a1ff;
+	cursor: pointer;
+	text-decoration:underline;
+	transition:.3s;
+}
+.link:hover{
+	color:#205b7d;
+}
+canvas{
+	top:0px !important;
+}
+body{
+	margin:0;
+	top:0;
+	left:0;
+}
+#tip1{
+	position: absolute;
+    transform: rotateZ(45deg);
+    padding: 0 100px;
+    background-color: black;
+    z-index: 10;
+    color: white;
+    top: 10px;
+    left: 120px;
+    white-space: nowrap;
+    box-shadow: 1px 2px 12px 0px #365a3f;
+	font-family:MV Boli;
+}
+#blood{
+	position:relative;
+	height:8px;
+	border-radius:4px;
+	background-color:rgba(100,100,100,0.5);
+	border:1px solid black;
+	top:-20px;
+	margin:0 15px;
+}
+#blood1{
+	position:relative;
+	height:8px;
+	background-color:red;
+	width:100%;
+	transition:2s ease-out;
+}
+#bloodset{
+	overflow:hidden;
+}
+.bloodset{
+	width:calc(50% - 30px);
+	float:left;
+	padding:5 10px;
+	transition:all 0.5s;
+	box-shadow: 0 4px 11px 0px rgb(0,0,0,40%);
+}
+.bloodset:hover{
+	box-shadow: 0 4px 11px 0px rgb(0,0,0,60%);
+}
+#bloodset1{
+	background-color:#f94949b5;
+	cursor:pointer;
+    color: white;
+	margin-left:10px;
+	border-radius:5px 0 0 5px;
+}
+#bloodset1:hover{
+	background-color:red;
+}
+#bloodset2{
+	cursor:pointer;
+	background-color:#fafaff47;
+	border-radius:0 5px 5px 0;
+    color: #e72a2a;
+}
+#bloodset2:hover{
+	background-color:white;
+	color:red;
+}
+#pta5 {
+    border-top: 1px solid #787474;
+    padding: 1em 2px 0 2px;
+    cursor: pointer;
+	color: #00a1ff;
+	font-weight:700;
+	transition:.3s;
+	text-shadow: 0 0.5px 1px #505050;
+}
+#pta5:hover{
+    color:#205b7d;
+}
+</style>
+<body>
+<div id="firstshow"><div class="reveal">WZJ Github Page</div><p class="glowIn" style="position:relative;top:40px;right:280px;white-space: nowrap;">养 浩 然 之 气 ， 做 永 信 之 人</p></div>
+<script>
+	"use strict";
+	let duration = 0.8;
+	let delay = 0.3;
+	let revealText = document.querySelector(".reveal");
+	let letters = revealText.textContent.split("");
+	revealText.textContent = "";
+	let middle = letters.filter(e => e !== " ").length / 2;
+	letters.forEach((letter, i) => {
+		let span = document.createElement("span");
+		span.textContent = letter;
+		span.style.animationDelay = `${delay + Math.abs(i - middle) * 0.1}s`;
+		revealText.append(span);
+	});
+	let glowInTexts = document.querySelectorAll(".glowIn");
+	glowInTexts.forEach(glowInText => {
+		let letters = glowInText.textContent.split("");
+		glowInText.textContent = "";
+		letters.forEach((letter, i) => {
+			let span = document.createElement("span");
+			span.textContent = letter;
+			span.style.animationDelay = `${i * 0.05 + 3}s`;
+			glowInText.append(span);
+		});
+	});
+</script>
+<div id="totop" onclick="scrollid('topdiv')">
+<svg t="1644478909068" id="icontop" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2032" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30">
+<path d="M554.666667 268.8v601.6h-85.333334V268.8L337.066667 401.066667 277.333333 341.333333 512 106.666667 746.666667 341.333333l-59.733334 59.733334L554.666667 268.8z" fill="#444444" p-id="2033"></path>
+</svg>
+</div>
+<img src="https://wzj-901.github.io/xzh/xzh1.png" style="display:none;">
+
+<div style="top:0px" id="topdiv"></div>
+<div id="html0">
+<div id="html">
+
+<div id="main">
+<div id="main0">
+<div id="s1point" style="user-select:none;">00</div>
+<div id="xshow"></div><div id="yshow"></div>
+<p id="tip1" style="user-select:none;">WZJ-901</p>
+<div id="s1head"></div>
+<image id="s1head2" src="https://wzj-901.github.io/xzh/xzh1.png" style="user-select:none;"></image>
+</div></div>
+<div id="note">
+	<div id="blood"><div id="blood1"></div></div>
+	<div id="bloodset" style="user-select:none;"><p id="bloodset1" class="bloodset" onclick="diemsg('你杀死了XZH',1)">对XZH扣血</p><p id="bloodset2" class="bloodset" onclick="diemsg('',-1)">给XZH加血</p></div>
+	<p>ＸＺＨ享有其最高控制权，你可以通过方向键或W/A/S/D协助他，当且仅当他认为你没有坑他时他还会采纳你的路径</p>
+	<p><b style="color:red">WAIT！</b>ＸＺＨ死后会有更多内容展示</p>
+	<p>不要举报；任何需求可咨询链接提供者</p>
+</div>
+<div id="point">
+	<p class="pta">长度：</p><p class="ptb" id="pt1">0</p>
+	<p class="pta">得分：</p><p class="ptb" id="pt2">0</p>
+	<p class="pta">步数：</p><p class="ptb" id="pt3">0</p>
+	<p class="pta">生命：</p><p class="ptb" id="pt4">0</p>
+	<p class="pta" id="pta5" onclick="hfu()">换肤</p>
+</div>
+
+</div>
+<div style="perspective:1500px;pointer-events:none;" id="html3">
+<div id="html2">
+<div id="html1">
+<div style="box-shadow:4px 4px 12px 0px rgb(50,50,50);border-radius:5px;padding:10px 5px">
+
+<div style="overflow:hidden;margin:20 0 10 10;">
+	<div style="float:left;margin:0 30 0 10;width:130px">
+		<font class="formfont1">产品名称：</font>
+		<b class="formfont2">ＸＺＨ</b>
+	</div>
+	<div>
+		<font class="formfont1">生产日期：</font>
+		<font>见包装喷码处</font>
+	</div>
+</div>
+<div style="overflow:hidden;margin:10 0 37 10;">
+	<div style="float:left;margin:0 30 0 10;width:130px">
+		<font class="formfont1">　保质期：</font>
+		<font class="formfont2">12个月</font>
+	</div>
+	<div id="dietime">
+		<font class="formfont1">死亡日期：</font>
+	</div>
+</div>
+<image id="xzh3" style="user-select:none;" src="https://wzj-901.github.io/xzh/xzh3.png"></image>
+<div id='br1'></div>
+<div id="texts">
+	<b class="subtext">人物生平</b>
+	<p class="mntext">XZH，前半生致力于促进<font style="font-style:italic;">华一</font>、<font style="font-style:italic;">楚康</font>世代和平，嫁入楚康，做出突出贡献，荣获<font style="font-style:italic;">华一·楚康</font>联名<font style="font-style:italic;">“优秀学生”“优秀团员”</font>奖。
+原创作品《<font style="font-style:italic;">卖炭翁·经营青楼后山中</font>》预计在2050年广为流传。</p>
+	<img src="https://wzj-901.github.io/xzh/xzh5.jpg" width="400" height="250" style="user-select:none;margin-left:calc(50% - 200px)"><p style="color: darkgrey;font-size: 13px;letter-spacing: 2px;user-select:none;">XZH母校 ▲</p>
+<p class="mntext" style="margin-block-start: -.3em;font-style:italic;color: rgb(50,80,70);font-family: 楷体;">还记得那个叫XZH的华一男子，嫁入楚康，从此便成了照亮楚康的月亮。他居住的厕所、他昏黄灯光下整理发票的背影、他急步于病房间行医治病的身姿一次次地出现在我的记忆中。时间越久，越给我长久的感动。他的无私、他的奉献、他的坚持就如同一朵玫瑰，散发着大爱的芬芳，弥漫在记忆里，时间越久越浓郁……</p>
+
+	<p class="mntext">2019年，新冠肺炎疫情暴发，13岁的XZH始终坚守一线，参与院内查房、会诊，出席院外专家讨论……1月下旬，他感到身体不适，经检测显示肾透支，必须住院治疗。</p>
+	<img src="https://wzj-901.github.io/xzh/xzh4.png" width="180" height="250" style="user-select:none;margin-left:calc(50% - 90px)"><p style="color: darkgrey;font-size: 13px;letter-spacing: 2px;user-select:none;">XZH在楚康门口值班 ▲</p>
+	<p class="mntext">经过精神病院全力救治，帝感其诚，将XZH从死亡线上拉了回来，病情逐渐好转。4月下旬，XZH康复出院。7月，已经康复的他再次披上白大褂，回到了心心念念的家乡<font style="font-style:italic;">保加利亚·瓦尔纳</font>，在<font style="font-style:italic;">妖王无限集团</font>继续履行守护生命的职责。<a class="link" href="https://user.qzone.qq.com/2647084480/1" target="_blank">查看详情</a></p>
+	<b class="subtext">代表作</b>
+	<p class="mntext">《<a class="link" href="javascript:void(0);" onclick="scrollid('poem')">卖炭翁·经营青楼后山中</a>》<font style="color: darkgrey;font-size: 13px;letter-spacing: 2px;">（2021.12）</font></p>
+	<b class="subtext">人物评论</b>
+	<p class="mntext" style="font-style:italic;color: rgb(50,80,70);font-family: 楷体;">“大家好，我是三楼13班隔壁打饭的一名阿姨。离婚十年了，一直没能走出生活的阴影。直到前天，我遇到了一个叫做XZH的小孩，你十中八九の技艺深深打动了释担而立的我。谢谢你，XZH,你改变了阿姨的一生。
+</p><p class="mntext" style="margin-block-start: -.3em;font-style:italic;color: rgb(50,80,70);font-family: 楷体;">“今天，阿姨特意来到这里投稿，就是为了感谢你。以后阿姨一定把最大最新鲜的给你吃，祝你在新的一年里学业有成！”</p>
+</div></div>
+<div id="poem" style="user-select:none;">
+<h3>《卖炭翁·经营青楼后山中》</h3>
+<h6>作者：XZH；
+略有改动（矫正部分名称，和谐关键字）</h6>
+<p style="white-space:pre-wrap;">ＸＺＨ，
+经营青楼后山<sup style="color:rgb(175,175,135);letter-spacing:-1px">①</sup>中。
+满面抚媚烟火色，
+两眼爱慕十指纤。
+卖　得钱何所营，
+身上衣裳口中药。
+可怜身上衣常撕，
+心忧　贱愿天暖。
+翩翩两寄<sup style="color:rgb(175,175,135);letter-spacing:-1px">②</sup>来是谁？
+绿帽使者ＩＮＸ。
+手把发票口称敕，
+回车叱人牵上床。
+一晚上，千余次，
+宫使驱将惜不得。
+半匹红纱一丈绫，
+系向人身充衣裳。</p></div>
+<p style="color:rgb(30,30,60);margin-block-start:-0.4em;white-space:pre-wrap;user-select:none;">时人赞曰：
+紫罗肚兜系素身，
+色泽冰土　如　。
+幽夜百战穿金甲，
+绿光乍现满　子。</p>
+<p style="color: darkgrey;font-size: 13px;letter-spacing: 2px;user-select:none;">作者注：①后山:华一寄后山；②寄:寄吧</p>
+</div></div></div>
+</div>
+<script>
+	if(self!=top){top.location.href=self.location.href;}
+	
+	
+	//格数
+	var x=15
+	var y=15
+	//属性
+	var own1='id="ax1by1"'
+	var dx=20
+	var dy=20
+	var mx=Math.floor(x/2)
+	var my=Math.floor(y/2)
+	
+	var s1do1=true
+	var s1do2=true
+	var s1do3=""
+	var s1do4=""
+	
+	var stop1=0
+	var dieshow=0
+	var blood=100
+	var backimg=1;
+	
+	var temp0
+	var temp1
+	var temp2
+	var temp3
+	var temp4
+	var temp5
+	var temp6
+	var temp7
+	var temp8
+	var temp9
+	var temp10
+	function scrollid(x){
+		document.getElementById(x).scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+	}
+	function pform(b,x0,y0){
+		form[x0-1][y0-1]=b;
+		pdiv(b,x0,y0)
+	}
+	function gform(x0,y0){
+		return form[x0-1][y0-1]
+	}
+	var color0="rgba(0,0,0,0)";
+	var color1="rgb(80,80,80)"
+	var color2="rgb(255,140,60)"
+	var color3="rgb(255,170,100)"
+	var color4="rgb(81,212,103)"
+	function pdiv(b,x0,y0){
+		b=b*1
+		temp4=true;
+		temp5="white";
+		switch(b){
+			case 0:temp4=true;temp5=color0;break;
+			case 1:temp4=true;temp5=color1;break;
+			case 2:temp4=true;temp5=color2;break;
+			case 3:temp4=true;temp5=color3;break;
+			case 4:temp4=true;temp5=color4;break;
+		}
+		if(temp4){
+			document.getElementById("a"+x0+"b"+y0).style.cssText+="background-color:"+temp5
+		}
+	}
+	//动作
+	function actdiv(a,b,x0,y0){
+		switch(b){
+		case 1:
+				s1do1=true
+				s1do2=true
+				s1do3=""
+				s1do4=""
+				switch(a){
+					case 0:break;
+					case 1:diemsg("XZH撞到墙死了",45);s1lf--;break;
+					case 2:
+						s1do1=false;
+						s1do3="diemsg('XZH撞到自己死了',45);s1lf--;s1arrx.push(s1dx0);s1arry.push(s1dy0);s1num++;pform2(s1num,s1x,s1y);s1rgb.push(0);pform0(gform0(s1x,s1y)+1,s1x,s1y)"
+						break;
+					case 3:break;
+					case 4:f1();autonumb=true;pform(0,s1x,s1y);stop1++;s1l++;break;
+				}
+				if(autoalways){
+					autonumb=true;
+					autoalways=false;
+				}
+				if(s1do1){
+					//操作数组
+					s1arrx.push(s1dx0)
+					s1arry.push(s1dy0)
+					s1num++;
+					pform2(s1num,s1x,s1y)
+					s1rgb.push(gform(s1x,s1y))
+				}
+				eval(s1do3)
+				if(s1do2){
+					s2()
+					pform(2,s1x,s1y)
+					focuss1(s1x,s1y)
+					s1point()
+					s1stp++;
+					s1pt0++;
+					leftdiv()
+					if(autonumb==true){auto();autonumb=false}
+					setTimeout("s1()",100)
+				}
+				eval(s1do4);
+				break;
+		}
+	}
+	
+	function diemsg(msg,bloodcut){
+		blood-=bloodcut;
+		blood=Math.max(Math.min(blood,100),0);
+		document.getElementById("blood1").style.width=blood+"%";
+		if(blood==0&&dieshow==0){
+			dieshow++;
+			//die
+			alert(msg);
+			die();
+		}
+		
+	}
+	//食物
+	function f1(){
+		f1x=Math.round(Math.random()*(x-1)+1)
+		f1y=Math.round(Math.random()*(y-1)+1)
+		if(gform(f1x,f1y)==0){
+			pform(4,f1x,f1y)
+			focus(f1x,f1y)
+			s1pt+=7
+			if(s1pt0<s1pt1+x+y){s1pt+=3}
+			if(s1pt0<s1pt1+(x+y)/3){s1pt+=3}
+			if(s1pt0<s1pt1+5){s1pt+=3}
+			s1pt0=0
+			s1pt1=Math.abs(f1x-s1x)+Math.abs(f1y-s1y)
+		}else{f1()}
+	}
+	
+	//0:空
+	//1:边框
+	//2:蛇1
+	//3:蛇1头
+	//4:食物
+	function hfu(){
+		setCookie("xzhbgimg",backimg,30);
+		backimg++;
+		switch(backimg){
+			case 2:
+				color2="rgb(175,175,135)";
+				color4="rgb(188,8,8)";
+				temp8="https://wzj-901.github.io/xzh/xzh4.png";
+			break;
+			case 3:
+				color2="rgb(81,214,117)";
+				color4="yellow";
+				temp8="https://wzj-901.github.io/xzh/xzh6.jpg";
+			break;
+			case 4:
+				color2="rgb(255,140,60)";
+				color4="rgb(81,212,103)";
+				temp8="https://wzj-901.github.io/xzh/xzh2.png";
+				backimg=1;
+			break;
+		}
+		change0("main","background-image:url("+temp8+");");
+		print(false);
+	}
+	function die(){
+		document.getElementById("html").style.filter="grayscale(100%)";
+		document.getElementById("main0").style.opacity="0";
+		document.onkeydown=function(){};
+		setTimeout("die2()",3000)
+		s1do2=false;
+	}
+	function die2(){
+		document.getElementById("html").style.transform="rotateY(90deg)";
+		die3();
+		var date1=new Date();
+		document.getElementById("dietime").innerHTML+="<font style='color:rgb(138,8,8)'"+">今日"+date1.getHours().toString().padStart(2,"0")+":"+date1.getMinutes().toString().padStart(2,"0")+":"+date1.getSeconds().toString().padStart(2,"0")+"<"+"/font>";
+	}
+	function die3(){
+		document.getElementById("html2").style.opacity="1";
+		change0("html2","pointer-events:unset;");
+		change0("html3","pointer-events:unset;");
+		document.getElementById("html1").style.transform="rotateY(0deg)";
+		
+	}
+	//突出显示
+	function focus(x0,y0){
+		document.getElementById("xshow").style.top=dy*y0-dy;
+		document.getElementById("yshow").style.left=dx*x0-dx;
+	}
+	function focuss1(x0,y0){
+		document.getElementById("s1head").style.top=dy*y0-dy;
+		document.getElementById("s1head2").style.top=dy*y0-dy-13;
+		document.getElementById("s1head").style.left=dx*x0-dx;
+		document.getElementById("s1head2").style.left=dx*x0-dx-8;
+	}
+	function s1point(){
+		if(s1l<10){temp8="0"+s1l}else{temp8=s1l}
+		document.getElementById("s1point").innerHTML=temp8;
+	}
+	function leftdiv(){
+		temp8=(Math.floor(s1stp/10))*10;
+		if(temp8==0){
+		temp8=s1stp;
+		}
+		if(temp8==s1stp){
+			s1pt+=3;
+		}
+		if((Math.floor(s1stp/30))*30==s1stp&&s1stp>9){
+			temp1=Math.round(Math.random())
+			temp2=Math.round(Math.random())
+			temp3=Math.round(Math.random())
+			if(temp1==1&&temp2==1&&temp3==1){temp1=0;temp2=0;temp3=0;}
+			document.getElementById("s1point").style.color="rgba("+temp1*255+","+temp2*255+","+temp3*255+",0.2)";
+		}
+		
+		document.getElementById("pt4").style.color="green";
+		if(s1lf<1){
+			document.getElementById("pt4").style.color="black";
+		}
+		if(s1lf<-5){
+			document.getElementById("pt4").style.color="red";
+		}
+		document.getElementById("pt3").style.color="black";
+		if(temp8>699){
+			document.getElementById("pt3").style.color="green";
+		}
+		document.getElementById("pt2").style.color="black";
+		if(s1pt>699){
+			document.getElementById("pt2").style.color="green";
+		}
+		document.getElementById("pt1").style.color="black";
+		if(s1l>30){
+			document.getElementById("pt1").style.color="green";
+		}
+		
+		document.getElementById("pt1").innerHTML=s1l;
+		document.getElementById("pt2").innerHTML=s1pt;
+		document.getElementById("pt3").innerHTML=temp8;
+		document.getElementById("pt4").innerHTML=s1lf;
+	}
+	
+	
+	
+	//定义表格x*y
+	//0:空
+	//1:边框
+	//2:蛇1
+	//3:蛇1头
+	//4:食物
+	temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="0,";}temp2="["+temp2+"0]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("var form="+temp3);
+	//打印表格x*y
+	function print(temp2){
+		for(var temp0=1;temp0<y+1;temp0++){
+			for(var temp1=1;temp1<x+1;temp1++){
+				if(temp2||gform(temp1,temp0)!=0){pdiv(gform(temp1,temp0),temp1,temp0)}
+			}
+		}
+	}
+	
+	//辅助表格
+	temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="0,";}temp2="["+temp2+"0]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";
+	temp5=temp3;//0
+	temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";
+	temp6=temp3;//-1
+	
+	//辅助表格0
+	//temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="0,";}temp2="["+temp2+"0]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";
+	eval("var form0="+temp5);
+	function pform0(b,x0,y0){
+		form0[x0-1][y0-1]=b;
+	}
+	function gform0(x0,y0){
+		return form0[x0-1][y0-1]
+	}
+	
+	
+	//辅助表格1
+	//temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("var form1="+temp3);
+	function cform1(){temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("form1="+temp3);}
+	function pform1(b,x0,y0){
+		form1[x0-1][y0-1]=b;
+	}
+	function gform1(x0,y0){
+		return form1[x0-1][y0-1]
+	}
+	
+	
+	//辅助表格3
+	//temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("var form3="+temp3);
+	function cform3(){temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";eval("form3="+temp3);}
+	function pform3(b,x0,y0){
+		form3[x0-1][y0-1]=b;
+	}
+	function gform3(x0,y0){
+		return form3[x0-1][y0-1]
+	}
+	
+	
+	//辅助表格2
+	//temp3="";temp2="";for(var temp1=1;temp1<y;temp1++){temp2+="-1,";}temp2="["+temp2+"-1]";for(var temp0=1;temp0<x;temp0++){temp3+=temp2+",";}temp3="["+temp3+temp2+"]";
+	eval("var form2="+temp6);
+	function pform2(b,x0,y0){
+		form2[x0-1][y0-1]=b;
+	}
+	function gform2(x0,y0){
+		return form2[x0-1][y0-1]
+	}
+	
+	
+	//蛇1头
+	var s1x=mx-1;
+	var s1y=my;
+	var s1dx=1;
+	var s1dy=0;
+	var s1dx2=1;
+	var s1dy2=0;
+	var s1arrx=new Array();
+	var s1arry=new Array();
+	var s1rgb=new Array();
+	var s1num=0;
+	var autonumb=false;
+	var autonumb0=true;
+	var autonum;
+	var autoform3=false;
+	var autoalways=false;
+	
+	var s1l=10;
+	var s1pt=1;
+	var s1pt0=0;
+	var s1pt1=0;
+	var s1stp=0;
+	var s1lf=1;
+	
+	function s1(){
+		autogo()
+		s1dx2=s1dx;
+		s1dy2=s1dy;
+		s1x+=s1dx;
+		s1y+=s1dy;
+		s1dx0=s1dx;
+		s1dy0=s1dy;
+		//超出
+		if(s1x>x){
+			s1x=1
+			s1dx0=1-x;
+		}
+		if(s1x<1){
+			s1x=x
+			s1dx0=x-1;
+		}
+		if(s1y>y){
+			s1y=1
+			s1dy0=1-y;
+		}
+		if(s1y<1){
+			s1y=y
+			s1dy0=y-1;
+		}
+		actdiv(gform(s1x,s1y),1,s1x,s1y)
+	}
+	//蛇1尾
+	var s2x=mx-s1l-1;
+	var s2y=my;
+	var s2dx=1;
+	var s2dy=0;
+	function s2(){
+		if(stop1==0){
+			if(s1l>s1num-1){
+				s2x+=s2dx;
+				s2y+=s2dy;
+				temp6=0;
+			}else{
+				if(autonumb==false&&autonumb0==true){autonumb=true;autonumb0=false}
+				
+				s2x+=s1arrx[s1num-s1l-1];
+				s2y+=s1arry[s1num-s1l-1];
+				temp6=s1rgb[s1num-s1l-1];
+				if(gform0(s2x,s2y)!=0){temp6=2;pform0(gform0(s2x,s2y)-1,s2x,s2y)}
+			}
+			
+			if(s2x>0&&s2y>0&&s2x<x+1&&s2y<y+1){
+				pform(temp6,s2x,s2y)
+			}
+		}else{
+			stop1--;
+		}
+	}
+	
+	//绘制边框
+	function pborder(){
+		for(var temp0=1;temp0<y+1;temp0++){
+			pform(1,1,temp0)
+			pform(1,x,temp0)
+		}
+		for(var temp1=1;temp1<x+1;temp1++){
+			pform(1,temp1,1)
+			pform(1,temp1,y)
+		}
+	}
+	
+	
+	
+	/*
+	在表格1，pform1(b,x0,y0)，gform1(x0,y0)
+	队列autox[],autoy[]
+	处理点：比较get x,y +1和周围点（符合要求）大小，小于则赋值过去并加入队列并增加长度auto1
+	
+	初始化：auto1=0 autox=[] autoy=[]
+	归0：auto1=0
+	重复
+		for 0~auto1-1
+			处理点（autox[0],autoy[0]）
+			
+			autox,autoy删除第一个
+	直到长度为auto1=0
+	打印
+	
+	*/
+	//自动
+	var auto1=0 
+	var autox=[]
+	var autoy=[]
+	var auto2=0 
+	var auto2x=[]
+	var auto2y=[]
+	
+	function auto(){
+		auto1=1
+		autox=[s1x]
+		autoy=[s1y]
+		cform1();
+		pform1(0,s1x,s1y)
+		do{
+			autodiv(autox[0],autoy[0])
+			autox.shift()
+			autoy.shift()
+			auto1--;
+			
+		}while(auto1>0)
+		//枚举结束
+		//alert(form1)
+		auto2f()
+	}
+	function auto2f(){
+		auto2=1
+		auto2x=[f1x]
+		auto2y=[f1y]
+		cform3();
+		if(gform1(f1x,f1y)==-1){
+			//diemsg("XZH找不到路径",0)
+			autoalways=true;
+		}
+		pform3(gform1(f1x,f1y),f1x,f1y);
+		autoform3=true
+		do{
+			auto2div(auto2x[0],auto2y[0])
+			auto2x.shift()
+			auto2y.shift()
+			auto2--;
+			
+		}while(auto2>0)
+		//枚举结束
+		//alert(form3)
+	}
+	
+	function autodiv(x,y){
+		autonum=gform1(x,y)+1
+		autodiv0(autonum,x,crty(y+1))
+		autodiv0(autonum,x,crty(y-1))
+		autodiv0(autonum,crtx(x-1),y)
+		autodiv0(autonum,crtx(x+1),y)
+	}
+	function auto2div(x,y){
+		auto2num=gform1(x,y)-1
+		auto2div0(auto2num,x,crty(y+1))
+		auto2div0(auto2num,x,crty(y-1))
+		auto2div0(auto2num,crtx(x-1),y)
+		auto2div0(auto2num,crtx(x+1),y)
+	}
+	function crtx(a){return ((a-1)%x+x)%x+1}
+	function crty(a){return ((a-1)%y+y)%y+1}
+	function autodiv0(a,x,y){
+		if((gform(x,y)==0||(x==s1x&&y==s1y)||gform(x,y)==4)||(gform(x,y)==2&&s1num+a>s1l+gform2(x,y))){
+			if(a<gform1(x,y)||gform1(x,y)==-1){
+				pform1(a,x,y);
+				autox.push(x);
+				autoy.push(y);
+				auto1++;
+			}
+		}
+	}
+	function auto2div0(a,x,y){
+		if(a==gform1(x,y)&&gform1(x,y)!=-1){
+			pform3(gform1(x,y),x,y);
+			auto2x.push(x);
+			auto2y.push(y);
+			auto2++;
+		}
+	}
+	function autogo(){
+		if(autoform3==true){
+			if(gform3(crtx(s1x+s1dx),crty(s1y+s1dy))!=gform3(s1x,s1y)+1){
+				if(s1dx==0){
+					if(gform3(crtx(s1x+1),s1y)==gform3(s1x,s1y)+1){s1dx=1;s1dy=0}
+					if(gform3(crtx(s1x-1),s1y)==gform3(s1x,s1y)+1){s1dx=-1;s1dy=0}
+				}else{
+					if(gform3(s1x,crty(s1y+1))==gform3(s1x,s1y)+1){s1dy=1;s1dx=0}
+					if(gform3(s1x,crty(s1y-1))==gform3(s1x,s1y)+1){s1dy=-1;s1dx=0}
+				}
+				
+			}
+		}
+	}
+	
+	
+	
+	function pborder(){
+		for(var temp0=1;temp0<y+1;temp0++){
+			pform(1,1,temp0)
+			pform(1,x,temp0)
+		}
+		for(var temp1=1;temp1<x+1;temp1++){
+			pform(1,temp1,1)
+			pform(1,temp1,y)
+		}
+	}
+	
+	
+	//cookie
+	//setCookie("password","123456",30);
+	function setCookie(cname,cvalue,exdays){
+		var ddddd = new Date();
+		ddddd.setTime(ddddd.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+ddddd.toGMTString();
+		document.cookie = cname+"="+cvalue+"; "+expires;
+	}
+	//getCookie("open")
+	function getCookie(cname){
+		var kname = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) {
+			var ck = ca[i].trim();
+			if (ck.indexOf(name)==0) { return ck.substring(kname.length,ck.length); }
+		}
+		return "";
+	}
+	window.onload=function(){
+		var date=new Date();
+		setCookie("xzhvst1",getCookie("xzhvst1")+"x"+(date.getMonth()+1).toString().padStart(2,"0")+":"+date.getDate().toString().padStart(2,"0")+":"+date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0"),30)
+		//alert((date.getMonth()+1).toString().padStart(2,"0")+":"+date.getDate().toString().padStart(2,"0")+":"+date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0"))
+		
+		temp3=""
+		for(var temp0=1;temp0<y+1;temp0++){
+			temp2=""
+			for(var temp1=1;temp1<x+1;temp1++){
+				temp2+="<d"+"iv "+own1.replace("x1",temp1).replace("y1",temp0)+"></di"+"v>";
+			}
+			temp3+="<d"+"iv class='main1'>"+temp2+"</di"+"v>";
+		}
+		document.getElementById("main0").innerHTML+=temp3;
+		document.getElementById("main").style.width=dx*x+"px";
+		document.getElementById("note").style.width=dx*x+20+"px";
+		document.getElementById("html1").style.width=dx*x+240+"px"
+		document.getElementById("main").style.left="calc(50% - "+(dx*x/2+40)+"px)";
+		document.getElementById("note").style.left="calc(50% - "+(dx*x/2+40)+"px)";
+		document.getElementById("html1").style.left="calc(50% - "+(dx*x/2+120)+"px)";
+		document.getElementById("note").style.top=dy*y/2+186;
+		
+			
+		//setTimeout("die()",10000)
+		setTimeout("s1()",6000)
+		gst();
+		
+		//pborder()
+		pform(2,mx-4,my)
+		pform(2,mx-3,my)
+		pform(2,mx-2,my)
+		pform(2,mx-1,my)
+		f1()
+		//s1()
+		//alert()
+		temp6=getCookie("xzhbgimg")*1;
+		if(isNaN(temp6)||temp6==0){}else{backimg=temp6;hfu()};
+		change0("firstshow","transition:2s;transition-delay:6s;pointer-events:none;opacity:0;");
+		setTimeout('change0("firstshow","display:none;");',8000)
+		setTimeout('scrollid("topdiv");',6000)
+	}
+	document.onkeydown=function(event){
+		var e = event || window.event || arguments.callee.caller.arguments[0];
+		if((e && e.keyCode==38)||(e && e.keyCode==87)){//上
+			if(s1dx2){
+				s1dx=0;
+				s1dy=-1;
+			}
+			return false;
+		}
+		if((e && e.keyCode==37)||(e && e.keyCode==65)){//左
+			if(s1dy2){
+				s1dx=-1;
+				s1dy=0;
+			}
+			return false;
+		}
+		if((e && e.keyCode==40)||(e && e.keyCode==83)){//下
+			if(s1dx2){
+				s1dx=0;
+				s1dy=1;
+			}
+			return false;
+		}
+		if((e && e.keyCode==39)||(e && e.keyCode==68)){//右
+			if(s1dy2){
+				s1dx=1;
+				s1dy=0;
+			}
+			return false;
+		}
+		if(e && e.keyCode==80){//暂停
+			alert("你已暂停\n\n点击取消以继续");
+			return false;
+		}if(e && e.keyCode==82){//重玩
+			location.reload();
+			return false;
+		}
+	}; 
+	var scrollTop=0;
+	var topdv=0;
+	function gst(){
+		scrollTop=0;
+		if(document.documentElement&&document.documentElement.scrollTop){
+			scrollTop=document.documentElement.scrollTop;
+		}else if(document.body){
+			scrollTop=document.body.scrollTop;
+		}
+		if(topdv==1&&scrollTop<500){
+		topdv=0;change0("totop","opacity:0;");
+		}
+		if(topdv==0&&scrollTop>500){
+		topdv=1;change0("totop","opacity:1;");
+		}
+		setTimeout("gst()",1000);
+	}
+</script>
+
+
+
+
+<script>
+    function change0(x,y){
+        document.getElementById(x).style.cssText+=y;
+    }
+</script>
+
+</body></html>
