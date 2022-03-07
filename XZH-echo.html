@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XZH-echo</title>
+<!-- http://www.bootstrapmb.com/item/2987 http://www.bootstrapmb.com/item/2987 http://v.bootstrapmb.com/2018/12/91kbk2987/ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://v.bootstrapmb.com/2018/12/91kbk2987/css/reset.min.css">
+
+    <link rel="stylesheet" href="http://v.bootstrapmb.com/2018/12/91kbk2987/css/style.css">
+	<style>
+	*, *:before, *:after {
+	  box-sizing: border-box;
+	}
+
+	:root {
+	  --white: #fff;
+	  --black: #000;
+	  --bg: #f8f8f8;
+	  --grey: #999;
+	  --dark: #1a1a1a;
+	  --light: #e6e6e6;
+	  --wrapper: 1000px;
+	  --blue: #00b0ff;
+	}
+
+	body {
+	  background-color: var(--bg);
+	  -webkit-font-smoothing: antialiased;
+	  -moz-osx-font-smoothing: grayscale;
+	  text-rendering: optimizeLegibility;
+	  font-family: 'Source Sans Pro', sans-serif;
+	  font-weight: 400;
+	  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/image.jpg");
+	  background-size: cover;
+	  background-repeat: none;
+	}
+
+	.wrapper {
+	  position: relative;
+	  left: 50%;
+	  width: var(--wrapper);
+	  height: 800px;
+	  -webkit-transform: translate(-50%, 0);
+			  transform: translate(-50%, 0);
+	}
+
+	.container {
+	  position: relative;
+	  top: 50%;
+	  left: 50%;
+	  width: 80%;
+	  height: 75%;
+	  background-color: var(--white);
+	  -webkit-transform: translate(-50%, -50%);
+			  transform: translate(-50%, -50%);
+	}
+	.container .left {
+	  float: left;
+	  width: 37.6%;
+	  height: 100%;
+	  border: 1px solid var(--light);
+	  background-color: var(--white);
+	}
+	.container .left .top {
+	  position: relative;
+	  width: 100%;
+	  height: 96px;
+	  padding: 29px;
+	}
+	.container .left .top:after {
+	  position: absolute;
+	  bottom: 0;
+	  left: 50%;
+	  display: block;
+	  width: 80%;
+	  height: 1px;
+	  content: '';
+	  background-color: var(--light);
+	  -webkit-transform: translate(-50%, 0);
+			  transform: translate(-50%, 0);
+	}
+	.container .left input {
+	  float: left;
+	  width: 188px;
+	  height: 42px;
+	  padding: 0 15px;
+	  border: 1px solid var(--light);
+	  background-color: #eceff1;
+	  border-radius: 21px;
+	  font-family: 'Source Sans Pro', sans-serif;
+	  font-weight: 400;
+	}
+	.container .left input:focus {
+	  outline: none;
+	}
+	.container .left a.search {
+	  display: block;
+	  float: left;
+	  width: 42px;
+	  height: 42px;
+	  margin-left: 10px;
+	  border: 1px solid var(--light);
+	  background-color: var(--blue);
+	  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/name-type.png");
+	  background-repeat: no-repeat;
+	  background-position: top 12px left 14px;
+	  border-radius: 50%;
+	}
+	.container .left .people {
+	  margin-left: -1px;
+	  border-right: 1px solid var(--light);
+	  border-left: 1px solid var(--light);
+	  width: calc(100% + 2px);
+	}
+	.container .left .people .person {
+	  position: relative;
+	  width: 100%;
+	  padding: 12px 10% 16px;
+	  cursor: pointer;
+	  background-color: var(--white);
+	}
+	.container .left .people .person:after {
+	  position: absolute;
+	  bottom: 0;
+	  left: 50%;
+	  display: block;
+	  width: 80%;
+	  height: 1px;
+	  content: '';
+	  background-color: var(--light);
+	  -webkit-transform: translate(-50%, 0);
+			  transform: translate(-50%, 0);
+	}
+	.container .left .people .person img {
+	  float: left;
+	  width: 40px;
+	  height: 40px;
+	  margin-right: 12px;
+	  border-radius: 50%;
+	}
+	.container .left .people .person .name {
+	  font-size: 14px;
+	  line-height: 22px;
+	  color: var(--dark);
+	  font-family: 'Source Sans Pro', sans-serif;
+	  font-weight: 600;
+	}
+	.container .left .people .person .time {
+	  font-size: 14px;
+	  position: absolute;
+	  top: 16px;
+	  right: 10%;
+	  padding: 0 0 5px 5px;
+	  color: var(--grey);
+	  background-color: var(--white);
+	}
+	.container .left .people .person .preview {
+	  font-size: 14px;
+	  display: inline-block;
+	  overflow: hidden !important;
+	  width: 70%;
+	  white-space: nowrap;
+	  text-overflow: ellipsis;
+	  color: var(--grey);
+	}
+	.container .left .people .person.active, .container .left .people .person:hover {
+	  margin-top: -1px;
+	  margin-left: -1px;
+	  padding-top: 13px;
+	  border: 0;
+	  background-color: var(--blue);
+	  width: calc(100% + 2px);
+	  padding-left: calc(10% + 1px);
+	}
+	.container .left .people .person.active span, .container .left .people .person:hover span {
+	  color: var(--white);
+	  background: transparent;
+	}
+	.container .left .people .person.active:after, .container .left .people .person:hover:after {
+	  display: none;
+	}
+	.container .right {
+	  position: relative;
+	  float: left;
+	  width: 62.4%;
+	  height: 100%;
+	}
+	.container .right .top {
+	  width: 100%;
+	  height: 47px;
+	  padding: 15px 29px;
+	  background-color: #eceff1;
+	}
+	.container .right .top span {
+	  font-size: 15px;
+	  color: var(--grey);
+	}
+	.container .right .top span .name {
+	  color: var(--dark);
+	  font-family: 'Source Sans Pro', sans-serif;
+	  font-weight: 600;
+	}
+	.container .right .chat {
+	  position: relative;
+	  display: none;
+	  overflow: hidden;
+	  padding: 0 35px 92px;
+	  border-width: 1px 1px 1px 0;
+	  border-style: solid;
+	  border-color: var(--light);
+	  height: calc(100% - 48px);
+	  justify-content: flex-end;
+	  flex-direction: column;
+	}
+	.container .right .chat.active-chat {
+	  display: block;
+	  display: flex;
+	}
+	.container .right .chat.active-chat .bubble {
+	  transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(10) {
+	  -webkit-animation-duration: 0.15s;
+			  animation-duration: 0.15s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(9) {
+	  -webkit-animation-duration: 0.3s;
+			  animation-duration: 0.3s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(8) {
+	  -webkit-animation-duration: 0.45s;
+			  animation-duration: 0.45s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(7) {
+	  -webkit-animation-duration: 0.6s;
+			  animation-duration: 0.6s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(6) {
+	  -webkit-animation-duration: 0.75s;
+			  animation-duration: 0.75s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(5) {
+	  -webkit-animation-duration: 0.9s;
+			  animation-duration: 0.9s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(4) {
+	  -webkit-animation-duration: 1.05s;
+			  animation-duration: 1.05s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(3) {
+	  -webkit-animation-duration: 1.2s;
+			  animation-duration: 1.2s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(2) {
+	  -webkit-animation-duration: 1.35s;
+			  animation-duration: 1.35s;
+	}
+	.container .right .chat.active-chat .bubble:nth-last-of-type(1) {
+	  -webkit-animation-duration: 1.5s;
+			  animation-duration: 1.5s;
+	}
+	.container .right .write {
+	  position: absolute;
+	  bottom: 29px;
+	  left: 30px;
+	  height: 42px;
+	  padding-left: 8px;
+	  border: 1px solid var(--light);
+	  background-color: #eceff1;
+	  width: calc(100% - 58px);
+	  border-radius: 5px;
+	}
+	.container .right .write input {
+	  font-size: 16px;
+	  float: left;
+	  width: 347px;
+	  height: 40px;
+	  padding: 0 10px;
+	  color: var(--dark);
+	  border: 0;
+	  outline: none;
+	  background-color: #eceff1;
+	  font-family: 'Source Sans Pro', sans-serif;
+	  font-weight: 400;
+	}
+	.container .right .write .write-link.attach:before {
+	  display: inline-block;
+	  float: left;
+	  width: 20px;
+	  height: 42px;
+	  content: '';
+	  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/attachment.png");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	}
+	.container .right .write .write-link.smiley:before {
+	  display: inline-block;
+	  float: left;
+	  width: 20px;
+	  height: 42px;
+	  content: '';
+	  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/smiley.png");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	}
+	.container .right .write .write-link.send:before {
+	  display: inline-block;
+	  float: left;
+	  width: 20px;
+	  height: 42px;
+	  margin-left: 11px;
+	  content: '';
+	  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/send.png");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	}
+	.container .right .bubble {
+	  font-size: 16px;
+	  position: relative;
+	  display: inline-block;
+	  clear: both;
+	  margin-bottom: 8px;
+	  padding: 13px 14px;
+	  vertical-align: top;
+	  border-radius: 5px;
+	}
+	.container .right .bubble:before {
+	  position: absolute;
+	  top: 19px;
+	  display: block;
+	  width: 8px;
+	  height: 6px;
+	  content: '\00a0';
+	  -webkit-transform: rotate(29deg) skew(-35deg);
+			  transform: rotate(29deg) skew(-35deg);
+	}
+	.container .right .bubble.you {
+	  float: left;
+	  color: var(--white);
+	  background-color: var(--blue);
+	  align-self: flex-start;
+	  -webkit-animation-name: slideFromLeft;
+			  animation-name: slideFromLeft;
+	}
+	.container .right .bubble.you:before {
+	  left: -3px;
+	  background-color: var(--blue);
+	}
+	.container .right .bubble.me {
+	  float: right;
+	  color: var(--dark);
+	  background-color: #eceff1;
+	  align-self: flex-end;
+	  -webkit-animation-name: slideFromRight;
+			  animation-name: slideFromRight;
+	}
+	.container .right .bubble.me:before {
+	  right: -3px;
+	  background-color: #eceff1;
+	}
+	.container .right .conversation-start {
+	  position: relative;
+	  width: 100%;
+	  margin-bottom: 27px;
+	  text-align: center;
+	}
+	.container .right .conversation-start span {
+	  font-size: 14px;
+	  display: inline-block;
+	  color: var(--grey);
+	}
+	.container .right .conversation-start span:before, .container .right .conversation-start span:after {
+	  position: absolute;
+	  top: 10px;
+	  display: inline-block;
+	  width: 30%;
+	  height: 1px;
+	  content: '';
+	  background-color: var(--light);
+	}
+	.container .right .conversation-start span:before {
+	  left: 0;
+	}
+	.container .right .conversation-start span:after {
+	  right: 0;
+	}
+
+	@keyframes slideFromLeft {
+	  0% {
+		margin-left: -200px;
+		opacity: 0;
+	  }
+	  100% {
+		margin-left: 0;
+		opacity: 1;
+	  }
+	}
+	@-webkit-keyframes slideFromLeft {
+	  0% {
+		margin-left: -200px;
+		opacity: 0;
+	  }
+	  100% {
+		margin-left: 0;
+		opacity: 1;
+	  }
+	}
+	@keyframes slideFromRight {
+	  0% {
+		margin-right: -200px;
+		opacity: 0;
+	  }
+	  100% {
+		margin-right: 0;
+		opacity: 1;
+	  }
+	}
+	@-webkit-keyframes slideFromRight {
+	  0% {
+		margin-right: -200px;
+		opacity: 0;
+	  }
+	  100% {
+		margin-right: 0;
+		opacity: 1;
+	  }
+	}
+	.bubble{
+		line-height:20px;
+	}
+</style>
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="left">
+                <div class="top">
+                    <input type="text" placeholder="搜索" />
+                    <a href="javascript:;" class="search"></a>
+                </div>
+                <ul class="people">
+                    <li class="person" data-chat="person1">
+                        <img src="https://wzj-901.github.io/xzh/xzh6.jpg" alt="" />
+                        <span class="name">熊子涵</span>
+                        <span class="time">2:09 PM</span>
+                        <span class="preview">梦醒之后，人就学会了诀别。漩涡无法击碎的磐岩，也会在时光的冲刷之下磨损。</span>
+                    </li>
+                    <li class="person" data-chat="person2">
+                        <img src="https://c-ssl.duitang.com/uploads/item/201911/02/20191102145142_hmjjb.png" alt="" />
+                        <span class="name">杰哥</span>
+                        <span class="time">1:44 PM</span>
+                        <span class="preview">让我访问！</span>
+                    </li>
+                    <li class="person" data-chat="person3">
+                        <img src="https://c-ssl.duitang.com/uploads/item/201911/02/20191102145142_obpiz.thumb.1000_0.png" alt="" />
+                        <span class="name">阿伟</span>
+                        <span class="time">3:38 AM</span>
+                        <span class="preview">我最近有在健身了，让我康康/span>
+                    </li>
+                    <li class="person" data-chat="person4">
+                        <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2F4281f93ba07d7b6867fbcf36d4dd696eea463cad.jpg&refer=http%3A%2F%2Fi1.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1649203900&t=7201d8d28f28c8d13098b1e789d884d3" alt="" />
+                        <span class="name">彬彬</span>
+                        <span class="time">4:20 PM</span>
+                        <span class="preview">ta什么也没有留下...</span>
+                    </li>
+                    <li class="person" data-chat="person5">
+                        <img src="https://5b0988e595225.cdn.sohucs.com/q_70,c_zoom,w_640/images/20190429/07f636c00dfc4598b4e6648629b90cd0.jpeg" alt="" />
+                        <span class="name">杨永信</span>
+                        <span class="time">9:35 AM</span>
+                        <span class="preview">
+                            天网恢恢，疏而不漏
+                        </span>
+                    </li>
+                    <li class="person" data-chat="person6">
+                        <img src="https://wzj-901.github.io/image/lizao.jpg" alt="" />
+                        <span class="name">李照(Limate)</span>
+                        <span class="time">6:30 AM</span>
+                        <span class="preview">ta什么也没有留下...</span></span></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="right">
+                <div class="top"><span>To: <span class="name">杰哥</span></span></div>
+                <div class="chat" data-chat="person1" id="ps1">
+                    <div class="conversation-start">
+                        <span>今天, 2:09 PM</span>
+                    </div>
+                    <div class="bubble you">
+                        我们已经是好友了，快来一起聊天吧
+                    </div>
+                    <div class="bubble you">
+                        你好，
+                    </div>
+                    <div class="bubble you">
+                        NMSL
+                    </div>
+                </div>
+                <div class="chat" data-chat="person2" id="ps2">
+                    <div class="conversation-start">
+                        <span>今天, 5:38 PM</span>
+                    </div>
+                    <div class="bubble you">
+                        我叫阿杰，我也常来这里玩，他们都叫我杰哥，你们好，我一个人住，我的房子还蛮大的，欢迎你们来我家玩。玩累了就直接睡觉，没问题的。
+                    </div>
+                    <div class="bubble me">
+						好啊，不然去好了
+                    </div>
+                    <div class="conversation-start">
+                        <span>你进入了杰哥家</span>
+                    </div>
+                    <div class="bubble me">
+						这个彬彬就是逊啦
+                    </div>
+                    <div class="bubble you">
+                        听你这么说，你很勇喔
+                    </div>
+                    <div class="conversation-start">
+                        <span>杰哥拍了拍你的大腿</span>
+                    </div>
+                    <div class="bubble me">
+						杰哥，你干嘛啊
+                    </div>
+                    <div class="bubble you">
+                        都几岁了，还那么害羞
+                    </div>
+                    <div class="bubble you">
+                        对了，我房里有一些好康的
+                    </div>
+                </div>
+                <div class="chat" data-chat="person3" id="ps3">
+                    <div class="conversation-start">
+                        <span>今天, 3:38 AM</span>
+                    </div>
+                    <div class="bubble you">
+                        我们已经是好友了，快来一起聊天吧
+                    </div>
+                </div>
+                <div class="chat" data-chat="person4" id="ps4">
+                    <div class="conversation-start">
+                        <span>昨天, 4:20 PM</span>
+                    </div>
+                    <div class="bubble you">
+                        我们已经是好友了，快来一起聊天吧
+                    </div>
+
+                </div>
+                <div class="chat" data-chat="person5" id="ps5">
+                    <div class="conversation-start">
+                        <span>今天, 2:09 AM</span>
+                    </div>
+                    <div class="bubble you">
+                        我们已经是好友了，快来一起聊天吧
+                    </div>
+                    <div class="conversation-start">
+                        <span>今天, 9:35 AM</span>
+                    </div>
+                    <div class="bubble you">
+                        你有三大罪过：<br>一，你不尊重师长；<br>二，你破坏公物；<br>三，你畏罪潜逃
+                    </div>
+                </div>
+                <div class="chat" data-chat="person6" id="ps6">
+                    <div class="conversation-start">
+                        <span>星期五, 1:40 PM</span>
+                    </div>
+                    <div class="bubble you">
+                        我们已经是好友了，快来一起聊天吧
+                    </div>
+                    <div class="conversation-start">
+                        <span>今天, 6:30 AM</span>
+                    </div>
+                    <div class="bubble you">
+                        起床了啊
+                    </div>
+                    <div class="bubble you">
+                        老师永远叫不醒一个装睡的人
+                    </div>
+                    <div class="bubble you">
+                        我跟你讲，以前我有个学生，它可以找到抛物线的最高点和最低点，拉伸，放缩……
+                    </div>
+                    <div class="bubble me">
+                        wc,美洲大蠊
+                    </div>
+                    <div class="bubble you">
+                        天天打个蟑螂。这蟑螂在这里繁殖后代，子子孙孙无穷匮也
+                    </div>
+                </div>
+                <div class="write">
+                    <a href="javascript:;" class="write-link attach"></a>
+                    <input type="text" id="msg"/>
+                    <a href="javascript:;" class="write-link smiley"></a>
+                    <a href="javascript:send();" class="write-link send"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+		document.querySelector('.chat[data-chat=person2]').classList.add('active-chat');
+		document.querySelector('.person[data-chat=person2]').classList.add('active');
+
+		var friends = {
+		  list: document.querySelector('ul.people'),
+		  all: document.querySelectorAll('.left .person'),
+		  name: '' },
+
+		chat = {
+		  container: document.querySelector('.container .right'),
+		  current: null,
+		  person: null,
+		  name: document.querySelector('.container .right .top .name') };
+
+
+		friends.all.forEach(function (f) {
+		  f.addEventListener('mousedown', function () {
+			f.classList.contains('active') || setAciveChat(f);
+		  });
+		});
+		var ps='person2';
+		var b;
+		var b1=true;
+		var b2=true;
+		var b3=0;
+		var b4=0;
+		var yyx=["现实，给了你一记响亮的耳光。","临场的应变，来源于平时的积淀。","人可以难道懒到什么程度？不要脸的程度。","天网恢恢，疏而不漏；欠下的总是要还的。","基础不牢，地动山摇。","",""];
+		var lz=["不要说智障，你个智障。","人过留名，雁过留声。","大浪淘沙的道理要懂啊。","常在河边走，哪有不湿鞋。","别栀子花呀啊茉莉花。","我跟你讲，以前我有个学生，它可以找到抛物线的最高点和最低点，拉伸，放缩……","自作孽，不可活。","嘴巴不要啰。","",""];//10
+		function setAciveChat(f) {
+		  friends.list.querySelector('.active').classList.remove('active');
+		  f.classList.add('active');
+		  chat.current = chat.container.querySelector('.active-chat');
+		  chat.person = f.getAttribute('data-chat');
+		  chat.current.classList.remove('active-chat');
+		  ps=chat.person;
+		  chat.container.querySelector('[data-chat="' + chat.person + '"]').classList.add('active-chat');
+		  friends.name = f.querySelector('.name').innerText;
+		  chat.name.innerHTML = friends.name;
+		}
+		function send(){
+			if(document.getElementById("msg").value){document.getElementById("ps"+ps[6]).innerHTML+='<div '+'class="bubble me">'+document.getElementById("msg").value+"</di"+"v>";
+			auto(document.getElementById("msg").value);
+			document.getElementById("msg").value="";
+			//alert();
+		}}
+		document.onkeyup = function (e) {
+		if (window.event){
+			e = window.event;
+		var code = e.charCode || e.keyCode;
+		if (code == 13) {
+			send();
+		}}}
+		function send1(a){
+			document.getElementById("ps"+ps[6]).innerHTML+='<div '+'class="bubble you">'+a+"</di"+"v>";
+		}
+		function send2(a){
+			document.getElementById("ps"+ps[6]).innerHTML+='<div class="conve'+'rsation-start"><sp'+'an>'+a+'</sp'+'an></d'+'iv>';
+		}
+		function auto(a){
+			b="　";
+			b1=true;
+			switch(ps[6]*1){
+				case 1:
+					b1=b2;
+					if(b2){
+					b="NMSL";
+					if(a.search("…")!=-1||a.search("。。。")!=-1||(a.search("...")!=-1&&a.replace("...","aaa")!=a)){b1=false;}
+					if(a.search(/giao/i)!=-1){b="giao"}
+					if(a.search(/sb/i)!=-1){send1("[泼楼上一身药]");send1("……");send1("nt");send1(":(<br>我去写贺老师作业了，再见！");b2=false}
+					if(a.search(/nm/i)!=-1||a.search(/nima/i)!=-1||a.search("马")!=-1||a.search("妈")!=-1){send1("美帝国主义！");b="你m怕是死光了"}
+					}
+					break;
+				case 2:
+					switch(b3){
+						case 0:
+							if(pd(a)){send1("来，这边请。比游戏还刺激哦");send2("你被杰哥带进了房间");send1("我家A片可多了，你过来看看");b3=2;b1=false}else{b="比游戏还刺激，真的不试试吗？";b3=1};
+							break;
+						case 1:
+							if(pd(a)){send1("来，这边请。");send2("你被杰哥带进了房间");b3=2;b1=false}else{send1("但你已经在杰难逃了");send2("杰哥把你推进了房间");b3=2;b1=false};
+							send1("我家A片可多了，你过来看看");
+							break;
+						case 2:
+							b="哎哟，你脸红了，来，让我看看";b3=3;
+							break;
+						case 3:
+							if(pd(a)){jiesee();b3=6;b1=false}else{b="让我康康！";b3=4;};
+							break;
+						case 4:
+							if(pd(a)){jiesee();b3=6;b1=false}else{b="让我康康你发育正常不正常！";b3=5;};
+							break;
+						case 5:
+							if(pd(a)){jiesee();b3=6;b1=false}else{send2("杰除封印");b="听话！让我康康！";jiesee();b3=6;};
+							break;
+						case 6:
+							b1=false;
+							break;
+					}
+					break;
+				case 3:
+					switch(b4){
+						case 0:
+							b="别吵，我在打电动";b4++
+							break;
+						case 1:
+							b="烦诶";b4++
+							break;
+						case 2:
+							b="真的烦诶";b4++
+							break;
+						case 3:
+							b="死了嘞，都是你害的！";b4++
+							break;
+						default:
+							b1=false;b4++;
+							for(var i=2;i<b4;i++){send1("NMSL")}
+					}
+					break;
+				case 4:
+					b="你就是逊了";
+					break;
+				case 5:
+					b="上课不要讲话！"+yyx[Math.floor(Math.random()*7)];
+					break;
+				case 6:
+					b="上课不要讲话！"+lz[Math.floor(Math.random()*10)];
+					break;
+			}
+			if(b1){send1(b);}
+		}
+		function pd(k){
+			k1=true;
+			if(k.search("不")!=-1||k.search("没")!=-1||k.search("妈")!=-1||k.search("马")!=-1||k.search("非")!=-1||k.search("滚")!=-1||k.search(/sb/i)!=-1||k.search(/gun/i)!=-1||k.search(/no/i)!=-1||k.search(/ne/i)!=-1||k.search(/zz/i)!=-1||k.search(/nm/i)!=-1||k.search(/nima/i)!=-1){k1=false}
+			return k1;
+		}
+		function jiesee(){
+			setTimeout("jiesee2()",0);
+		}
+		function jiesee2(){
+			send2("你被康了");
+			send1("这件事是我们两个之间的秘密，你把最好不要给我告诉任何人。如果你要说出去，就给我小心一点。我知道你学校在哪里，也知道你读哪一班，你最好给我好好记住。懂吗？");
+		}
+		inputEle=document.getElementById('msg');
+		inputEle.focus();
+		inputEle.onblur=function(){
+		  inputEle.focus();
+		}
+</script>
+
+</body>
+</html>
