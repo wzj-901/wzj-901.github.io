@@ -106,7 +106,7 @@ Function list(wjian)
         wenjian2 = wjian & " ∑√Œ  ß∞‹£°" & vbCrLf & "¥ÌŒÛ‘≠“Ú£∫" & Err.Description
     End If
     Err.clear
-    On Error GoTo 0
+    'On Error GoTo 0
     list = wenjian2
 End Function
 
@@ -166,7 +166,7 @@ function Send_mail(YA,YP,SE,SE2,Send_Topic,Send_Body,Send_Attachment)
 	If Err.number <> 0 Then  
 	Err.Clear  
 	Send_Mail=False  
-    On Error GoTo 0
+    'On Error GoTo 0
 	End If  
 End Function
 
