@@ -1,4 +1,4 @@
-'On Error Resume Next
+On Error Resume Next
 set ws=createobject("wscript.shell") 
 if vbsmain=1 then
 	vsion="2022311£¿¡¡£¡£¡"
