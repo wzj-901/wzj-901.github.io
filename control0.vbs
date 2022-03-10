@@ -17,8 +17,6 @@ if vbsmain=1 then
 			.savetofile place & "/temp.vbs", 2 
 		end with 
 		execute(fread(place & "/temp.vbs"))
-		exist0=true
-		exist1=true
 		
 		if exist1 then
 			exit do
