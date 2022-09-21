@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>兼容测试</title>
+</head>
+<style>
+	.a{
+	margin:50px 100px;
+	position:relative;
+	}
+	#a div{
+	width:3px;
+	position:relative;
+	background-color:red;
+	height:400px;
+	float:left;
+	margin:0 7px;
+	}
+	#b div{
+	width:3px;
+	position:relative;
+	background-color:red;
+	height:400px;
+	float:left;
+	margin:0 5px;
+	
+	}
+	#b{transition:7s;}
+</style>
+<body>
+<div style="position:absolute">
+    <div id="a" class="a" style="background-color:red"></div>
+	<button style="margin-left:30px;background-color:blue;" onclick='x()'>clickme</button>
+	<p style="background-color:pink;" onclick='x()'>点此</p>
+	<input style="" onclick='y()' id="aa">
+</body>
+<script>
+function y(){
+var k=parseInt(document.getElementById("aa").value);
+var j=0;
+for(p=1;p<k;p++){
+j=j+1;
+}
+document.getElementById("a").innerHTML=j}
+function x(){document.getElementById("a").innerHTML="OK";
+alert("ok")}
+</script>
+</html>
