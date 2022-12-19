@@ -1,0 +1,55 @@
+<html><head><meta charset="UTF-8"><title>调试1</title></head>
+<style>
+html{background-color:black}
+body{
+	margin:0;
+}
+.aa{
+	position:absolute;
+	left:100px;
+	top:100px;
+	width:30px;
+	height:30px;
+	z-index:10;
+	border:4px solid red;
+}
+.aa>p{
+	color:red;
+	font-size:10px;
+}
+.bb{
+	position:relative;
+	width:250px;
+	height:200px;
+	font-color:red;
+	background-image:url("https://wzj-901.github.io/xzh/xzh2.png");
+}
+body *{
+	background-color:white;
+}
+</style>
+<body>
+	
+	<div class="aa"><p>1</p></div>
+	
+	<div class="bb" id="bb"><div style="overflow:hidden;"><div style="float:left;margin:10px;">宽度</div><input id="b1"></div><div>高度</div><input id="b2"></div>
+	
+	<script>
+		document.getElementById("b1").onclick=function(){
+			document.getElementById("bb").style.width=document.getElementById("b1").value||250;
+			document.getElementById("bb").style.height=document.getElementById("b2").value||200;
+			
+		}
+		document.getElementById("b2").onclick=function(){
+			document.getElementById("bb").style.width=document.getElementById("b1").value||250;
+			document.getElementById("bb").style.height=document.getElementById("b2").value||200;
+			
+		}
+	
+	
+	</script>
+	
+	
+	
+</body>
+</html>
