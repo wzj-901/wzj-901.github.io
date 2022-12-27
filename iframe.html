@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
     <style type="text/css">
         div {
             height: 100vh;
@@ -31,6 +30,60 @@
             left: 49.75%;
 		   cursor:w-resize;
         }
+		#ctrl-bar1,#ctrl-bar2{
+			position:absolute;
+			right:30px;
+			top:10px;
+			overflow:hidden;
+			height:40px;
+		}
+		#ctrl-bar1>div,#ctrl-bar2>div{
+			position:relative;
+			float:left;
+			height:min-content;
+			width:min-content;
+			margin:0 6px;
+			overflow:hidden;
+			cursor:pointer;
+			//transition:all .1s;
+			border-radius:5px;
+			border: 1px solid rgb(178 178 178 / 38%);
+			background-color:rgba(0,0,0,0);
+		}
+		.pop-out{
+			padding: 5px 5px 1px 5px;
+			opacity:0.6;
+		}
+		.pop-out:hover{
+			opacity:1;
+		}
+		.copy-url{
+			padding: 4px 4px 2px 4px;
+			opacity:0.6;
+			transition:width .4s !important;
+			transition-delay:0s;
+		}
+		.copy-url:hover{
+			opacity:1;
+		}
+		#ctrl-bar1>div:hover,#ctrl-bar2>div:hover{
+			background-color: rgb(86 86 86 / 10%);
+		}
+		.css-helper{
+			opacity:0 !important;
+			width:0.1px !Important;
+			height:100vh !important;
+			margin:0 !important;
+			border:0px !important;
+			padding:0 !iimportant;
+		}
+		.alrt{
+			word-break:keep-all;
+			margin: 1px 0 4px 0;
+			color: rgb(13 87 0);
+			font-weight: bold;
+			display:none;
+		}
     </style>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 	<title>我的文库</title>
@@ -39,10 +92,22 @@
 <body>
 <div class="left" style="background-color: #eaf7f8">
 	<iframe width="100%" height="100%" src="" id="frame1"></iframe>
+	<div id="ctrl-bar1">
+		<div  class="css-helper" style="width:10px !important;"></div>
+		<div class="pop-out" title="弹出独立窗体查看" onclick="PCpop()"><svg fill="#5e5e5e" width="21px" height="21px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke="#5e5e5e" stroke-width="0.576"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_iconCarrier"> <path class="clr-i-outline clr-i-outline-path-1" d="M27,33H5a2,2,0,0,1-2-2V9A2,2,0,0,1,5,7H15V9H5V31H27V21h2V31A2,2,0,0,1,27,33Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M18,3a1,1,0,0,0,0,2H29.59L15.74,18.85a1,1,0,1,0,1.41,1.41L31,6.41V18a1,1,0,0,0,2,0V3Z"></path> </g></svg></div>
+		<div  class="css-helper"></div>
+		<div class="copy-url" id="copy-url1" style="width:24px;" title="复制URL  <PC mode>" onclick='a1();setTimeout("PCcopy()",200)'><div></div><p class="alrt" id="PCcopied">复制成功</p><svg id="PCsvg" width="22px" height="22px" viewBox="0 0 48.00 48.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#5e5e5e" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_iconCarrier"><path d="M25.8927 16.0306L18.1145 8.25238C15.2506 5.38854 10.7031 5.2929 7.9572 8.03878C5.21132 10.7846 5.30696 15.3322 8.1708 18.1961L15.949 25.9742" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M31.9161 22.0706L39.6943 29.8488C42.5581 32.7126 42.9291 37.1231 39.9079 40.0061C36.8867 42.889 32.6144 42.6563 29.7506 39.7925L21.9724 32.0143" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21.2384 21.0758L17.3493 17.1867" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M30.3131 30.1502L26.424 26.2612" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></div>
+		</div>
 </div>
 <div class="drag"></div>
 <div class="right" style="background-color: #f5f5f5">
 	<iframe width="100%" height="100%" src="" id="frame2"></iframe>
+	<div id="ctrl-bar2">
+		<div  class="css-helper" style="width:10px !important;"></div>
+		<div class="pop-out" title="弹出独立窗体查看" onclick="MOBILEpop()"><svg fill="#5e5e5e" width="21px" height="21px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke="#5e5e5e" stroke-width="0.576"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_iconCarrier"> <path class="clr-i-outline clr-i-outline-path-1" d="M27,33H5a2,2,0,0,1-2-2V9A2,2,0,0,1,5,7H15V9H5V31H27V21h2V31A2,2,0,0,1,27,33Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M18,3a1,1,0,0,0,0,2H29.59L15.74,18.85a1,1,0,1,0,1.41,1.41L31,6.41V18a1,1,0,0,0,2,0V3Z"></path> </g></svg></div>
+		<div  class="css-helper"></div>
+		<div class="copy-url" id="copy-url2" style="width:24px;" title="复制URL  <MOBILE mode>" onclick='a3();setTimeout("MOBILEcopy()",200)'><div></div><p class="alrt" id="MOBILEcopied">复制成功</p><svg id="MOBILEsvg" width="22px" height="22px" viewBox="0 0 48.00 48.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#5e5e5e" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_iconCarrier"><path d="M25.8927 16.0306L18.1145 8.25238C15.2506 5.38854 10.7031 5.2929 7.9572 8.03878C5.21132 10.7846 5.30696 15.3322 8.1708 18.1961L15.949 25.9742" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M31.9161 22.0706L39.6943 29.8488C42.5581 32.7126 42.9291 37.1231 39.9079 40.0061C36.8867 42.889 32.6144 42.6563 29.7506 39.7925L21.9724 32.0143" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21.2384 21.0758L17.3493 17.1867" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M30.3131 30.1502L26.424 26.2612" stroke="#55e5e5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></div>
+		</div>
 </div>
 <script type="text/javascript">
     //调整大小
@@ -93,6 +158,30 @@
         }
     };
     resizeDiv.init();
+	function a1(){
+		document.getElementById("copy-url1").style.width="64px";
+	}
+	function a2(){
+		document.getElementById("copy-url1").style.width="24px";
+	}
+	function a3(){
+		document.getElementById("copy-url2").style.width="64px";
+	}
+	function a4(){
+		document.getElementById("copy-url2").style.width="24px";
+	}
+	function PCcopy(){
+		document.getElementById("PCsvg").style.display="none";
+		document.getElementById("PCcopied").style.display="block";
+		setTimeout("PCcopy2()",0);
+		setTimeout('a2();document.getElementById("PCsvg").style.display="unset";document.getElementById("PCcopied").style.display="none";',4000);
+	}
+	function MOBILEcopy(){
+		document.getElementById("MOBILEsvg").style.display="none";
+		document.getElementById("MOBILEcopied").style.display="block";
+		setTimeout("MOBILEcopy2()",0);
+		setTimeout('a4();document.getElementById("MOBILEsvg").style.display="unset";document.getElementById("MOBILEcopied").style.display="none";',4000);
+	}
 </script>
 </body>
 </html>
