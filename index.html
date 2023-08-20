@@ -293,6 +293,12 @@ case 2:
 	document.getElementById('body').style.cssText="display:none";
 	document.getElementById('body2').style.cssText="display:block";
 	lockopen();
+	}if(a.split("src:")[1]){
+	document.write("<body"+" style='margin:0'><iframe src='http://"+a.split("src:")[1]+"' style='height:100vh;width:100%;z-index:1000;border:0px;'></ifrmae></body>")
+	setCookie("password",a,30)
+	}if(a.split("srcs:")[1]){
+	document.write("<body"+" style='margin:0'><iframe src='https://"+a.split("srcs:")[1]+"' style='height:100vh;width:100%;z-index:1000;border:0px;'></ifrmae></body>")
+	setCookie("password",a,30)
 	}
 	break;
 case 3:
@@ -312,7 +318,7 @@ case 3:
 <div id="body2">
 <html>
 <head>
-	<title>Hello World</title>
+	<title>Wzj Github Page</title>
 </head>
 <script>
     var title1on="a1";
