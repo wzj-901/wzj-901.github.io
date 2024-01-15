@@ -1,0 +1,74 @@
+<HTA:APPLICATION Applicationname="enterHELP" SHOWINTASKBAR="no" SingleInstance="no" SYSMENU="no" CAPTION="no" SCROLL="no" BORDER="none" BORDERSTYLE="normal"/>
+<meta charset="UTF-8">
+<div id="main" style="left:0px;top:0px;right:0px;width:1000px;height:500px;overflow:hidden;position:absolute;margin:0px;padding:0px;background-color:black;"></div>
+<script language="null" id="str1">
+			<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=11" />
+			<div style="font-family:'仿宋';font-weight:bold;color:white">　要脱单，找娄宽</div>
+			<div style="font-family:'仿宋';font-weight:bold;color:white">物竞娄宽，帮您脱单</div>
+</script><script language="null" id="str2">
+			#main{
+				overflow:hidden;
+			}
+			#img1{
+				width:231px;
+				cursor:url("图片1.cur");
+			}
+			html{
+			background-color:black;}
+</script>
+<script language="JavaScript" type="text/JavaScript">
+	function stop() {
+		return false;
+	}
+	var sw=screen.width//屏幕高度
+	var sh=screen.height//屏幕宽度
+	var imagew=230//popup宽
+	var imageh=53//popup高
+	var speed=100//popup刷新速度
+	var winmain=0//主窗体是否显示
+	var winblur=1//主窗体失去焦点是否关闭
+	var blurdo=""//主窗体失去焦点动作（默认）
+	var blurdo1=""//主窗体失去焦点动作
+	var maincode=""//主窗体代码（默认）
+	var x=sw/2-100,y=250//popup坐标
+	//sw-233,sh-60-33
+	var lp1='msg.show(x,y,imagew,imageh);funcloop=setTimeout("loop1();",speed);'//popup刷新代码
+	var lp='msg.show(x,y,imagew,imageh);funcloop=setTimeout("loop1();",speed);'//popup刷新代码（默认）
+	var msg = window.createPopup();//popup
+	var doc = msg.document.body;//popup的body
+	var str1=document.getElementById("str1").innerHTML//popup的html
+	var str2=document.getElementById("str2").innerHTML//popup的css
+	str1=str1.replace("</"+">","</scri"+"pt>")
+	doc.innerHTML = str1;
+	msg.document.createStyleSheet().cssText=str2;
+	msg.document.onmouseover=function(){
+		x=randw();y=randh();
+	}
+	document.oncontextmenu = stop;
+	msg.document.oncontextmenu = stop;	
+	function loop1(){
+		eval(lp1);
+	}
+	function randw(){
+		return Math.floor(Math.random()*(sw-233)); 
+	}
+	function randh(){
+		return Math.floor(Math.random()*(sh-60-33)); 
+	}
+	
+	loop1();
+	
+</script>
+<script language="VBScript">
+	function winhide()
+		set doc=window.document
+		sw=screen.width
+		sh=screen.height
+		intLeft = sw+10
+		intTop = 0
+		window.resizeTo 0,0
+		window.moveTo intLeft,intTop
+	end function
+	temp=winhide()
+</script>
