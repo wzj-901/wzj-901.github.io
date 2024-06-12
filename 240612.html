@@ -1,0 +1,30 @@
+<script>
+
+var x1=0,x=1,the1=0,the=0.0001,d=0.00001,t1l,times=0;
+
+do{
+	x1+=(.5*the1^2*x-.25*the^2)*d;
+	the1+=-(.5*the+2*x1*the1)*d/x;
+	x+=x1*d
+	the+=the1*d;
+	times++;
+}while( x<1.3 )
+
+do{
+	t1l=the1;
+	x1+=(.5*the1^2*x-.25*the^2)*d;
+	the1+=-(.5*the+2*x1*the1)*d/x;
+	x+=x1*d
+	the+=the1*d;
+	times++;
+}while( t1l*the1>0 )
+
+
+
+console.log("x:"+x+" x1:"+x1)
+console.log("theta:"+the+" theta1:"+the1)
+console.log("迭代"+times+"次")
+
+document.write("x:"+x+" x1:"+x1+" theta:"+the+" theta1:"+the1+" 迭代"+times+"次")
+
+</script>
