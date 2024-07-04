@@ -1,0 +1,35 @@
+<script>
+a=true;
+x1=0.00003;
+x0=0.00015;
+n0=1000;
+n1=0;
+k=1;
+window.onclick=function(){if(a){a=false;
+	Math.random();
+	Sn=0;
+	Sn2=0;
+	do{
+		n1+=n0;
+		for(n=1;n<n0+1;n++){
+			x=0;
+			j=0;
+			do{
+				j++;
+				x+=x1+x0*(2*Math.random()-1)
+			}while(x<1)
+			//console.log(n+"： "+j);
+			Sn+=j;
+			Sn2+=j*j;
+		}
+		xn=Sn/n1;
+		xn2=Math.pow((Sn2-Sn*Sn/n1)/(n1*(n1-1)),.5);
+		console.log("次数：  "+n1);
+		console.log("次数预期:  "+xn);
+		console.log("次数误差:  "+xn2);
+	}while(k=1)
+	
+	
+}
+}
+</script>
