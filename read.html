@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诚信报时工具</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center;    /* 垂直居中 */
+            height: 100vh;          /* 使容器充满整个视口高度 */
+            margin: 0;              /* 去掉默认边距 */
+            font-family: "等线"; /* 设置字体为宋体 */
+        }
+
+        #speakTime {
+            background: none;       /* 去掉背景 */
+            border: none;           /* 去掉边框 */
+            font-size: 50px;        /* 字体大小 */
+            cursor: pointer;        /* 鼠标悬停时显示手形 */
+            padding: 10px 20px;     /* 添加内边距 */
+            color: black;           /* 字体颜色 */
+			letter-spacing: 6px;  
+        }
+
+        #speakTime:hover {
+            text-decoration: underline; /* 鼠标悬停时下划线效果 */
+        }
+    </style>
+</head>
+<body>
+    <button id="speakTime">点此诚信报时</button>
+
+    <audio id="dingSound" src="https://wzj-901.github.io/start.wav"></audio>
+
+    <script>
+        function formatTimeUnit(unit) {
+            return unit < 10 ? '0' + unit : unit;
+        }
+
+        function format12Hour(hours) {
+            const period = hours >= 12 ? '下午' : '上午';
+            const adjustedHours = hours % 12 || 12; // 将小时转换为12小时制
+            return { adjustedHours, period };
+        }
+
+        document.getElementById('speakTime').addEventListener('click', function() {
+            const dingSound = document.getElementById('dingSound');
+
+            dingSound.play().then(() => {
+                setTimeout(() => {
+                    const now = new Date();
+                    const hours = now.getHours();
+                    const minutes = formatTimeUnit(now.getMinutes());
+                    const seconds = formatTimeUnit(now.getSeconds());
+
+                    const { adjustedHours, period } = format12Hour(hours);
+                    const timeString = `${period}${adjustedHours}点${minutes}分${seconds}秒`;
+                    const utterance = new SpeechSynthesisUtterance(timeString);
+utterance.volume=0.6;
+utterance.rate = 0.8; 
+                    speechSynthesis.speak(utterance);
+                }, 1000); // 延迟1秒（1000毫秒）
+            }).catch(error => {
+                console.error("播放提示音失败:", error);
+            });
+        });
+    </script>
+</body>
+</html>
