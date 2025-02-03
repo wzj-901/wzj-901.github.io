@@ -487,8 +487,8 @@ function drawIt(x){
 			var xx=0;
 			var tmp1=x["f(x)"];
 			ctx.lineWidth = (x.Type=="不等粗y=f(x)")?r2vs(x.stroke||1):(x.stroke||1);
-			ctx.moveTo(0,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));
-			for(xx=0;xx<=x0;xx+=1){ctx.lineTo(xx,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));}
+			ctx.moveTo(-ctx.lineWidth,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));
+			for(xx=-ctx.lineWidth;xx<=x0+ctx.lineWidth;xx+=1){ctx.lineTo(xx,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));}
 			
 			ctx.strokeStyle = x.color||"black"; 
 			ctx.stroke();
@@ -499,8 +499,8 @@ function drawIt(x){
 			var xx=0;
 			var tmp1=x["f(x)"];
 			ctx.lineWidth = (x.Type=="不等粗x=f(y)")?r2vs(x.stroke||1):(x.stroke||1);
-			ctx.moveTo(r2vx(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))),0);
-			for(xx=0;xx<=y0;xx+=1){ctx.lineTo(r2vx(eval(tmp1.replace("x","("+v2ry(xx)+")").replace("^","**"))),xx);}
+			ctx.moveTo(r2vx(eval(tmp1.replace("x","("+v2ry(xx)+")").replace("^","**"))),-ctx.lineWidth);
+			for(xx=-ctx.lineWidth;xx<=y0+ctx.lineWidth;xx+=1){ctx.lineTo(r2vx(eval(tmp1.replace("x","("+v2ry(xx)+")").replace("^","**"))),xx);}
 			
 			ctx.strokeStyle = x.color||"black"; 
 			ctx.stroke();
