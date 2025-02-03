@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理引擎</title>
+    <style>
+        /* 去除默认的margin和padding */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 隐藏滚动条 */
+            height: 100%;
+        }
+
+        /* 设置Canvas为全屏 */
+        canvas {
+            display: block; /* 去除Canvas的默认inline-block间距 */
+            width: 100%;
+            height: 100%;
+			cursor:crosshair;
+        }
+		*{
+		  user-select: none; /* 禁止文本选择 */
+		  -webkit-user-select: none; /* 兼容 Safari */
+		  -moz-user-select: none; /* 兼容 Firefox */
+		  -ms-user-select: none; /* 兼容 IE/Edge */
+		}
+		#controls button ,#More{
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  width: 35px;
+		  height: 35px;
+		  margin-bottom: 10px;
+		  padding: 0;
+		  backdrop-filter:blur(3px);
+		  background-color: #dddfe27a; /* 按钮背景色 */
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+		  cursor: pointer;
+		  transition: stroke 0.2s;
+		}
+
+		#controls button:hover ,#More:hover{
+		  background-color: #dddfe27a; /* 背景不变色 */
+		}
+
+		#controls button:hover svg ,#More:hover svg{
+		  stroke: #000; /* 鼠标移入时 SVG 线条变为黑色 */
+		}
+
+		#controls button svg ,#More svg{
+		  stroke: #777; /* 鼠标未移入时线条颜色 */
+		  transition: stroke 0.2s;
+		}
+		#More{
+			position:fixed;
+			bottom:40px;
+			right:30px;
+		  backdrop-filter:blur(8px);
+		    background-color: #f1f6ffeb; /* 按钮背景色 */
+			height:60px;
+			width:60px;
+		  border-radius: 30px;
+			box-shadow: 2px 4px 15px rgb(0 0 0 / 30%);
+		}
+		#More:hover{
+			background-color:#f1f6ff;
+		}
+
+
+		/* 加减按钮上下紧贴 */
+		#zoomIn {
+		  border-bottom-left-radius: 0 !Important;
+		  border-bottom-right-radius: 0 !Important;
+		  margin-bottom: -1px !Important; /* 消除间距 */
+		}
+
+		#zoomOut {
+		  border-top-left-radius: 0 !Important;
+		  border-top-right-radius: 0 !Important;
+		}
+		#resetView{
+			opacity:0;
+			transition:.5s all !Important;
+		}
+		
+		#offsetInfo ,#info2{
+		  display: none; /* 默认隐藏 */
+		  top: 0px; /* 与按钮顶部对齐 */
+		  left: -297px; /* 放在按钮左侧，留出 10px 间距 */
+		  position: absolute;
+		  width:250px;
+		  height:200px;
+		  backdrop-filter:blur(5px);
+		  background-color: #f8f9fab0; /* 更浅的背景色 */
+		  border: 1px solid #dee2e6; /* 深灰色薄边框 */
+		  border-radius: 8px; /* 圆角 */
+		  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+		  padding: 16px;
+		}
+		#info2{
+		  backdrop-filter:blur(20px);
+		  z-index:2000;
+		  top:30px;
+		  left:30px;
+		  width: calc(100vw - 170px);
+		  height:  calc(100vh - 93px);
+		
+		}
+		#info2 {
+		  overflow: auto;  /* 允许滚动 */
+		}
+
+		/* 隐藏滚动条 */
+		#info2::-webkit-scrollbar {
+		  display: none;  /* 隐藏滚动条 */
+		}
+		#info2 div *{
+			 white-space: pre-wrap;
+		}
+
+		/* 小箭头（背景色部分） */
+		#offsetInfo div:first-of-type {
+		  position: absolute;
+		  top: 12px; /* 垂直居中 */
+		  right: -10px; /* 指向按钮 */
+		  width: 0;
+		  height: 0;
+		  border-top: 10px solid transparent;
+		  border-bottom: 10px solid transparent;
+		  border-left: 10px solid #f8f9fa; /* 背景色 */
+		  z-index: 1; /* 确保在边框上方 */
+		}
+
+		/* 小箭头（边框部分） */
+		#offsetInfo div:last-of-type {
+		  position: absolute;
+		  top: 12px; /* 垂直居中 */
+		  right: -11px; /* 覆盖边框 */
+		  width: 0;
+		  height: 0;
+		  border-top: 10px solid transparent;
+		  border-bottom: 10px solid transparent;
+		  border-left: 10px solid #dee2e6; /* 边框色 */
+		  z-index: 0; /* 确保在背景色下方 */
+		}
+    </style>
+</head>
+<body>
+    <!-- Canvas元素 -->
+	<div id="controls" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+	  <button id="showOffset">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+		  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+		</svg>
+	  </button>
+	  <button id="zoomIn">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+		  <line x1="12" y1="5" x2="12" y2="19"></line>
+		  <line x1="5" y1="12" x2="19" y2="12"></line>
+		</svg>
+	  </button>
+	  <button id="zoomOut">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+		  <line x1="5" y1="12" x2="19" y2="12"></line>
+		</svg>
+	  </button>
+	  <button id="resetView">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+		  <path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 2.17-9.87"></path>
+		</svg>
+	    </button>
+  <div id="offsetInfo">
+    <div style="position: absolute; top: 12px; right: -10px; width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 10px solid #f8f9fa;"></div>
+    <div style="position: absolute; top: 12px; right: -11px; width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 10px solid #dee2e6;"></div>
+    <p>X向: <span id="offsetXValue">0</span> ~ <span id="offsetXValue2">0</span></p>
+    <p>Y向: <span id="offsetYValue">0</span> ~ <span id="offsetYValue2">0</span></p>
+    <p>scale: <span id="scaleValue">0</span></p>
+    <p>演化时间: <span id="timeValue">0s</span></p>
+    <p>鼠标: <span id="mouseValue">Null</span></p>
+  </div> </div>
+	  <button id="More">
+		<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+		  <line x1="12" y1="5" x2="12" y2="19"></line>
+		  <line x1="5" y1="12" x2="19" y2="12"></line>
+		</svg>
+	  </button>
+	  <div id="info2">
+		  <div><h4>系统任务</h4>
+		  <p id="sysHtml">sysDrawn=["x3","x4","x1","x2"];
+var x1={"Type":"等粗直线","color":"#000","stroke":1.3,"xy":[0,0]};//参数：y=kx+b的k,b
+var x2={"Type":"等粗直线","color":"#000","stroke":1.3,"xy2":0};//xy2表示竖线
+var x3={"Type":"网格","color":"#ccc","stroke":1,"xy":[40,40]};//参数：y=kx+b的k,b
+var x4={"Type":"网格字","color":"#999","stroke":1,"xy":[200,200]};</p></div>
+ <div><h4>用户任务</h4>
+		  <p id="userHtml">userDrawn=["a1","a2","a3","a4","a5","a6","a7","a8","a9","a10","a11","a12"];
+var a7={"Type":"线段","color":"purple","stroke":0.2,"xy":[[1,3],[4,6]]};//参数：y=kx+b的k,b
+var a12={"Type":"等粗线段","color":"purple","xy":[[10,30],[100,72]]};//参数：y=kx+b的k,b
+var a8={"Type":"直线","color":"purple","stroke":3,"xy":[-2.3,100]};//参数：y=kx+b的k,b
+var a1={"Type":"矩形","color":"red","border":10,"xy":[[800,-10],[300,40]]};//[中心x,y],[大小x，y]
+var a3={"Type":"矩形","rotage":10,"color":rgb(),"border-color":"green","xy":[[-20,100],[30,90]]};
+var a4={"Type":"矩形","color":"red","xy":[[500,700],[50,80]]};
+var a2={"Type":"圆形","color":rgb(),"xy":[[400,500],50]};//[中心x,y],r
+var a5={"Type":"圆形","color":rgb(),border:3,"xy":[[400,500],50]};
+var a6={"Type":"圆形","color":rgb(),border:3,"border-color":rgb(),"xy":[[400,590],50]}
+var a9={"Type":"y=f(x)","color":rgb(),"stroke":3,"f(x)":"x^2"}
+var a10={"Type":"x=f(y)","color":rgb(),"f(x)":"Math.sin(x^2)"}
+var a11={"Type":"f(x,y)=0","color":rgb(),"f(y)":"x^3+y^3-14"}</p></div>
+ <div><h4>含时演化</h4>
+		  <p id="goHtml">a1.xy[0][1]=30*T
+a3.rotage=10*(T+1)</p></div>
+  </div>
+    <canvas id="myCanvas"></canvas>
+
+    <script>
+	
+//按钮的控件
+
+
+const showOffsetButton = document.getElementById('showOffset');
+const showOffsetButton2 = document.getElementById('More');
+const offsetInfo = document.getElementById('offsetInfo');
+const offsetInfo2 = document.getElementById('info2');
+const offsetXValue = document.getElementById('offsetXValue');
+const offsetYValue = document.getElementById('offsetYValue');
+const scaleValue = document.getElementById('scaleValue');
+const timeValue = document.getElementById('timeValue');
+const resetView=document.getElementById("resetView");
+const mouseView=document.getElementById("mouseView");
+
+// 点击按钮切换显示/隐藏
+offsetInfo.style.display ='none';
+showOffsetButton.addEventListener('click', () => {
+  if (offsetInfo.style.display === 'none') {
+    offsetInfo.style.display = 'block'; // 显示
+  } else {
+    offsetInfo.style.display = 'none'; // 隐藏
+  }
+});offsetInfo2.style.display ='none';
+showOffsetButton2.addEventListener('click', () => {
+  if (offsetInfo2.style.display === 'none') {
+    offsetInfo2.style.display = 'block'; // 显示
+window.removeEventListener('wheel', bb, { passive: false })
+  } else {
+    offsetInfo2.style.display = 'none'; // 隐藏
+window.addEventListener('wheel', bb, { passive: false })
+  }
+});
+var x0,y0;
+function loop1(){
+    offsetXValue.textContent = offsetX.toPrecision(5); // 更新 OffsetX
+    offsetXValue2.textContent = (offsetX+x0*offScale).toPrecision(5); // 更新 OffsetX2
+    offsetYValue.textContent = offsetY.toPrecision(5); // 更新 OffsetY
+    offsetYValue2.textContent = (offsetY+y0*offScale).toPrecision(5); // 更新 OffsetY2
+    scaleValue.textContent = offScale.toPrecision(5); // 更新 
+    timeValue.textContent = Time().toPrecision(5)+"s"+(state?"":" 暂停中"); // 更新 
+    mouseValue.textContent = (mouseX||mouseY)?"（"+v2rx(mouseX).toPrecision(5)+"，"+v2ry(mouseY).toPrecision(5)+"）":"Null"; // 更新 
+	if(offsetX==0 && offsetY==0 && offScale==1){resetView.style.opacity=0}else{resetView.style.opacity=1;};
+	setTimeout("loop1()",100);
+}
+	setTimeout("loop1()",100);
+
+
+
+
+
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+var state=false;//false为暂停
+// 设置画布为全屏，并处理高 DPI
+function resizeCanvas() {
+  // 获取设备的像素比
+  const dpr = window.devicePixelRatio || 1;
+  // 设置画布的 CSS 大小（逻辑像素）
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  // 设置画布的实际像素大小（物理像素）
+  canvas.width = window.innerWidth * dpr;
+  x0=window.innerWidth;
+  y0=window.innerHeight;
+  canvas.height = window.innerHeight * dpr;
+  // 缩放上下文以匹配 DPI
+  ctx.scale(dpr, dpr);
+}
+// 初始化画布大小
+resizeCanvas();
+// 监听窗口大小变化，动态调整画布大小
+window.addEventListener('resize', resizeCanvas);
+function getElapsedSeconds() {
+  const start = performance.now(); // 起始时间
+  return function() {
+    const now = performance.now(); // 当前时间
+    const elapsed = (now - start) / 1000; // 计算经过的秒数
+    return elapsed; // 返回秒数（带小数）
+};}const gTime = getElapsedSeconds();
+var pauseS=gTime();
+var pauseAll=0;
+function Time(){
+	return (state?gTime():pauseS)-pauseAll;
+}
+function pauseChange(){
+	if(state){
+			pauseS=gTime();
+		}else{
+			pauseAll+=gTime()-pauseS;
+		}
+		state=!state;
+}
+
+
+
+//初始化画布和时间完成
+//现在开始定义双坐标
+
+
+
+
+
+let offsetX = 0;
+let offsetY = 0;
+let offScale=1;//<1表示看到真实空间的一小部分
+function r2v(x){
+return [r2vx(x[0]),r2vy(x[1])];
+}function r2vx(x){
+return (x-offsetX)/offScale;
+}function r2vy(x){
+return (x-offsetY)/offScale;
+}function v2r(x){
+return [v2rx(x[0]),v2ry(x[1])];
+}function v2rx(x){
+return offsetX+x*offScale;
+}function v2ry(x){
+return offsetY+x*offScale;
+}
+function r2vs(x) {
+  if (Array.isArray(x)) {
+    // 如果 x 是数组，返回新数组，其中每个元素都应用 r2v
+    return x.map(r2vs); 
+  } else if (typeof x === 'number') {
+    // 如果 x 是数字
+    return x/offScale;
+  }
+}
+function v2rs(x) {
+  if (Array.isArray(x)) {
+    // 如果 x 是数组，返回新数组，其中每个元素都应用 r2v
+    return x.map(r2v); 
+  } else if (typeof x === 'number') {
+    // 如果 x 是数字
+    return x*offScale;
+  }
+}
+// 示例：向右下方移动视口
+function moveView(deltaX, deltaY) {
+  offsetX += deltaX;
+  offsetY += deltaY;
+}
+
+function getRange(aaa, bbb, dx) {
+  const multiples = [];
+  // 从最小的倍数开始
+  let start = Math.ceil(aaa / dx) * dx;
+  // 遍历范围直到最大值
+  for (let i = start; i <= bbb; i += dx) {
+    multiples.push(i);
+  }
+  return multiples;
+}
+function Size(x0, y0) {
+  const area = x0 * y0;
+  
+  // 计算最小需要的 d
+  const minD = Math.sqrt(area / 90);
+  
+  // 计算 d 的数量级（以 10 为底的对数，取整）
+  const n = Math.floor(Math.log10(minD));
+  
+  // 计算可能的网格尺度：0.2 * 10^n 和 0.5 * 10^n
+  const d1 = 2 * Math.pow(10, n);
+  const d2 = 5 * Math.pow(10, n);
+  
+  // 检查 d1 和 d2 是否满足条件
+  const total1 = (x0 / d1) * (y0 / d1);
+  const total2 = (x0 / d2) * (y0 / d2);
+
+  // 返回满足网格数不超过 70 的最小 d
+  if (total1 <= 90) {
+    return d1;
+  } else if (total2 <= 90) {
+    return d2;
+  } else {
+    // 如果都不满足条件，返回 10^n 的下一个倍数
+    return Math.pow(10, n+1);
+  }
+}
+function loop2(as){
+	var d=Size(x0*offScale,y0*offScale);
+	x3.xy=[d/5,d/5]
+	x4.xy=[d,d]
+	as&&setTimeout("loop2(true)",200);
+}
+setTimeout("loop2(true)",100)
+function rgb() {
+  // 随机生成 RGB 值，确保颜色较亮
+  const r = Math.floor(Math.random() * 128 + 128);  // 红色通道范围在 128-255
+  const g = Math.floor(Math.random() * 128 + 128);  // 绿色通道范围在 128-255
+  const b = Math.floor(Math.random() * 128 + 128);  // 蓝色通道范围在 128-255
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+
+
+
+
+//双坐标定义完成
+
+var userDrawn=[];
+var sysDrawn=[];
+var infinity=1e+30;
+//测试
+<!-- sysDrawn.push("x3"); -->
+<!-- sysDrawn.push("x4"); -->
+<!-- sysDrawn.push("x1"); -->
+<!-- sysDrawn.push("x2"); -->
+<!-- userDrawn.push("a1"); -->
+<!-- userDrawn.push("a2"); -->
+<!-- userDrawn.push("a3"); -->
+<!-- userDrawn.push("a4"); -->
+<!-- userDrawn.push("a5"); -->
+<!-- userDrawn.push("a6"); -->
+<!-- userDrawn.push("a8"); -->
+
+<!-- sysDrawn=["x3","x4","x1","x2"]; -->
+<!-- var x1={"Type":"等粗直线","color":"#000","stroke":1.3,"xy":[0,0]};//参数：y=kx+b的k,b -->
+<!-- var x2={"Type":"等粗直线","color":"#000","stroke":1.3,"xy2":0};//xy2表示竖线 -->
+<!-- var x3={"Type":"网格","color":"#ccc","stroke":1,"xy":[40,40]};//参数：y=kx+b的k,b -->
+<!-- var x4={"Type":"网格字","color":"#999","stroke":1,"xy":[200,200]}; -->
+<!-- userDrawn=["a1","a2","a3","a4","a5","a6","a7","a8","a9","a10","a11","a12"]; -->
+<!-- var a7={"Type":"线段","color":"purple","stroke":0.2,"xy":[[1,3],[4,6]]};//参数：y=kx+b的k,b -->
+<!-- var a12={"Type":"等粗线段","color":"purple","xy":[[10,30],[100,72]]};//参数：y=kx+b的k,b -->
+<!-- var a8={"Type":"直线","color":"purple","stroke":3,"xy":[-2.3,100]};//参数：y=kx+b的k,b -->
+<!-- var a1={"Type":"矩形","color":"red","border":10,"xy":[[800,-10],[300,40]]};//[中心x,y],[大小x，y] -->
+<!-- var a3={"Type":"矩形","rotage":10,"color":rgb(),"border-color":"green","xy":[[-20,100],[30,90]]}; -->
+<!-- var a4={"Type":"矩形","color":"red","xy":[[500,700],[50,80]]}; -->
+<!-- var a2={"Type":"圆形","color":rgb(),"xy":[[400,500],50]};//[中心x,y],r -->
+<!-- var a5={"Type":"圆形","color":rgb(),border:3,"xy":[[400,500],50]}; -->
+<!-- var a6={"Type":"圆形","color":rgb(),border:3,"border-color":rgb(),"xy":[[400,590],50]} -->
+<!-- var a9={"Type":"y=f(x)","color":rgb(),"stroke":3,"f(x)":"x^2"} -->
+<!-- var a10={"Type":"x=f(y)","color":rgb(),"f(y)":"y^2"} -->
+<!-- var a11={"Type":"f(x,y)=0","color":rgb(),"f(y)":"x^3+y^3-14"} -->
+
+
+eval(document.getElementById("sysHtml").textContent);
+eval(document.getElementById("userHtml").textContent);
+
+var n=0;
+// 在Canvas上绘制内容
+function drawIt(x){
+	switch(x.Type){
+		case "直线":
+		case "等粗直线":
+			ctx.beginPath();
+			if("xy" in x){
+				var attr1=[x.xy[0],r2vy(x.xy[1])];ctx.moveTo(-x0,r2vy(attr1[0]*v2rx(-x0)+v2ry(attr1[1])));ctx.lineTo(2*x0,r2vy(attr1[0]*v2rx(2*x0)+v2ry(attr1[1])));
+			}
+			if("xy2" in x){
+				ctx.moveTo(r2vx(x.xy2),0);ctx.lineTo(r2vx(x.xy2),y0);
+			}
+			ctx.strokeStyle = x.color||"black"; 
+			if(x.Type=="直线"){ctx.lineWidth = r2vs(x.stroke||1); }else{ctx.lineWidth = (x.stroke||1); }
+			ctx.stroke();
+			break;
+		case "线段":
+		case "等粗线段":
+			ctx.beginPath();
+			ctx.moveTo(...r2v(x.xy[0]));ctx.lineTo(...r2v(x.xy[1]));
+			ctx.strokeStyle = x.color||"black"; 
+			ctx.lineWidth = (x.Type=="线段")?r2vs(x.stroke||1):(x.stroke||1);
+			ctx.stroke();
+		break;
+		case "y=f(x)":
+		case "不等粗y=f(x)":
+			ctx.beginPath();
+			var xx=0;
+			var tmp1=x["f(x)"];
+			ctx.lineWidth = (x.Type=="不等粗y=f(x)")?r2vs(x.stroke||1):(x.stroke||1);
+			ctx.moveTo(0,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));
+			for(xx=0;xx<=x0;xx+=ctx.lineWidth){ctx.lineTo(xx,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));}
+			
+			ctx.strokeStyle = x.color||"black"; 
+			ctx.stroke();
+		break;
+		case "x=f(y)":
+		case "不等粗x=f(y)":
+			ctx.beginPath();
+			var xx=0;
+			var tmp1=x["f(x)"];
+			ctx.lineWidth = (x.Type=="不等粗y=f(x)")?r2vs(x.stroke||1):(x.stroke||1);
+			ctx.moveTo(r2vx(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))),0);
+			for(xx=0;xx<=y0;xx+=ctx.lineWidth){ctx.lineTo(r2vx(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))),xx);}
+			
+			ctx.strokeStyle = x.color||"black"; 
+			ctx.stroke();
+		break;
+		case "网格":
+		case "网格字":
+			getRange(offsetX,offsetX+x0*offScale,x.xy[0]).forEach(x1 => {
+				drawIt({"Type":"等粗直线","color":x.color||"black","stroke":x.stroke,"xy2":(x1)})
+				if(x.Type==="网格字" && x1!==0){
+					ctx.beginPath();
+					 ctx.font = '11px Arial'; // 设置字体大小和字体类型
+					ctx.fillStyle = '#555'; // 设置填充颜色
+					ctx.textAlign = 'center'; // 文本对齐方式
+					ctx.textBaseline = 'top'; // 文本垂直对齐方式
+					ctx.fillText(parseFloat(x1.toFixed(8)),r2vx(x1),2);
+				}
+			});
+			getRange((offsetY),offsetY+y0*offScale,x.xy[1]).forEach(x1 => {
+				drawIt({"Type":"等粗直线","color":x.color||"black","stroke":x.stroke,"xy":[0,x1]})
+				if(x.Type==="网格字" && x1!==0){
+					ctx.beginPath();
+					 ctx.font = '11px Arial'; // 设置字体大小和字体类型
+					ctx.fillStyle = '#555'; // 设置填充颜色
+					ctx.textAlign = 'left'; // 文本对齐方式
+					ctx.textBaseline = 'center'; // 文本垂直对齐方式
+					ctx.fillText(parseFloat(x1.toFixed(8)),4,r2vy(x1));
+				}
+			});
+		break;
+		case "矩形":
+			if(x.rotage){
+				ctx.save();
+				ctx.translate(...r2v(x.xy[0])); // 将坐标系原点移动到(250, 250)处
+				ctx.rotate(x.rotage * Math.PI / 180); // 旋转30度（角度转为弧度）
+				var a={...x};
+				a.xy=[v2r([0,0]),a.xy[1]];
+				a.rotage=undefined;
+			    drawIt(a);
+				ctx.restore();
+			}else{ctx.beginPath();
+			ctx.fillStyle = x.color||"black"; // 填充颜色
+			//alert([r2vx(x.xy[0][0])-0.5*r2vs(x.xy[1][0]),r2vy(x.xy[0][1])-0.5*r2vs(x.xy[1][1]), ...r2vs(x.xy[1])])
+			ctx.fillRect(r2vx(x.xy[0][0])-0.5*r2vs(x.xy[1][0]),r2vy(x.xy[0][1])-0.5*r2vs(x.xy[1][1]), ...r2vs(x.xy[1])); // 绘制红色矩形，位置(100, 100)，宽度300，高度150
+			if("border-color" in x|| "border" in x){
+				ctx.strokeStyle = x["border-color"]||"black"; // 边框颜色
+				ctx.lineWidth =r2vs( x.border || 1); // 边框宽度
+				ctx.strokeRect(r2vx(x.xy[0][0])-0.5*r2vs(x.xy[1][0]),r2vy(x.xy[0][1])-0.5*r2vs(x.xy[1][1]), ...r2vs(x.xy[1])); // 绘制矩形边框
+			}}
+		break;
+		case "圆形":
+			ctx.beginPath();
+			 ctx.fillStyle = x.color||"black"; // 圆的填充色
+
+			ctx.arc(...r2v(x.xy[0]), r2vs(x.xy[1]), 0, 2 * Math.PI); // 绘制圆
+			ctx.fill(); // 填充绿色
+			if("border-color" in x|| "border" in x){
+				ctx.lineWidth = r2vs( x.border || 1); // 边框宽度
+				ctx.strokeStyle = x["border-color"]||"black";  // 圆的边框颜色
+				ctx.stroke(); // 绘制蓝色边框
+			}
+		break;
+	}
+
+
+}
+function draw() {
+	// 清除画布
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	//绘制每一个
+	sysDrawn.forEach(item => {
+		if(typeof item === "string"){drawIt(window[item]);}else{drawIt(item)};
+	});
+	userDrawn.forEach(item => {
+		if(typeof item === "string"){drawIt(window[item]);}else{drawIt(item)};
+	});
+	
+	// 绘制一个矩形
+	//ctx.fillStyle = 'blue';
+	//ctx.fillRect(r2vx(50*Time()),r2vy(100),r2vs(200),r2vs(150));
+T=Time();
+	//go
+	<!-- a1.xy[0][1]=30*T -->
+
+	eval(document.getElementById("goHtml").textContent);
+
+	// 绘制一个圆形
+	ctx.beginPath();
+	ctx.arc(r2vx(400), r2vy(300), r2vs(50), 0, Math.PI * 2, true);
+	ctx.fillStyle = 'red';
+	ctx.fill();
+
+ ctx.font = '20px Arial'; // 设置字体大小和字体类型
+    ctx.fillStyle = '#0aa'; // 设置填充颜色
+    ctx.textAlign = 'right'; // 文本对齐方式
+    ctx.textBaseline = 'bottom'; // 文本垂直对齐方式
+    // 在canvas上写字
+    ctx.fillText('物理引擎 TEST', x0-10, y0-10);
+
+  // 60Hz 持续调用
+  requestAnimationFrame(draw);n++;
+}
+
+// 调用绘制函数
+draw();
+
+
+
+
+
+
+
+// 示例：监听键盘事件移动视口
+window.addEventListener('keydown', (event) => {
+  if (event.ctrlKey) {if (event.key === 'ArrowRight') moveView(-10, 0);
+  if (event.key === 'ArrowLeft') moveView(10, 0);
+  if (event.key === 'ArrowDown') moveView(0, -10);
+  if (event.key === 'ArrowUp') moveView(0, 10);}
+  if (event.key === 'p' || event.key === 'P') pauseChange();
+});
+canvas.addEventListener('dblclick', () => {pauseChange();});
+zoomIn.addEventListener('click', () => {offScale=offScale*0.95});
+zoomOut.addEventListener('click', () => {offScale=offScale*1.05});
+resetView.addEventListener('click', () => {offScale=1;offsetX=0;offsetY=0;loop2(false)});
+
+
+//缩放跟随
+// 处理鼠标滚轮事件
+const bb=bb2.bind(null);
+ function bb2(event2){
+ event2.preventDefault();  // 阻止默认滚轮事件（如页面滚动）
+  // 如果是向上滚动，增加缩放；向下滚动，减少缩放
+  if (event.deltaY < 0) {
+    offScale *= 1.1;  // 放大
+  } else {
+    offScale /= 1.1;  // 缩小
+  }}
+window.addEventListener('wheel',bb,{passive: false})
+// 处理触摸屏缩放手势事件
+let lastTouchDistance = 0; // 上次触摸距离
+let initialoffScale = 1;  // 初始缩放因子
+let initialTouches = []; 
+let offXini=0;
+let offYini=0;
+let offSini=0;
+window.addEventListener('touchstart', (event) => {
+  if (event.touches.length === 2) {
+    // 获取初始的两点间距
+    const distance = getDistance(event.touches[0], event.touches[1]);
+    lastTouchDistance = distance;  // 保存初始触摸点位置
+    initialTouches = [
+      { x: event.touches[0].pageX, y: event.touches[0].pageY },
+      { x: event.touches[1].pageX, y: event.touches[1].pageY }
+    ];
+	offXini=offsetX;
+	offYini=offsetY;
+	offSini=offScale;
+	event.preventDefault(); 
+  }
+}, { passive: false });
+window.addEventListener('touchmove', (event) => {
+  if (event.touches.length === 2) {
+    // 获取当前的两点间距
+    const distance = getDistance(event.touches[0], event.touches[1]);
+    // 计算缩放比例
+    const offScaleChange = distance / lastTouchDistance;
+    offScale /= offScaleChange;
+    // 更新最后的触摸距离
+    lastTouchDistance = distance;
+	event.preventDefault();
+	// 获取当前的两个触摸点的位置
+    const touch1 = event.touches[0];
+    const touch2 = event.touches[1];
+    // 计算两根手指的位移
+    var tempX1 = touch1.pageX*offScale - initialTouches[0].x*offSini;
+    var tempY1 = touch1.pageY*offScale - initialTouches[0].y*offSini;
+    var tempX2 = touch2.pageX*offScale - initialTouches[1].x*offSini;
+    var tempY2 = touch2.pageY*offScale - initialTouches[1].y*offSini;
+	offsetX=offXini-0.5*(tempX1+tempX2)
+	offsetY=offYini-0.5*(tempY1+tempY2)
+  }
+}, { passive: false});
+// 计算两个触摸点的距离
+function getDistance(touch1, touch2) {
+  const dx = touch2.pageX - touch1.pageX;
+  const dy = touch2.pageY - touch1.pageY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+var mouseX = null;
+var mouseY = null;
+canvas.addEventListener('mousemove', function(event) {
+            // 获取鼠标相对于canvas的坐标
+            mouseX = event.offsetX;
+            mouseY = event.offsetY;
+        });
+//offsetx+touch1*sclae1=offxini+touchini*scale0
+
+    </script>
+</body>
+</html>
