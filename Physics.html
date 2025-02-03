@@ -206,7 +206,7 @@ var a2={"Type":"圆形","color":rgb(),"xy":[[400,500],50]};//[中心x,y],r
 var a5={"Type":"圆形","color":rgb(),border:3,"xy":[[400,500],50]};
 var a6={"Type":"圆形","color":rgb(),border:3,"border-color":rgb(),"xy":[[400,590],50]}
 var a9={"Type":"y=f(x)","color":rgb(),"stroke":3,"f(x)":"x^2"}
-var a10={"Type":"x=f(y)","color":rgb(),"f(x)":"Math.sin(x^2)"}
+var a10={"Type":"不等粗x=f(y)","color":rgb(),"f(x)":"100*Math.sin(0.0001*x^2)"}
 var a11={"Type":"f(x,y)=0","color":rgb(),"f(y)":"x^3+y^3-14"}</p></div>
  <div><h4>含时演化</h4>
 		  <p id="goHtml">a1.xy[0][1]=30*T
@@ -488,7 +488,7 @@ function drawIt(x){
 			var tmp1=x["f(x)"];
 			ctx.lineWidth = (x.Type=="不等粗y=f(x)")?r2vs(x.stroke||1):(x.stroke||1);
 			ctx.moveTo(0,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));
-			for(xx=0;xx<=x0;xx+=ctx.lineWidth){ctx.lineTo(xx,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));}
+			for(xx=0;xx<=x0;xx+=1){ctx.lineTo(xx,r2vy(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))));}
 			
 			ctx.strokeStyle = x.color||"black"; 
 			ctx.stroke();
@@ -498,9 +498,9 @@ function drawIt(x){
 			ctx.beginPath();
 			var xx=0;
 			var tmp1=x["f(x)"];
-			ctx.lineWidth = (x.Type=="不等粗y=f(x)")?r2vs(x.stroke||1):(x.stroke||1);
+			ctx.lineWidth = (x.Type=="不等粗x=f(y)")?r2vs(x.stroke||1):(x.stroke||1);
 			ctx.moveTo(r2vx(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))),0);
-			for(xx=0;xx<=y0;xx+=ctx.lineWidth){ctx.lineTo(r2vx(eval(tmp1.replace("x","("+v2rx(xx)+")").replace("^","**"))),xx);}
+			for(xx=0;xx<=y0;xx+=1){ctx.lineTo(r2vx(eval(tmp1.replace("x","("+v2ry(xx)+")").replace("^","**"))),xx);}
 			
 			ctx.strokeStyle = x.color||"black"; 
 			ctx.stroke();
