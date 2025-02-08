@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D绘图</title>
+    <title>物理引擎</title>
     <style>
         /* 去除默认的margin和padding */
         body, html {
@@ -146,6 +146,20 @@
 		  border-left: 10px solid #dee2e6; /* 边框色 */
 		  z-index: 0; /* 确保在背景色下方 */
 		}
+		
+		textarea {
+            border: none; /* 去掉边框 */
+            resize: none; /* 禁止调整大小 */
+            padding: 0; /* 去掉内边距 */
+            margin: 0; /* 去掉外边距 */
+            font-family: inherit; /* 继承字体 */
+            font-size: inherit; /* 继承字体大小 */
+            line-height: inherit; /* 继承行高 */
+            width: 100%; /* 宽度与父元素相同 */
+            overflow: hidden; /* 隐藏滚动条 */
+		  user-select: unset; /* 禁止文本选择 */
+		  -webkit-user-select: unset; /* 兼容 Safari */
+        }
     </style>
 </head>
 <body>
@@ -218,7 +232,44 @@ a11["f(x,y)"]="x^3+y^3-"+1400000*(T+1)</p></div>
     <script>
 	//"a1","a2","a3","a4","a5","a6","a7","a8","a9","a10","a11","a12"
 //按钮的控件
+function setCookie(cname,cvalue,exdays){
+	var d = new Date();
+	d.setTime(d.getTime()+(exdays*24*60*60*1000));
+	var expires = "expires="+d.toGMTString();
+	document.cookie = cname+"="+encodeURIComponent(cvalue)+"; "+expires;}
+function getCookie(cname){
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i].trim();
+		if (c.indexOf(name)==0) { return decodeURIComponent(c.substring(name.length,c.length)); }
+	}
+	return "";}
+['sysHtml', 'userHtml', 'goHtml'].forEach(function(id) {
+    let pElement = document.getElementById(id);
+    pElement.addEventListener('click', function() {
 
+        // 创建一个多行输入框
+        let textarea = document.createElement('textarea');
+        textarea.value = pElement.innerText;  // 将 p 元素的内容复制到输入框
+		textarea.style.height = pElement.offsetHeight + 'px';
+        textarea.setAttribute('id2', pElement.id);
+        textarea.setAttribute('id', pElement.id+"aa");
+        pElement.parentNode.insertBefore(textarea, pElement.nextSibling);
+        // 隐藏 p 元素
+        pElement.style.display = 'none';
+
+        // 输入框失去焦点时保存新内容到 cookie
+        textarea.addEventListener('blur', function() {
+            let newText =this.value; // 获取输入框的内容
+            setCookie(this.getAttribute(id2), newText, 100);  // 保存内容到对应的 cookie
+        });
+    });
+});
+	
+if(getCookie("sysHtml")){document.getElementById("sysHtml").textContent=getCookie("sysHtml")}else{setCookie("sysHtml",document.getElementById("sysHtml").textContent,100)}
+if(getCookie("userHtml")){document.getElementById("userHtml").textContent=getCookie("userHtml")}else{setCookie("userHtml",document.getElementById("userHtml").textContent,100)}
+if(getCookie("goHtml")){document.getElementById("goHtml").textContent=getCookie("goHtml")}else{setCookie("goHtml",document.getElementById("goHtml").textContent,100)}
 
 const showOffsetButton = document.getElementById('showOffset');
 const showOffsetButton2 = document.getElementById('More');
@@ -314,7 +365,6 @@ function pauseChange(){
 
 //初始化画布和时间完成
 //现在开始定义双坐标
-
 
 
 
@@ -556,7 +606,7 @@ function drawIt(x){
 			}
 			//if(j==0){console.log(points);j=1;}
 			//his2>his  yy大，正
-			 var j1=0;
+				 var j1=0;
 			points.forEach((item, index) => {
 				xx=item[0];
 				his=getF2(t1,xx,item[1]-dy);
@@ -580,52 +630,112 @@ function drawIt(x){
 										te=true;
 										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
 											if(getF2(t1,xx2,yy2+n1)<0){
-												n2=n1;
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
+										if(te){
+											//补救
+											te2=true;
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy3>yEnd+dy || yy3<yStart-dy){break;}
+										}
 									}else{
 										te=true;
 										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
 											if(getF2(t1,xx2,yy2+n1)>0){
-												n2=n1;
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
+										if(te){
+											//补救
+											te2=true;
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2<yy20+n1;yy2+=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;alert()
+												}
+											}
+											if(!te2){break;}
+										}
 									}
 								}else{
 									if(his3<0){
 										te=true;
 										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
 											if(getF2(t1,xx2,yy2+n1)>0){
-												n2=n1;
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
+										if(te){
+											//补救
+											te2=true;
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2){break;}
+										}
 									}else{
 										te=true;
 										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
 											if(getF2(t1,xx2,yy2+n1)<0){
-												n2=n1;
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
+										if(te){
+											//补救
+											te2=true;
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2<yy20+n1;yy2+=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;alert()
+												}
+											}
+											if(!te2){break;}
+										}
 									}
 								
 								}}
@@ -659,53 +769,110 @@ function drawIt(x){
 										te=true;
 										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
 											if(getF2(t1,xx2,yy2+n1)>0){
-												n2=n1;
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
+										if(te){
+											//补救
+											te2=true;
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy3>yEnd+dy || yy3<yStart-dy){break;}
+										}
 									}else{
 										te=true;
 										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
 											if(getF2(t1,xx2,yy2+n1)<0){
-												n2=n1;
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
-									}
+										if(te){
+											//补救
+											te2=true;
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20+dy0;yy2>yy20+n1;yy2+=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy3>yEnd+dy || yy3<yStart-dy){break;}
+									}}
 								}else{
 									if(his3>0){
 										te=true;
 										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
 											if(getF2(t1,xx2,yy2+n1)<0){
-												n2=n1;
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
-									}else{
+										if(te){
+											//补救
+											te2=true;
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy3>yEnd+dy || yy3<yStart-dy){break;}
+									}}else{
 										te=true;
 										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
 											if(getF2(t1,xx2,yy2+n1)>0){
-												n2=n1;
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1));
 												yy2+=n2;
 												ctx.lineTo(r2vx(xx2),r2vy(yy2));
 												te=false;
 												break;
 											}
 										}
-										if(te){break;}
-									}
+										if(te){
+											//补救
+											te2=true;
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20+dy0;yy2>yy20+n1;yy2+=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy3>yEnd+dy || yy3<yStart-dy){break;}
+									}}
 								
 								}}
 								
