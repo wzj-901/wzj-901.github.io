@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>物理引擎</title>
+    <title>math-2D</title>
     <style>
         /* 去除默认的margin和padding */
         body, html {
@@ -262,7 +262,7 @@ function getCookie(cname){
         // 输入框失去焦点时保存新内容到 cookie
         textarea.addEventListener('blur', function() {
             let newText =this.value; // 获取输入框的内容
-            setCookie(this.getAttribute(id2), newText, 100);  // 保存内容到对应的 cookie
+            setCookie(this.getAttribute("id2"), newText, 100);  // 保存内容到对应的 cookie
         });
     });
 });
@@ -980,7 +980,7 @@ T=Time();
     ctx.textAlign = 'right'; // 文本对齐方式
     ctx.textBaseline = 'bottom'; // 文本垂直对齐方式
     // 在canvas上写字
-    ctx.fillText('物理引擎 TEST', x0-10, y0-10);
+    ctx.fillText('Math-2D', x0-10, y0-10);
 
   // 60Hz 持续调用
   requestAnimationFrame(draw);n++;
