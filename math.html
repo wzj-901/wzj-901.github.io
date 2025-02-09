@@ -206,23 +206,26 @@
 		  <p id="sysHtml">sysDrawn=["x3","x4","x1","x2"];
 var x1={"Type":"等粗直线","color":"#000","stroke":1.3,"xy":[0,0]};//参数：y=kx+b的k,b
 var x2={"Type":"等粗直线","color":"#000","stroke":1.3,"xy2":0};//xy2表示竖线
-var x3={"Type":"网格","color":"#ccc","stroke":1,"xy":[40,40]};//参数：y=kx+b的k,b
+var x3={"Type":"网格","color":"#ccc","stroke":1,"xy":[40,40]};
 var x4={"Type":"网格字","color":"#999","stroke":1,"xy":[200,200]};</p></div>
  <div><h4>用户任务</h4>
 		  <p id="userHtml">userDrawn=["a3","a7","a9","a10","a11"];
 var a7={"Type":"线段","color":"purple","stroke":0.2,"xy":[[1,3],[4,6]]};//参数：y=kx+b的k,b
 var a12={"Type":"等粗线段","color":"purple","xy":[[10,30],[100,72]]};//参数：y=kx+b的k,b
-var a8={"Type":"直线","color":"purple","stroke":3,"xy":[-2.3,100]};//参数：y=kx+b的k,b
-var a1={"Type":"矩形","color":"red","border":10,"xy":[[800,-10],[300,40]]};//[中心x,y],[大小x，y]
+var a8={"Type":"直线","color":"purple","stroke":3,"xy":[-2.3,100]};
+var a1={"Type":"矩形","color":"red","border":10,"xy":[[800,-10],[300,40]]};//参数：[中心x,y],[大小x，y]
 var a3={"Type":"矩形","rotage":10,"color":rgb(),"border-color":"green","xy":[[-20,100],[30,90]]};
 var a4={"Type":"矩形","color":"red","xy":[[500,700],[50,80]]};
-var a2={"Type":"圆形","color":rgb(),"xy":[[400,500],50]};//[中心x,y],r
+var a2={"Type":"圆形","color":rgb(),"xy":[[400,500],50]};//参数：[中心x,y],r
 var a5={"Type":"圆形","color":rgb(),border:3,"xy":[[400,500],50]};
 var a6={"Type":"圆形","color":rgb(),border:3,"border-color":rgb(),"xy":[[400,590],50]}
 var a9={"Type":"y=f(x)","color":rgb(),"stroke":3,"f(x)":"x^2"}
 var a10={"Type":"不等粗x=f(y)","color":rgb(),"f(x)":"100*Math.sin(0.0001*x^2)"}
 var a11={"Type":"f(x,y)=0","color":"red",stroke:2,"f(x,y)":"x^3+y^3-1400000"}
-var a13={"Type":"f(x,y)=0","color":"red",stroke:2,"f(x,y)":"-x*y+1000000"}</p></div>
+var a13={"Type":"f(x,y)=0","color":"red",stroke:2,"f(x,y)":"-x*y+1000000"}
+//固体能级userDrawn=["b1","b2"]
+var b1={"Type":"固体能级","color":"red",stroke:1,"dx":30*Math.PI,"f(x)":"(x/30)^2","f(x,y)":"-Math.cos(x/30)+Math.cos(y^0.5)+13*Math.sin(y^0.5)/(y^0.5)"}
+var b2={"Type":"y=f(x)","color":"grey",stroke:1,"f(x)":"(x/30)^2"}</p></div>
  <div><h4>含时演化</h4>
 		  <p id="goHtml">a1.xy[0][1]=30*T
 a3.rotage=10*(T+1)
@@ -850,6 +853,316 @@ function drawIt(x){
 							xx3=xx3-dx;
 							yy3=yy3+(xx3-xx2)*n0/dx0
 							
+						}while(te2 && xx3>xStart && yy3<yEnd+dy && yy3>yStart-dy)
+						
+						break;
+					}
+				}
+			})
+			//console.log(points)
+			
+			ctx.strokeStyle = x.color||"black"; 
+			ctx.stroke();
+		break;
+		
+		case "固体能级":
+			ctx.beginPath();
+			var t1=x["f(x,y)"];
+			ctx.lineWidth = (x.Type=="不等粗f(x,y)=0")?r2vs(x.stroke||1):(x.stroke||1);
+			var dx0=v2rs(1);var dx=x.dx;
+			var dy0=v2rs(0.3);var dy=v2rs(2);
+			var xStart=v2rx(-ctx.lineWidth);
+			var xEnd=v2rx(x0+ctx.lineWidth);
+			var yStart=v2ry(-ctx.lineWidth);
+			var yEnd=v2ry(y0+ctx.lineWidth);
+			var his;
+			var yy2;
+			var points=[];
+			
+			var dx1=x.dx;
+			getRange(offsetX-dx,offsetX+x0*offScale+dx,x.dx).forEach(x1 => {
+				x1>0 && points.push([x1,getF(x["f(x)"],x1)+dy/2,(x1/x.dx)%2<0.5 || (x1/x.dx)%2>1.5,true]);
+				x1<0 && points.push([x1,getF(x["f(x)"],x1)+dy/2,((-x1/x.dx)%2<0.5 || (-x1/x.dx)%2>1.5),false]);
+				
+			})
+			
+			
+			
+			
+				 var j1=0;
+			points.forEach((item, index) => {
+				xx=item[0];
+				his=getF2(t1,xx,item[1]-dy);
+				for(yy=item[1]-dy+dy0;yy<=item[1]+dy0;yy+=dy0){
+					his2=getF2(t1,xx,yy);
+					if(his2>0 && his<0 || his2<0 && his>0){
+						ctx.moveTo(r2vx(xx),r2vy(yy))
+						yy2=yy;
+						xx3=xx;
+						yy3=yy;
+						n2=0;//初始化斜率
+						do{if(!points[index][3]){
+							for(xx2=xx3+dx0;xx2<xx3+dx0+dx;xx2+=dx0){
+								his3=getF2(t1,xx2,yy2+n2);
+								if(his3==0){
+									yy2+=yy2+n2;te2=true;
+									ctx.lineTo(r2vx(xx2),r2vy(yy2))
+								}else{
+								if(item[2]){//往大的找，突然负变正
+									if(his3>0){
+										te=true;
+										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
+											if(getF2(t1,xx2,yy2+n1)<0){
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+Math.max(n1,-50*dy0);yy2-=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+										}
+									}else{
+										te=true;
+										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
+											if(getF2(t1,xx2,yy2+n1)>0){
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2<yy20+Math.min(n1,50*dy0);yy2+=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+										}
+									}
+								}else{
+									if(his3<0){
+										te=true;
+										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
+											if(getF2(t1,xx2,yy2+n1)>0){
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2>yy20+Math.max(n1,-50*dy0);yy2-=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+										}
+									}else{
+										te=true;
+										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
+											if(getF2(t1,xx2,yy2+n1)<0){
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2-=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy2;yy2<yy20+Math.min(n1,50*dy0);yy2+=dy0){
+												xx5=xx2+dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+										}
+									}
+								
+								}}
+								
+							}break;
+							xx3=xx3+dx;
+							yy3=yy3+(xx3-xx2)*n0/dx0
+							points.forEach((item, index) => {
+								if((item[0]-xx3<0.1*dx || xx3-item[0]<0.1*dx )&& yy3<=item[1] && yy3>=item[1]-dy){
+									points.splice(index, 1);
+								}
+							})
+							}break;
+						}while(te2 && xx3<xEnd && yy3<yEnd+dy && yy3>yStart-dy)
+						
+						ctx.moveTo(r2vx(xx),r2vy(yy))
+						yy2=yy;
+						xx3=xx;
+						yy3=yy;
+						n2=0;//初始化负的斜率
+						do{if(points[index][3]){
+							for(xx2=xx3+dx0;xx2>xx3+dx0-dx;xx2-=dx0){
+								his3=getF2(t1,xx2,yy2+n2);
+								if(his3==0){
+									yy2+=yy2+n2;te2=true;
+									ctx.lineTo(r2vx(xx2),r2vy(yy2))
+								}else{
+								if(!item[2]){//往大的找，突然负变正
+									if(his3<0){
+										te=true;
+										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
+											if(getF2(t1,xx2,yy2+n1)>0){
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+										}
+									}else{
+										te=true;
+										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
+											if(getF2(t1,xx2,yy2+n1)<0){
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20+dy0;yy2>yy20+n1;yy2+=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+									}}
+								}else{
+									if(his3>0){
+										te=true;
+										for(n1=n2-dy0;n1>n2-50*dy0;n1-=dy0){
+											if(getF2(t1,xx2,yy2+n1)<0){
+												n2=n1+dy0/(1-getF2(t1,xx2,yy2+n1+dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20-dy0;yy2>yy20+n1;yy2-=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)>0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+									}}else{
+										te=true;
+										for(n1=n2+dy0;n1<n2+50*dy0;n1+=dy0){
+											if(getF2(t1,xx2,yy2+n1)>0){
+												n2=n1-dy0/(1-getF2(t1,xx2,yy2+n1-dy0)/getF2(t1,xx2,yy2+n1))+0.001*dy0;
+												yy2+=n2;
+												ctx.lineTo(r2vx(xx2),r2vy(yy2));
+												te=false;
+												break;
+											}
+										}
+											te2=true;
+										if(te){
+											//补救
+											xx2+=dx0;
+											yy20=yy2;
+											n2=0;
+											for(yy2=yy20+dy0;yy2>yy20+n1;yy2+=dy0){
+												xx5=xx2-dx0/(1-getF2(t1,xx2+dx0,yy2)/getF2(t1,xx2,yy2));
+												ctx.lineTo(r2vx(xx5),r2vy(yy2));
+												if(getF2(t1,xx2,yy2)<0){//说明没有继续的可能，彻底放弃
+													te2=false;
+													break;
+												}
+											}
+											if(!te2 || yy2>yEnd+dy || yy2<yStart-dy){te2=false;break;}
+									}}
+								
+								}}
+								
+							}
+							break;
+							xx3=xx3-dx;
+							yy3=yy3+(xx3-xx2)*n0/dx0
+							}break;
 						}while(te2 && xx3>xStart && yy3<yEnd+dy && yy3>yStart-dy)
 						
 						break;
