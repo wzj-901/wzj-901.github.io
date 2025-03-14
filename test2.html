@@ -1,1 +1,33 @@
-<html><script>var a=114514;do{a=(a+1)*0.345632;a=a-1;}while(1<2)</script></html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest/dist/module/index.js';
+
+// 替换为你的 Supabase 项目 URL 和匿名密钥
+const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+async function fetchMessages() {
+  try {
+    // 查询 my-table 表中的所有记录，并获取 message 字段的值
+    const { data, error } = await supabase
+      .from('my-table')
+      .select('message');
+
+    if (error) {
+      console.error('Error fetching data:', error);
+      return;
+    }
+
+    console.log('Fetched messages:', data);
+    return data;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+  }
+}
+
+// 调用函数
+fetchMessages();
+</script>
+</head>
