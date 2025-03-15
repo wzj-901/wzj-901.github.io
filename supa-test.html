@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Supabase测试</title>
+    <!-- 引入Supabase客户端库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>数据</h1>
+    <h6 id="datas"></h6>
+
+    <script>
+        // 初始化Supabase客户端[3,5](@ref)
+const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
+
+
+const { createClient } = supabase
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+
+// 基础功能示例
+async function fetchTab(table,Select) {
+  try {
+    // 查询 my-table 表中的所有记录，并获取 message 字段的值
+    const { data, error } = await supabaseClient.from(table).select(Select).single();
+
+    if (error) {
+      console.error('Error fetching data:', error);
+      return "";
+    }
+
+    console.log('Fetched messages:',data);
+    return data;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+	return "";
+  }
+}
+// 更新数据示例
+async function updateTab(table,column, value,Name,updateData) {
+  try {
+    // 根据条件更新记录，并返回更新后的完整数据
+    const { data, error } = await supabaseClient
+      .from(table)
+      .update({[Name]: updateData})
+      .eq(column, value)
+      .select(Name)          // 返回更新后的完整字段
+      .single();            // 明确要求只更新一条记录
+
+    if (error) {
+      console.error('Error updating data:', error);
+      return null; // 用 null 表示明确无数据
+    }
+
+    console.log('Updated data:', data);
+    return data; // 直接返回更新后的数据对象
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null; // 保持错误时返回类型一致性
+  }
+}
+
+fetchTab("my-table","message2").then(Data=>{
+  console.log(Data)
+})
+// 调用函数
+fetchTab("my-table","message").then(Data=>{
+	const data=Data?.message;
+  if(data){
+    console.log("get!");
+    console.log(data);
+    var visit_times=data["visit-times"];
+    console.log(visit_times);
+    var data2=structuredClone(data);
+    data2["visit-times"]=visit_times+1;
+    updateTab("my-table",  "id","1", "message",data2).then(Data=>{
+      console.log("update!");
+      console.log(Data?.message)
+      document.getElementById("datas").innerHTML="访问次数："+Data?.message["visit-times"];
+    })
+  }
+});
+
+
+
+    </script>
+</body>
+</html>
