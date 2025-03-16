@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋游戏</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #board {
+            display: none;
+            grid-template-columns: repeat(15, 30px);
+            gap: 1px;
+            background-color: #d2b48c;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .black::after {
+            content: "●";
+            color: #333;
+            font-size: 24px;
+        }
+        .white::after {
+            content: "●";
+            color: #fff;
+            font-size: 24px;
+        }
+        #controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+        }
+        .role-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .black-btn {
+            background-color: #333;
+            color: white;
+        }
+        .white-btn {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+		
+        .clear-btn {
+            background-color: #ef1d1d;
+            color: #ffffff;
+            border: 1px solid #940303;
+        }
+    </style>
+	
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div id="controls">
+        <button class="role-btn black-btn" onclick="selectRole('black');document.getElementById('controls').style.display='none'">执黑</button>
+        <button class="role-btn white-btn" onclick="selectRole('white');document.getElementById('controls').style.display='none'">执白</button>
+        <button class="role-btn clear-btn" onclick="Clear()">清空</button>
+    </div>
+    <div id="board"></div>
+
+    <script>
+        let currentRole = null; // 当前选择的角色
+        let state = Array(225).fill(0).join(','); // 初始棋盘状态
+        let isMyTurn = false; // 是否轮到当前玩家
+
+        // 状态代理监听
+        const stateProxy = new Proxy({}, {
+            set(target, prop, value) {
+                if (prop === 'state') {
+                    state = value;
+                    renderBoard(value);
+                    updateTurnState();
+                }
+                return true;
+            }
+        });
+
+        // 棋盘渲染
+        function renderBoard(stateStr) {
+            const board = document.getElementById('board');
+            board.innerHTML = stateStr.split(',').map((val, index) => {
+                const cls = val === '1' ? 'black' : val === '2' ? 'white' : '';
+                return `<div class="cell ${cls}" data-index="${index}"></div>`;
+            }).join('');
+
+            // 绑定点击事件
+            board.querySelectorAll('.cell').forEach(cell => {
+                cell.onclick = () => handleMove(parseInt(cell.dataset.index));
+            });
+        }
+
+        // 更新回合状态
+        function updateTurnState() {
+            if (!currentRole) return;
+
+            const blackCount = state.split('1').length - 1;
+            const whiteCount = state.split('2').length - 1;
+
+            isMyTurn = (currentRole === 'black' && blackCount === whiteCount) ||
+                       (currentRole === 'white' && whiteCount === blackCount - 1);
+
+            // 视觉反馈
+            document.getElementById('board').style.cursor = isMyTurn ? 'pointer' : 'not-allowed';
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.style.opacity = isMyTurn ? 1 : 0.6;
+            });
+        }
+
+        // 落子处理
+        function handleMove(index) {
+            if (!isMyTurn) return;
+            if (state.split(',')[index] !== '0') return;
+
+            const newState = state.split(',');
+            newState[index] = currentRole === 'black' ? '1' : '2';
+            stateProxy.state = newState.join(','); // 触发状态更新
+			// 发送数据到Supabase数据库
+			updateTab('demo1','id',"1",'game',{"state":state});
+        }
+
+		function Clear() {
+			stateProxy.state = Array(225).fill(0).join(','); // 触发状态更新
+			// 发送数据到Supabase数据库
+			console.log(state);
+			updateTab('demo1','id',"1",'game',{"state":state}).then(Data => {window.location.reload();});
+		}
+
+        // 角色选择
+        function selectRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.opacity = btn.classList.contains(role + '-btn') ? 1 : 0.6;
+            });
+            updateTurnState();
+        }
+
+        // 初始化
+        renderBoard(state);
+    </script>
+	 <script>
+        // 初始化Supabase客户端[3,5](@ref)
+const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
+
+
+const { createClient } = supabase
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+
+// 基础功能示例
+async function fetchTab(table,Select) {
+  try {
+    // 查询 my-table 表中的所有记录，并获取 message 字段的值
+    const { data, error } = await supabaseClient.from(table).select(Select).single();
+
+    if (error) {
+      console.error('Error fetching data:', error);
+      return "";
+    }
+
+    console.log('Fetched messages:',data);
+    return data;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+	return "";
+  }
+}
+// 更新数据示例
+async function updateTab(table,column, value,Name,updateData) {
+  try {
+    // 根据条件更新记录，并返回更新后的完整数据
+    const { data, error } = await supabaseClient
+      .from(table)
+      .update({[Name]: updateData})
+      .eq(column, value)
+      .select(Name)          // 返回更新后的完整字段
+      .single();            // 明确要求只更新一条记录
+
+    if (error) {
+      console.error('Error updating data:', error);
+      return null; // 用 null 表示明确无数据
+    }
+
+    console.log('Updated data:', data);
+    return data; // 直接返回更新后的数据对象
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null; // 保持错误时返回类型一致性
+  }
+}
+
+
+fetchTab('demo1','game').then(Data => {
+	console.log(Data);
+	stateProxy.state=Data.game.state;
+	document.getElementById('board').style.display = 'grid';
+});
+
+
+
+const channel=supabaseClient.channel('demo1_channel_test')
+                            .on('postgres_changes',
+                              {event: 'UPDATE', schema: 'public', table: 'demo1'},
+                              (payload) => {
+                                console.log('Received event:', payload.new);
+                                const Data=payload.new;
+                                var data=Data.game;
+                                // 处理事件
+								stateProxy.state=data?.state;
+                              }
+                            ).subscribe();
+setInterval(() => channel.send({type:'heartbeat'}).then(({statues})=>{
+	console.log('heartbeat:',statues);
+}),10000); // 发送心跳包
+
+
+</script>
+</body>
+</html>
