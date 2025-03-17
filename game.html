@@ -237,7 +237,11 @@ const channel=supabaseClient.channel('demo1_channel_test')
 setInterval(() => channel.send({type:'heartbeat'}).then(({statues})=>{
 	console.log('heartbeat:',statues);
 }),10000); // 发送心跳包
-
+setInterval(() => {
+        document.hidden || fetchTab('demo1','game').then(Data => {
+        console.log(Data);
+        Data?.game?.state && stateProxy.state=Data.game.state;
+    })},20000); // 定时刷新数据
 
 </script>
 </body>
