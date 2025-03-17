@@ -240,7 +240,7 @@ setInterval(() => channel.send({type:'heartbeat'}).then(({statues})=>{
 setInterval(() => {
         document.hidden || fetchTab('demo1','game').then(Data => {
         console.log(Data);
-        Data?.game?.state && stateProxy.state=Data.game.state;
+        Data?.game?.state && (stateProxy.state=Data.game.state);
     })},20000); // 定时刷新数据
 
 </script>
