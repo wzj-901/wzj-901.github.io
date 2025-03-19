@@ -213,7 +213,27 @@ async function updateTab(table,column, value,Name,updateData) {
     return null; // 保持错误时返回类型一致性
   }
 }
+// 边缘函数示例
+async function updateEdge(funcName,updateData) {
+  try {
+    const { data, error } = await supabaseClient.functions
+        .invoke(funcName, {body: updateData},
+        )
 
+    if (error) {
+      console.error('Error updating data:', error);
+      return null; // 用 null 表示明确无数据
+    }
+
+    console.log('Updated data:', data);
+    return data; // 直接返回更新后的数据对象
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null; // 保持错误时返回类型一致性
+  }
+}
+
+//updateEdge('hello-world',{key:"11546aasw阿"}).then(Data => {console.log(Data);});
 
 fetchTab('demo1','game').then(Data => {
 	console.log(Data);
