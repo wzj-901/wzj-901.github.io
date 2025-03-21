@@ -212,7 +212,7 @@ function Paint(){
     ctx.fillStyle = '#555'; // 设置填充颜色
     ctx.textAlign = 'center'; // 文本对齐方式
     ctx.textBaseline = 'top'; // 文本垂直对齐方式
-    let text=`y=k*x+b\nk=${k.toFixed(8)}±${SE_k.toFixed(4)}\nb=${b.toFixed(8)}±${SE_b.toFixed(4)}\nr=${r.toFixed(10)}`
+    let text=`y=k*x+b\nk=${k.toPrecision(8)}±${SE_k.toPrecision(4)}\nb=${b.toPrecision(8)}±${SE_b.toPrecision(4)}\nr=${r.toPrecision(10)}`
     text=text.split(/\n/g)
     text.forEach((t,i) => {ctx.fillText(t, 300, 10+i*20)}) // 绘制文本
 
@@ -328,7 +328,7 @@ function calculateAxisTicks(Xmin, Xmax) {
     // 生成刻度（处理浮点精度）
     const ticks = [];
     for (let v = start; v <= end + 1e-10; v += step) {
-        ticks.push(Number(v.toFixed(12)));
+        ticks.push(Number(v.toPrecision(8)));
     }
 
     // 如果刻度太少则细分
