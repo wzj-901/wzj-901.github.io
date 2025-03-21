@@ -368,7 +368,8 @@ function fill(x) {
     setALL();
 }
 function dealIt(x,i){
-    if(x.startsWith("x=>")){Do2x(x.split("x=>")[1]);return;}
+    if(x.startsWith("##")){return;}
+    else if(x.startsWith("x=>")){Do2x(x.split("x=>")[1]);return;}
     else if(x.startsWith("y=>")){Do2y(x.split("y=>")[1]);return;}
     else if(x.startsWith("x=")){Dox(x.split("x=")[1]);return;}
     else if(x.startsWith("y=")){Doy(x.split("y=")[1]);return;}
@@ -470,6 +471,27 @@ function deal3(x) {
 }
 setInterval("Paint()",500)
 
+function setCookie(cname,cvalue,exdays){
+	var d = new Date();
+	d.setTime(d.getTime()+(exdays*24*60*60*1000));
+	var expires = "expires="+d.toGMTString();
+	document.cookie = cname+"="+encodeURIComponent(cvalue)+"; "+expires;}
+function getCookie(cname){
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i].trim();
+		if (c.indexOf(name)==0) { return decodeURIComponent(c.substring(name.length,c.length)); }
+	}
+	return "";}
+
+
+var aaa=getCookie("text-value");
+if(aaa){
+    x=aaa;
+    document.getElementById("inputText").value=x?(x.startsWith("##")?"":"##")+x.replace(/\n##/g,"\n").replace(/\n/g,"\n##"):x;
+}
+setInterval("text-value",`setCookie('${document.getElementById('inputText').value}',100)`,1000)
 // 测试用例
 // console.log(deal3("1.23,45.6"));      // [1.23, 45.6]
 // console.log(deal3("1.8+9"));          // [1.8, 9]
