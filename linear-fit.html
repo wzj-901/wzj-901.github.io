@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head><title>拟合</title>
+    <style>
+        body { margin: 0;overflow:hidden; height: 100vh; display: flex; }
+        #tableArea { width: 300px; border-right: 1px solid black; overflow: auto; }
+        #rightArea { flex: 1; display: flex; flex-direction: column; }
+        #inputArea { height: 300px; border-bottom: 1px solid black; }
+        #bottomArea { flex: 1; display: flex; }
+        #imageArea { width: 500px; border-right: 1px solid black; position: relative; }
+        #settingsArea { flex: 1; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        td { border: 1px solid #ddd; padding: 0; }
+        input { width: 100%; border: none; padding: 5px; box-sizing: border-box; }
+        textarea {box-sizing: border-box;font-size: 20px;font-family: "等线"; width: 100%; height: 100%; padding: 10px; resize: none; border: none; }
+        canvas { position: absolute; top: 0; left: 0; }
+    </style>
+</head>
+<body>
+    <div id="tableArea">
+        <table id="dataTable">
+            <tbody></tbody>
+        </table>
+    </div>
+    
+    <div id="rightArea">
+        <div id="inputArea">
+            <textarea id="inputText" placeholder="语音输入区，Ctrl+Enter 执行"></textarea>
+        </div>
+        <div id="bottomArea">
+            <div id="imageArea">
+                <canvas id="myCanvas"></canvas>
+            </div>
+            <div id="settingsArea">
+				<textarea id="inputText">
+方形尺寸4，线宽1，
+#x开始0，#x结束0，
+#y开始0，#y结束0</textarea></div>
+        </div>
+    </div>
+
+<script>
+let a = [[, "x", "y", "扩展"]];
+for(let i=0;i<200;i++){a.push(["","","",""])}
+function initTable() {
+    const tbody = document.querySelector('#dataTable tbody');
+    tbody.innerHTML = '';
+    
+    // 始终显示a.length+1行
+    for(let i=0; i<a.length; i++) {  // 修改循环条件
+        const tr = document.createElement('tr');
+        
+        // 行号列
+        const td0 = document.createElement('td');
+        td0.innerHTML = `<input class="row-number" value="${i}" disabled>`;
+        tr.appendChild(td0);
+        
+        // 数据列
+        for(let j=1; j<4; j++) {
+            const td = document.createElement('td');
+            const value = '';
+            td.innerHTML = `<input value="${value}" 
+                                data-row="${i}"
+                                data-col="${j}"
+                                oninput="syncData(${i},${j},this.value)"
+                                onkeydown="handleKey(event, ${i}, ${j})">`;  // 新增键盘事件
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+}
+// 新增键盘导航函数
+function handleKey(e, row, col) {
+    const key = e.key;
+    const inputs = document.querySelectorAll('[data-row]');
+    
+    if(key.startsWith('Arrow')||key=="Enter") {
+        e.preventDefault();
+        let newRow = row;
+        let newCol = col;
+        
+        switch(key) {
+            case 'ArrowUp': newRow = Math.max(0, row-1); break;
+            case 'ArrowDown':case 'Enter': newRow = row+1; break;
+            case 'ArrowLeft': newCol = Math.max(1, col-1); break;
+            case 'ArrowRight': newCol = Math.min(3, col+1); break;
+        }
+        
+        const selector = `[data-row="${newRow}"][data-col="${newCol}"]`;
+        const target = document.querySelector(selector);
+        target?.focus();
+    }
+}
+
+const Get=(x,y)=>document.querySelector(`[data-row="${x}"][data-col="${y}"]`);
+function setALL(){
+	for(let i=0;i<a.length;i++){
+		for(let j=1;j<4;j++){
+			Get(i,j).value=a[i][j];
+		}
+	}	
+
+}
+setTimeout("setALL()",0);
+// 数据同步函数
+function syncData(i, j, value) {
+    a[i][j] = value;
+    console.log('Updated a:', a);
+}
+
+
+
+// 输入监听
+document.getElementById('inputText').addEventListener('keydown', e => {
+    if(e.ctrlKey && e.key === 'Enter') {
+        fill(e.target.value);
+        e.preventDefault();
+    }
+});
+
+// 初始化执行
+initTable();
+
+const canvas = document.getElementById('myCanvas');
+const dpi = window.devicePixelRatio;
+canvas.width = 500 * dpi;
+canvas.height = 500 * dpi;
+canvas.style.width = "500px";
+canvas.style.height = "500px";
+
+const ctx = canvas.getContext('2d');
+ctx.scale(dpi, dpi);
+function Paint(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#000';
+    ctx.strokeRect(0, 0, 500, 500);
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#000';
+    ctx.moveTo(100, 100);
+    ctx.lineTo(100, 440);
+    ctx.lineTo(440, 440);
+    ctx.stroke();
+
+    var a2=[]
+    for(let i=1;i<a.length;i++){
+        var x=Number(a[i][1]);
+        var y=Number(a[i][2]);
+        if(x && y){
+            a2.push([x,y]);
+        }
+    }    
+    if(a2.length>0){
+    a2.sort((a, b) => a[0] - b[0]);
+    var Xmin2=a2[0][0];
+    var Xmax2=a2[a2.length-1][0];
+    delX=Xmax2-Xmin2;
+    Xmin=Xmin2-delX*0.05;
+    Xmax=Xmax2+delX*0.05;
+    Psize=4;
+    var  a3 = JSON.parse(JSON.stringify(a2));
+    a3.sort((a, b) => a[1] - b[1]);
+    var Ymin2=a3[0][1];
+    var Ymax2=a3[a3.length-1][1];
+    delY=Ymax2-Ymin2;
+    Ymin=Ymin2-delY*0.05;
+    Ymax=Ymax2+delY*0.05;
+    function changeXY(x,y){
+        return [(x-Xmin)/(Xmax-Xmin)*340+100,(Ymax-y)/(Ymax-Ymin)*340+100];
+    }
+    for(let i=0;i<a2.length;i++){
+        
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#000';
+        ctx.fillRect(changeXY(...a2[i])[0]-Psize/2, changeXY(...a2[i])[1]-Psize/2, Psize, Psize);
+    }   
+    ctx.beginPath();
+    ctx.font = '25px Arial'; // 设置字体大小和字体类型
+    ctx.fillStyle = '#555'; // 设置填充颜色
+    ctx.textAlign = 'center'; // 文本对齐方式
+    ctx.textBaseline = 'bottom'; // 文本垂直对齐方式
+    ctx.fillText(a[0][1], 280, 495); // 绘制文本
+
+    ctx.font = '25px Arial'; // 设置字体大小和字体类型
+    ctx.fillStyle = '#555'; // 设置填充颜色
+    ctx.textAlign = 'center'; // 文本对齐方式
+    ctx.textBaseline = 'top'; // 文本垂直对齐方式
+    xa = 12; // 文字的水平起始位置
+    ya = 250; // 文字的垂直位置（画布高度的一半）
+    // 保存当前的上下文状态
+    ctx.save();
+    // 将画布旋转90度
+    ctx.translate(xa, ya); // 将旋转中心移动到绘制位置
+    ctx.rotate(-Math.PI / 2); // 逆时针旋转90度
+    // 绘制文字
+    ctx.fillText(a[0][2], 0, 0); // 在旋转后的坐标系中绘制文字
+    // 恢复之前的上下文状态
+    ctx.restore();
+
+    //线性拟合
+    var Result=linearRegression(a2);
+    var k=Result.k;
+    var b=Result.b;
+    var r=Result.r;
+    var SE_k=Result.SE_k;
+    var SE_b=Result.SE_b;
+
+    ctx.beginPath();
+    ctx.font = '15px Arial'; // 设置字体大小和字体类型
+    ctx.fillStyle = '#555'; // 设置填充颜色
+    ctx.textAlign = 'center'; // 文本对齐方式
+    ctx.textBaseline = 'top'; // 文本垂直对齐方式
+    let text=`y=k*x+b\nk=${k.toFixed(8)}±${SE_k.toFixed(4)}\nb=${b.toFixed(8)}±${SE_b.toFixed(4)}\nr=${r.toFixed(10)}`
+    text=text.split(/\n/g)
+    text.forEach((t,i) => {ctx.fillText(t, 300, 10+i*20)}) // 绘制文本
+
+    
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#f00';
+    ctx.moveTo(...changeXY(Xmin2,k*Xmin2+b));
+    ctx.lineTo(...changeXY(Xmax2,k*Xmax2+b));
+    ctx.stroke();
+
+    indexs1=calculateAxisTicks(Xmin,Xmax);
+    indexs2=calculateAxisTicks(Ymin,Ymax);
+    for(let i=0;i<indexs1.length;i++){
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#000';
+        ctx.moveTo(changeXY(indexs1[i],0)[0],440);
+        ctx.lineTo(changeXY(indexs1[i],0)[0],445);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.font = '15px Arial'; // 设置字体大小和字体类型
+        ctx.fillStyle = '#555'; // 设置填充颜色
+        ctx.textAlign = 'center'; // 文本对齐方式
+        ctx.textBaseline = 'top'; // 文本垂直对齐方式
+        ctx.fillText(indexs1[i],changeXY(indexs1[i],0)[0],450);
+    }
+    for(let i=0;i<indexs2.length;i++){
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#000';
+        ctx.moveTo(100,changeXY(0,indexs2[i])[1]);
+        ctx.lineTo(95,changeXY(0,indexs2[i])[1]);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.font = '15px Arial'; // 设置字体大小和字体类型
+        ctx.fillStyle = '#555'; // 设置填充颜色
+        ctx.textAlign = 'right'; // 文本对齐方式
+        ctx.textBaseline = 'center'; // 文本垂直对齐方式
+        ctx.fillText(indexs2[i],95,changeXY(0,indexs2[i])[1]);
+    }
+}}
+
+function linearRegression(a2) {
+    const x = a2.map(p => p[0]);
+    const y = a2.map(p => p[1]);
+    const n = x.length;
+
+    if (n < 2) throw new Error("至少需要两个数据点");
+
+    // 计算均值
+    const xMean = x.reduce((a, v) => a + v, 0) / n;
+    const yMean = y.reduce((a, v) => a + v, 0) / n;
+
+    // 计算协方差、x方差、y方差
+    let varX = 0, cov = 0, varY = 0;
+    for (let i = 0; i < n; i++) {
+        const xiDiff = x[i] - xMean;
+        const yiDiff = y[i] - yMean;
+        varX += xiDiff ** 2;
+        cov += xiDiff * yiDiff;
+        varY += yiDiff ** 2;
+    }
+
+    if (varX === 0) throw new Error("x值不能全相同");
+
+    // 计算斜率k和截距b
+    const k = cov / varX;
+    const b = yMean - k * xMean;
+
+    // 计算相关系数r
+    const r = cov / (Math.sqrt(varX) * Math.sqrt(varY));
+
+    // 计算残差平方和RSS
+    let RSS = 0;
+    for (let i = 0; i < n; i++) {
+        RSS += (y[i] - (k * x[i] + b)) ** 2;
+    }
+
+    // 计算不确定度
+    const sigmaSquared = RSS / (n - 2);
+    const SE_k = Math.sqrt(sigmaSquared / varX);
+    const SE_b = Math.sqrt(sigmaSquared * (1/n + xMean**2 / varX));
+
+    return { k, b, r, SE_k, SE_b };
+}
+function calculateAxisTicks(Xmin, Xmax) {
+    if (Xmin >= Xmax) return [];
+    
+    // 处理极小范围的情况（如0.0001量级）
+    const magnitude = Math.pow(10, Math.floor(Math.log10(Xmax - Xmin)));
+    let step = magnitude;
+    
+    // 使用优化的步长候选序列
+    const candidates = [0.1, 0.2, 0.25, 0.5, 1, 2, 2.5, 5, 10];
+    for (const candidate of candidates) {
+        const testStep = candidate * magnitude;
+        const tickCount = Math.ceil((Xmax - Xmin) / testStep);
+        if (tickCount <= 12 && tickCount >= 5) {
+            step = testStep;
+            break;
+        }
+    }
+
+    // 计算起始点（不小于Xmin的最小步长倍数）
+    let start = Math.ceil(Xmin / step) * step;
+    start = Math.max(start, Xmin); // 确保不超出下限
+    
+    // 计算结束点（不超过Xmax的最大步长倍数）
+    let end = Math.floor(Xmax / step) * step;
+    end = Math.min(end, Xmax); // 确保不超出上限
+    
+    // 生成刻度（处理浮点精度）
+    const ticks = [];
+    for (let v = start; v <= end + 1e-10; v += step) {
+        ticks.push(Number(v.toFixed(12)));
+    }
+
+    // 如果刻度太少则细分
+    if (ticks.length < 5) {
+        return calculateAxisTicks(Xmin, Xmax, step/2);
+    }
+
+    return ticks;
+}
+
+// 测试用例
+console.log(calculateAxisTicks(-0.01, 0.0073)); 
+// 输出: [-0.01, -0.008, -0.006, -0.004, -0.002, 0, 0.002, 0.004, 0.006]
+
+
+// 示例用法
+console.log(calculateAxisTicks(3, 19)); 
+// 输出：[2, 4, 6, 8, 10, 12, 14, 16, 18, 20]（10个刻度）
+
+console.log(calculateAxisTicks(0, 11));
+// 输出：[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]（12个刻度）
+
+
+
+
+
+
+var xSeted=false;
+var ySeted=false;
+var xyLast="x";
+var paintType="linear";
+// 示例函数
+function fill(x) {
+    console.log('执行内容:', x);
+    var lines=x.split("\n");
+    lines.forEach(dealIt);
+    setALL();
+}
+function dealIt(x,i){
+    if(x.startsWith("x=>")){Do2x(x.split("x=>")[1]);return;}
+    else if(x.startsWith("y=>")){Do2y(x.split("y=>")[1]);return;}
+    else if(x.startsWith("x=")){Dox(x.split("x=")[1]);return;}
+    else if(x.startsWith("y=")){Doy(x.split("y=")[1]);return;}
+    else if(x.startsWith("x#")){a[0][1]=x.split("x#")[1] || a[0][1];return;}
+    else if(x.startsWith("y#")){a[0][2]=x.split("y#")[1] || a[0][2];return;}
+    else if(x.startsWith("线性")){paintType="linear";return;}
+    else if(x.startsWith("指数x")){paintType="expX";return;}
+    else if(x.startsWith("对数x")){paintType="lnX";return;}
+    else if(x.startsWith("指数y")){paintType="expY";return;}
+    else if(x.startsWith("对数y")){paintType="lnY";return;}
+    
+    if(!xSeted){Dox(x);return;}
+    if(!ySeted){Doy(x);return;}
+    if(xyLast=="x"){Dox(x);return;}
+    if(xyLast=="y"){Doy(x);return;}
+
+}
+function Dox(x){
+    x1=deal3(x);console.log(x1);
+    if(x1.length>0){
+        for(let i=0;i<x1.length;i++){
+            a[i+1][1]=x1[i];
+        }xSeted=true;xyLast="x";
+    }
+}
+function Doy(x){
+    x1=deal3(x);console.log(x1);
+    if(x1.length>0){
+        for(let i=0;i<x1.length;i++){
+            a[i+1][2]=x1[i];
+        }ySeted=true;xyLast="y";
+    }
+}
+function Do2x(xx){
+    for(let i=1;i<a.length;i++){xx0=xx;
+       try{var x=a[i][1];var y=a[i][2];
+        a[i][1]=eval(xx0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i));}catch(e){}
+    }
+}
+function Do2y(yy){
+
+    for(let i=1;i<a.length;i++){yy0=yy;
+        try{var x=a[i][1];var y=a[i][2];
+        a[i][2]=eval(yy0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i));}catch(e){}
+    }
+}
+
+function deal3(x) {
+    let aa = [];
+    let current = '';
+    let hasDot = false;
+
+    const isDigit = c => /\d/.test(c);
+    const isSpace = c => /\s/.test(c);
+    const isSeparator = c => /[，。,.；;：:+-正负]/.test(c);
+
+    for (const c of x) {
+        if (isDigit(c) || isSpace(c) || c === '.') {
+            if (c === '.') {
+                if ((current.match(/\./g) || []).length >= 1) {
+                    // 处理重复小数点
+                    const lastNeg = current.lastIndexOf('-');
+                    const lastSpace = current.lastIndexOf(' ');
+                    const splitIndex = lastNeg>0?lastNeg:lastSpace;
+                    
+                    if (splitIndex !== -1) {
+                        aa.push(current.substring(0, splitIndex + 1));
+                        current = current.substring(splitIndex + 1) + '.';
+                    } else {
+                        aa.push(current);
+                        current = '.';
+                    }
+                } else {
+                    current += c;
+                }
+            } else {
+                current += c;
+            }
+        } else if (isSeparator(c)) {
+            aa.push(current);
+            current = /[+-]/.test(c) ? c : '';
+        } else {
+            current += ' ';
+        }
+    }
+
+    if (current) aa.push(current);
+
+    // 后处理：合并空格并转换数字
+    return aa
+        .map(s => s.replace(/\s/g, ''))
+        .filter(s => s !== '')
+        .map(s => {
+            // 处理空字符串和无效格式
+            try { return s === '-' || s === '+' ? NaN : Number(s); } 
+            catch { return NaN; }
+        })
+        .filter(n => !isNaN(n));
+}
+setInterval("Paint()",500)
+
+// 测试用例
+// console.log(deal3("1.23,45.6"));      // [1.23, 45.6]
+// console.log(deal3("1.8+9"));          // [1.8, 9]
+// console.log(deal3("1.845啊9.7"));          // [1.8, -9]
+// console.log(deal3("1.88 7 5.4"));    // [1.887, 5.4]
+// console.log(deal3("-12.3+-4.5"));     // [-12.3, -4.5]
+// console.log(deal3("1..23.4"));       // [1, 0.23, 0.4]
+
+</script>
+</body>
+</html>
