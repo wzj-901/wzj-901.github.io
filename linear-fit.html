@@ -491,7 +491,7 @@ if(aaa){
     x=aaa;
     document.getElementById("inputText").value=x?(x.startsWith("##")?"":"##")+x.replace(/\n##/g,"\n").replace(/\n/g,"\n##"):x;
 }
-setInterval(`setCookie("textvalue",'${document.getElementById('inputText').value}',100)`,1000)
+setInterval(`setCookie("textvalue",document.getElementById('inputText').value||"",100)`,1000)
 // 测试用例
 // console.log(deal3("1.23,45.6"));      // [1.23, 45.6]
 // console.log(deal3("1.8+9"));          // [1.8, 9]
