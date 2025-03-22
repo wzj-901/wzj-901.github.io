@@ -406,15 +406,56 @@ function Doy(x){
 function Do2x(xx){
     for(let i=1;i<a.length;i++){xx0=xx;
        try{var x=a[i][1];var y=a[i][2];
-        a[i][1]=eval(xx0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i));}catch(e){}
+        a[i][1]=eval(maths(xx0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i)));}catch(e){console.log(e)}
     }
 }
 function Do2y(yy){
 
     for(let i=1;i<a.length;i++){yy0=yy;
         try{var x=a[i][1];var y=a[i][2];
-        a[i][2]=eval(yy0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i));}catch(e){}
+        a[i][2]=eval(maths(yy0.replace(/x/g,"("+x+")").replace(/y/g,"("+y+")").replace(/I/g,i)));}catch(e){console.log(e)}
     }
+}function maths(x) {
+    // 定义替换规则，按优先级从高到低排序（长函数名优先）
+    const replacements = [
+        { pattern: /\barccosh\b/g, replacement: "Math.acosh" },
+        { pattern: /\barcsinh\b/g, replacement: "Math.asinh" },
+        { pattern: /\barctanh\b/g, replacement: "Math.atanh" },
+        { pattern: /\barccos\b/g, replacement: "Math.acos" },
+        { pattern: /\barcsin\b/g, replacement: "Math.asin" },
+        { pattern: /\barctan\b/g, replacement: "Math.atan" },
+        { pattern: /\bsinh\b/g, replacement: "Math.sinh" },
+        { pattern: /\bcosh\b/g, replacement: "Math.cosh" },
+        { pattern: /\btanh\b/g, replacement: "Math.tanh" },
+        { pattern: /\bsin\b/g, replacement: "Math.sin" },
+        { pattern: /\bcos\b/g, replacement: "Math.cos" },
+        { pattern: /\btan\b/g, replacement: "Math.tan" },
+        { pattern: /\bln\b/g, replacement: "Math.log" },
+        { pattern: /\bexp\b/g, replacement: "Math.exp" },
+        { pattern: /\bsqrt\b/g, replacement: "Math.sqrt" },
+        { pattern: /\bpow\b/g, replacement: "Math.pow" },
+        { pattern: /\babs\b/g, replacement: "Math.abs" },
+        { pattern: /\bround\b/g, replacement: "Math.round" },
+        { pattern: /\bfloor\b/g, replacement: "Math.floor" },
+        { pattern: /\bceil\b/g, replacement: "Math.ceil" },
+        { pattern: /\bE\b/g, replacement: "Math.E" },
+        { pattern: /\bπ\b/g, replacement: "Math.PI" },
+        { pattern: /\^/g, replacement: "**" },
+        { pattern: /⌊/g, replacement: "Math.floor(" },
+        { pattern: /⌋/g, replacement: ")" },
+        { pattern: /⌈/g, replacement: "Math.ceil(" },
+        { pattern: /⌉/g, replacement: ")" },
+    ];
+
+    // 先移除已有的 Math. 前缀（避免重复）
+    let result = x.replace(/Math\./g, "");
+
+    // 按顺序应用替换规则
+    for (const { pattern, replacement } of replacements) {
+        result = result.replace(pattern, replacement);
+    }
+
+    return result;
 }
 
 function deal3(x) {
