@@ -13,7 +13,8 @@
         table { width: 100%; border-collapse: collapse; }
         td { border: 1px solid #ddd; padding: 0; }
         input { width: 100%; border: none; padding: 5px; box-sizing: border-box; }
-        textarea {box-sizing: border-box;font-size: 20px;font-family: "等线"; width: 100%; height: 100%; padding: 10px; resize: none; border: none; }
+        textarea {box-sizing: border-box;font-size: 20px;font-family: Arial;font-family: "Consolas", "Monaco", "Courier New", monospace;
+        width: 100%; height: 100%; padding: 10px; resize: none; border: none; }
         canvas { position: absolute; top: 0; left: 0; }
     </style>
 </head>
@@ -33,13 +34,58 @@
                 <canvas id="myCanvas"></canvas>
             </div>
             <div id="settingsArea">
-				<textarea id="inputText">
-方形尺寸4，线宽1，
-#x开始0，#x结束0，
-#y开始0，#y结束0</textarea></div>
+				<textarea id="inputText2"></textarea></div>
         </div>
     </div>
-
+    <style>
+        /* 竖屏覆盖样式 */
+        @media (max-aspect-ratio: 1/1) {
+            body { position: relative; display: block; }
+            
+            #tableArea {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 300px !important;
+                height: calc(100vh - 300px); /* 总高 - 输入区高度 */
+            }
+            
+            #inputArea {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width:100vw;
+                height: 300px;
+            }
+            
+            #bottomArea {
+                position: absolute;
+                top: 300px;  /* 输入区下方 */
+                left: 300px;
+                height: calc(100vh - 300px); /* 总高 - 输入区高度 */
+                width: calc(100vw - 300px); /* 总宽 - 表格区宽度 */
+            }
+            
+            #imageArea {
+                width: 100% !important;
+                height: 500px; /* 固定最小高度 */
+                border-right: none;
+                border-bottom: 1px solid black;
+            }
+            
+            #settingsArea {
+                position: absolute;
+                top: 500px;  /* 图片区高度 */
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+        }
+    </style>
+    
+    <script>
+    </script>
+    
 <script>
 let a = [[, "x", "y", "扩展"]];
 for(let i=0;i<200;i++){a.push(["","","",""])}
@@ -152,6 +198,57 @@ function Paint(){
         }
     }    
     if(a2.length>0){
+    // 假设a2是已有的二维数组，例如：const a2 = [[1,2], [3,4], [5,6]];
+
+        // 通用统计计算函数
+        const calculateStats = (values) => {
+            const n = values.length;
+            const sum = values.reduce((acc, val) => acc + val, 0);
+            const mean = n === 0 ? 0 : sum / n;
+            
+            const sumOfSquares = values.reduce((acc, val) => acc + val ** 2, 0);
+            const squaredDifferences = values.map(v => (v - mean) ** 2);
+            const sumSquaredDiff = squaredDifferences.reduce((acc, val) => acc + val, 0);
+            
+            return {
+                n,
+                sum: sum.toPrecision(9),
+                mean: mean.toPrecision(9),
+                sumSq: sumOfSquares.toPrecision(9),
+                sumSquaredDiff: sumSquaredDiff.toPrecision(9),
+                stdDev: Math.sqrt(sumSquaredDiff / (n*(n-1))).toPrecision(9)
+            };
+        };
+
+        // 提取x,y数据
+        const xValues = a2.map(pair => pair[0]);
+        const yValues = a2.map(pair => pair[1]);
+
+        // 计算统计量
+        const xStats = calculateStats(xValues);
+        const yStats = calculateStats(yValues);
+
+        // 构建可读性输出
+        const outputText = `
+【X统计】------------------
+n      : ${xStats.n}
+Σx     : ${xStats.sum}
+x̄      : ${xStats.mean}
+Σx²    : ${xStats.sumSq}
+Σ(x-x̄)²: ${xStats.sumSquaredDiff}
+σ_x    : ${xStats.stdDev}
+【Y统计】------------------
+n      : ${yStats.n}
+Σy     : ${yStats.sum}
+ȳ      : ${yStats.mean}
+Σy²    : ${yStats.sumSq}
+Σ(y-ȳ)²: ${yStats.sumSquaredDiff}
+σ_y    : ${yStats.stdDev}
+`.trim();
+
+        // 输出到文本域
+        document.querySelector('#inputText2').value = outputText;
+
     a2.sort((a, b) => a[0] - b[0]);
     var Xmin2=a2[0][0];
     var Xmax2=a2[a2.length-1][0];
@@ -328,7 +425,7 @@ function calculateAxisTicks(Xmin, Xmax) {
     // 生成刻度（处理浮点精度）
     const ticks = [];
     for (let v = start; v <= end + 1e-10; v += step) {
-        ticks.push(Number(v.toPrecision(8)));
+        ticks.push(Math.abs((v.toPrecision(8)))<1e-10?0:Number(v.toPrecision(8)));
     }
 
     // 如果刻度太少则细分
