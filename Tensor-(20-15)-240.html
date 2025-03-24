@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tensorflow 验证码训练</title>
+
+  <!-- Import TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <!-- Import tfjs-vis -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.5.1/dist/tfjs-vis.umd.min.js"></script>
+
+  <!-- 移除原有mnist_data引用 -->
+<script type="module">
+  // 替换为自定义数据处理器
+  class CustomData {
+    constructor() {
+      this.trainIndices = [];
+      this.testIndices = [];
+    }
+  
+    async load() {
+      // 并行加载图像和文本数据
+      // 图片处理模块（基于原代码优化）
+     
+    const indices = Array.from(tf.util.createShuffledIndices(240));
+    this.trainIndices = new Int32Array(indices.slice(0, 192)); // 明确指定类型 [1](@ref)
+    this.testIndices = new Int32Array(indices.slice(192));
+      async function processImage() {
+          const img = await loadImage('https://wzj-901.github.io/Tensorflow/(20-15)-240.png');
+          
+          // 创建主画布
+          const canvas = document.createElement('canvas');
+          [canvas.width, canvas.height] = [img.width, img.height];
+          canvas.getContext('2d').drawImage(img, 0, 0);
+
+          // 初始化四维数组[1,2](@ref)
+          const resultArray = new Array(240);
+          const imageData = canvas.getContext('2d').getImageData(0, 0, img.width, img.height).data;
+          
+          for (let i = 0; i < 240; i++) {
+              resultArray[i] = new Array(15);
+              const startX = i * 15;
+              
+              for (let x = 0; x < 15; x++) {
+                  resultArray[i][x] = new Array(20);
+                  
+                  for (let y = 0; y < 20; y++) {
+                      const idx = (y * img.width + startX + x) * 4;
+                      resultArray[i][x][y] = [ // RGB通道
+                          imageData[idx],     // Red
+                          imageData[idx + 1], // Green
+                          imageData[idx + 2]  // Blue
+                      ];
+                  }
+              }
+          }
+          return resultArray;
+      }
+
+      // 文本处理模块（新增）
+      async function processText() {
+          const response = await fetch('https://wzj-901.github.io/Tensorflow/(20-15)-240.txt');
+          const text = (await response.text()).trim();
+          
+          // 验证数据完整性
+          if (text.length !== 240) throw new Error('Invalid text length');
+          
+          // 生成one-hot编码[1,2](@ref)
+          const oneHotArray = new Array(240);
+          for (let i = 0; i < 240; i++) {
+              const num = parseInt(text[i]);
+              if (isNaN(num) || num < 0 || num > 9) throw new Error(`Invalid char at ${i}`);
+              
+              oneHotArray[i] = new Array(10).fill(0);
+              oneHotArray[i][num] = 1;
+          }
+          return oneHotArray;
+      }
+
+      // 图像加载工具函数
+      function loadImage(url) {
+          return new Promise((resolve, reject) => {
+              const img = new Image();
+              img.crossOrigin = "Anonymous";
+              img.onload = () => resolve(img);
+              img.onerror = reject;
+              img.src = url;
+          });
+      }
+      const [imageData, textData] = await Promise.all([
+        processImage(),  // 来自您提供的processImage
+        processText()    // 来自您提供的processText
+      ]);
+      
+      // 转换为TensorFlow张量
+      this.dataset = {
+        images: tf.tensor4d(imageData, [240, 15, 20, 3]).div(255).neg().add(1), // [N,H,W,C]
+        labels: tf.tensor2d(textData)                     // [N,10]
+      };
+      
+      // 划分训练集/测试集（示例比例8:2）
+      //const indices = tf.util.createShuffledIndices(240);
+      this.trainIndices = indices.slice(0, 192);
+      this.testIndices = indices.slice(192);
+    }
+  
+    nextTrainBatch(batchSize) {
+      return this.nextBatch(batchSize, true);
+    }
+  
+    nextTestBatch(batchSize) {
+      return this.nextBatch(batchSize, false);
+    }
+  
+    nextBatch(batchSize, isTrain) {
+    const indices = isTrain ? 
+      this.trainIndices : 
+      this.testIndices;
+
+    // 获取当前批次索引（不修改原数组）
+    const batchIndices = indices.slice(0, batchSize);
+    console.log(batchSize, indices.length, batchIndices.length, isTrain)
+    // 更新剩余索引
+    if (isTrain) {
+      this.trainIndices = indices.slice(batchSize);
+    } else {
+      //this.testIndices = indices.slice(batchSize);
+    }
+
+    return {
+      xs: this.dataset.images.gather(tf.tensor1d(batchIndices,'int32')),
+      labels: this.dataset.labels.gather(tf.tensor1d(batchIndices,'int32'))
+    };
+  }
+  }
+  // RGB转灰度函数（可选）
+function rgb2gray(tensor) {
+  return tf.tidy(() => {
+    return tf.mul(
+      tensor.mean(3),  // 取RGB均值
+      tf.scalar(1/255) // 归一化
+    ).expandDims(3);   // 恢复通道维度
+  });
+}
+
+// 数据标准化函数
+function normalize(tensor) {
+  return tf.tidy(() => {
+    return tf.div(
+      tf.sub(tensor, tf.min(tensor)),
+      tf.sub(tf.max(tensor), tf.min(tensor))
+    );
+  });
+}
+
+//tf
+//tfvis
+
+
+async function showExamples(data) {
+  const surface = tfvis.visor().surface({ name: '新数据集示例', tab: 'Batch数据集'});
+  const examples = data.nextTestBatch(40);
+  
+  // 调整渲染尺寸
+  for (let i = 0; i < 20; i++) {
+    const imageTensor = examples.xs
+      .slice([i, 0, 0, 0], [1, 15, 20, 3])
+      .transpose([0,2,1, 3])
+      .reshape([20, 15, 3]);  // 保持原始尺寸
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = 15;  // 显示缩放
+    canvas.height = 20;
+    await tf.browser.toPixels(imageTensor, canvas);
+    
+    // 添加标签显示
+    const label = examples.labels.argMax(1).dataSync()[i];
+    const div = document.createElement('div');
+    div.innerHTML = `<span>${label}</span>`;
+    div.appendChild(canvas);
+    
+    surface.drawArea.appendChild(div);
+    imageTensor.dispose();
+  }
+}
+
+async function run() {
+  const data = new CustomData();
+  await data.load();
+  await showExamples(data);
+
+  const model = getModel();
+  tfvis.show.modelSummary({name: 'Model Architecture', tab: 'Model'}, model);
+  await train(model, data);
+
+	await showAccuracy(model, data);
+	await showConfusion(model, data);
+  model.save("downloads://识别2")
+  //tf.train.Saver().save("downloads://验证码识别模型")
+}
+
+
+
+
+
+
+function getModel() {
+  const model = tf.sequential();
+  
+  // 输入层适配新尺寸
+  model.add(tf.layers.conv2d({
+    inputShape: [15, 20, 3],  // 高度15px，宽度20px，RGB三通道
+    kernelSize: 3,//等价于[5,5]
+    filters: 16,
+    strides: 1,
+	padding: 'same',//默认valid缩水，可以设置“same”
+    activation: 'relu',
+    kernelInitializer: 'varianceScaling'
+  }));
+  
+  model.add(tf.layers.maxPooling2d({poolSize: 2}));
+  
+  // 调整后续层参数防止维度错误
+  model.add(tf.layers.conv2d({
+    kernelSize: 3,//等价于[5,5]
+    filters: 32,
+    strides: 1,
+	padding: 'same',//默认valid缩水，可以设置“same”
+    activation: 'relu',
+    kernelInitializer: 'varianceScaling'
+  }));
+  
+  model.add(tf.layers.maxPooling2d({poolSize: 2}));
+  
+  // 扁平化前检查维度
+  model.add(tf.layers.flatten());
+  model.add(tf.layers.dense({units: 64, activation: 'relu'}));
+  model.add(tf.layers.dense({units: 10, activation: 'softmax'}));
+
+  // 保持原有编译配置
+  model.compile({
+    optimizer: tf.train.adam(),
+    loss: 'categoricalCrossentropy',
+    metrics: ['accuracy']
+  });
+  
+  return model;
+}
+
+
+
+
+
+
+async function train(model, data) {
+  const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
+  const container = {
+    name: 'Model Training', tab: 'Model', styles: { height: '1000px' }
+  };
+  const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+
+  const BATCH_SIZE = 32;
+  const TRAIN_DATA_SIZE = 192;
+  const TEST_DATA_SIZE = 48;
+
+  const [trainXs, trainYs] = tf.tidy(() => {
+    const d = data.nextTrainBatch(TRAIN_DATA_SIZE);
+    return [
+		//原始为[TRAIN_DATA_SIZE,784]
+      d.xs.reshape([TRAIN_DATA_SIZE, 15, 20, 3]),
+      d.labels
+    ];
+  });
+
+  const [testXs, testYs] = tf.tidy(() => {
+    const d = data.nextTestBatch(TEST_DATA_SIZE);
+    return [
+      d.xs.reshape([TEST_DATA_SIZE, 15, 20, 3]),
+      d.labels
+    ];
+  });
+
+  return model.fit(trainXs, trainYs, {
+    batchSize: BATCH_SIZE,
+    validationData: [testXs, testYs],
+    epochs: 40,
+    shuffle: true,
+    callbacks: fitCallbacks
+  });
+}
+
+
+const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
+function doPrediction(model, data, testDataSize = 48) {
+  const IMAGE_WIDTH = 15;
+  const IMAGE_HEIGHT = 20;
+  const testData = data.nextTestBatch(testDataSize);
+  const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 3]);
+  const labels = testData.labels.argMax(-1);
+  const preds = model.predict(testxs).argMax(-1);
+
+  testxs.dispose();
+  return [preds, labels];
+}
+
+async function showAccuracy(model, data) {
+  const [preds, labels] = doPrediction(model, data);
+  const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
+  const container = {name: 'Accuracy', tab: 'Evaluation'};
+  tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
+
+  labels.dispose();
+}
+
+async function showConfusion(model, data) {
+  const [preds, labels] = doPrediction(model, data);
+  const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+  const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
+  tfvis.render.confusionMatrix(container, {values: confusionMatrix, tickLabels: classNames});
+
+  labels.dispose();
+}
+
+
+
+
+document.addEventListener('DOMContentLoaded', run);
+  </script>
+
+</head>
+
+<body>
+</body>
+</html>
