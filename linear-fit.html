@@ -193,61 +193,80 @@ function Paint(){
     for(let i=1;i<a.length;i++){
         var x=Number(a[i][1]);
         var y=Number(a[i][2]);
-        if(x && y){
+        if((x || a[i][1]===0 || a[i][1]==="0") && (y || a[i][2]===0 || a[i][2]==="0")){
             a2.push([x,y]);
         }
     }    
     if(a2.length>0){
     // 假设a2是已有的二维数组，例如：const a2 = [[1,2], [3,4], [5,6]];
+		// 通用统计计算函数
+		const calculateStats = (values) => {
+			const n = values.length;
+			if (n === 0) return null; // 空数据集返回null
 
-        // 通用统计计算函数
-        const calculateStats = (values) => {
-            const n = values.length;
-            const sum = values.reduce((acc, val) => acc + val, 0);
-            const mean = n === 0 ? 0 : sum / n;
-            
-            const sumOfSquares = values.reduce((acc, val) => acc + val ** 2, 0);
-            const squaredDifferences = values.map(v => (v - mean) ** 2);
-            const sumSquaredDiff = squaredDifferences.reduce((acc, val) => acc + val, 0);
-            
-            return {
-                n,
-                sum: sum.toPrecision(9),
-                mean: mean.toPrecision(9),
-                sumSq: sumOfSquares.toPrecision(9),
-                sumSquaredDiff: sumSquaredDiff.toPrecision(9),
-                stdDev: Math.sqrt(sumSquaredDiff / (n*(n-1))).toPrecision(9)
-            };
-        };
+			const sum = values.reduce((acc, val) => acc + val, 0);
+			const mean = sum / n;
+			
+			// 计算各项统计指标
+			const sumOfSquares = values.reduce((acc, val) => acc + val ** 2, 0);
+			const sumSquaredDiff = values.reduce((acc, val) => acc + (val - mean) ** 2, 0);
+			
+			// 处理标准差计算边界情况
+			let stdDev;
+			try {
+				stdDev = n > 1 
+					? Math.sqrt(sumSquaredDiff / (n - 1)).toPrecision(9)  // 样本标准差
+					: '-'  // 单个数据点无法计算标准差
+			} catch (e) {
+				stdDev = 'Error';
+			}
 
-        // 提取x,y数据
-        const xValues = a2.map(pair => pair[0]);
-        const yValues = a2.map(pair => pair[1]);
+			return {
+				n,
+				sum: sum.toPrecision(9),
+				mean: mean.toPrecision(9),
+				sumSq: sumOfSquares.toPrecision(9),
+				sumSquaredDiff: sumSquaredDiff.toPrecision(9),
+				stdDev
+			};
+		};
 
-        // 计算统计量
-        const xStats = calculateStats(xValues);
-        const yStats = calculateStats(yValues);
+		// 提取x,y数据（含空值过滤）
+		const xValues = a2.map(pair => pair[0]).filter(v => typeof v === 'number');
+		const yValues = a2.map(pair => pair[1]).filter(v => typeof v === 'number');
 
-        // 构建可读性输出
-        const outputText = `
-【X统计】------------------
-n      : ${xStats.n}
-Σx     : ${xStats.sum}
-x̄      : ${xStats.mean}
-Σx²    : ${xStats.sumSq}
-Σ(x-x̄)²: ${xStats.sumSquaredDiff}
-σ_x    : ${xStats.stdDev}
-【Y统计】------------------
-n      : ${yStats.n}
-Σy     : ${yStats.sum}
-ȳ      : ${yStats.mean}
-Σy²    : ${yStats.sumSq}
-Σ(y-ȳ)²: ${yStats.sumSquaredDiff}
-σ_y    : ${yStats.stdDev}
-`.trim();
+		// 计算统计量（自动过滤空数据集）
+		const xStats = calculateStats(xValues);
+		const yStats = calculateStats(yValues);
 
-        // 输出到文本域
-        document.querySelector('#inputText2').value = outputText;
+		// 动态构建输出内容
+		const outputBuilder = [];
+		if (xStats) {
+			outputBuilder.push(`
+		【X统计】------------------
+		n      : ${xStats.n}
+		Σx     : ${xStats.sum}
+		x̄      : ${xStats.mean}
+		Σx²    : ${xStats.sumSq}
+		Σ(x-x̄)²: ${xStats.sumSquaredDiff}
+		σ_x    : ${xStats.stdDev}`.trim());
+		}
+
+		if (yStats) {
+			outputBuilder.push(`
+		【Y统计】------------------
+		n      : ${yStats.n}
+		Σy     : ${yStats.sum}
+		ȳ      : ${yStats.mean}
+		Σy²    : ${yStats.sumSq}
+		Σ(y-ȳ)²: ${yStats.sumSquaredDiff}
+		σ_y    : ${yStats.stdDev}`.trim());
+		}
+
+		// 输出到文本域（空数据集时显示提示）
+		document.querySelector('#inputText2').value = outputBuilder.length > 0 
+			? outputBuilder.join('\n\n') 
+			: "";
 
     a2.sort((a, b) => a[0] - b[0]);
     var Xmin2=a2[0][0];
