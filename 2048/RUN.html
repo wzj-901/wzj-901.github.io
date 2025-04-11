@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>2048 DQN Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #gameContainer { display: flex; margin-bottom: 20px; }
+        #board { display: grid; grid-template-columns: repeat(4, 80px); gap: 10px; }
+        .tile { 
+            width: 80px; height: 80px; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold;
+            border-radius: 5px; background: #eee4da;
+        }
+        #controls { margin-left: 50px; }
+        button { padding: 10px 15px; margin: 5px; font-size: 16px; cursor: pointer; }
+        #stats { margin-top: 20px; }
+        .tile-0 { background: #cdc1b4; }
+        .tile-1 { background: #eee4da; color: #776e65; }
+        .tile-2 { background: #ede0c8; color: #776e65; }
+        .tile-3 { background: #f2b179; color: #f9f6f2; }
+        .tile-4 { background: #f59563; color: #f9f6f2; }
+        .tile-5 { background: #f67c5f; color: #f9f6f2; }
+        .tile-6 { background: #f65e3b; color: #f9f6f2; }
+        .tile-7 { background: #edcf72; color: #776e65; }
+        .tile-8 { background: #edcc61; color: #776e65; }
+        .tile-9 { background: #edc850; color: #776e65; }
+        .tile-10 { background: #edc53f; color: #776e65; }
+        .tile-11 { background: #edc22e; color: #776e65; }
+        .tile-12 { background: #3c3a32; color: #f9f6f2; }
+        .tile-13 { background: #3c3a32; color: #f9f6f2; }
+    </style>
+</head>
+<body>
+    <h1>2048 DQN Tester</h1>
+    <div id="gameContainer">
+        <div id="board"></div>
+        <div id="controls">
+            <button id="autoPlayBtn">Auto Play</button>
+            <button id="stepBtn">Next Step</button>
+            <button id="resetBtn">Reset Game</button>
+            <div id="stats">
+                <p>Current Score: <span id="score">0</span></p>
+                <p>Max Tile: <span id="maxTile">0</span></p>
+                <p>Moves: <span id="moves">0</span></p>
+                <p>AI Action: <span id="aiAction">-</span></p>
+                <p>Q Values: <span id="qValues">-</span></p>
+				<p id="maxs">Max:</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ================ 游戏环境 ================
+const Adam=[4e-5,0.9,0.999,1e-6];
+
+const decayLength=2e3;
+const MaxExploration=0.9;
+const MinExploration=0.05;
+
+const Steps=2e4;
+const TrainStart=1000;
+const BatchSize=200;
+const TrainInterval=10;
+const UpdateRate=0.1;
+
+const SpaceReward=2;
+const DieReward=-3;
+const RewardSpread=0.9;
+const rewards=[0,0,0.1, 0.4,0.5,0.9,1.7,  3,  4,  4, 4,  4,  4,   4]
+//                  3   4   5   6   7   8   9  10  11  12  13 
+
+const score = Array(14).fill(0); 
+for (let k = 3; k <= 13; k++) score[k] = 2 * score[k - 1] + (rewards[k] || 0);
+
+
+function createDQNModel() {
+    //好！第二层是第一层2倍适合存储复杂策略，与图像识别这种无脑问题不同。
+    //这里是Q值的计算，所以最后一层不用tanh激活了，毕竟Q没有上下界限制。
+    //上卷积层更好，特别是同时使用不同尺度卷积核
+    const model = tf.sequential({
+        layers: [
+            tf.layers.conv2d({filters: 16, kernelSize: [2, 2],padding:'same', activation: 'relu', inputShape: [4, 4, 1]}),
+            //tf.layers.conv2d({filters: 32, kernelSize: [2, 2],padding:'same', activation: 'relu'}),
+            tf.layers.flatten(),
+            tf.layers.dense({units: 70, activation: 'relu'}),
+            tf.layers.dense({units: 60, activation: 'relu'}),
+            tf.layers.dense({units: 50, activation: 'relu'}),
+            tf.layers.dense({units: 4})    
+        ]
+    });
+    //这里adam()默认1e-3，这里比监督学习更容易震荡，调小一点
+    //Huber损失（更稳定）：误差小，平方；误差大，线性防炸
+    //之前用的交叉熵，那个是Σ-yi*log(pi),这里pi都没有肯定不适用。
+    model.compile({
+        optimizer: tf.train.adam(...Adam),
+        loss: tf.losses.huberLoss
+    });
+    return model;
+}
+
+class Game2048Env {
+    constructor() {
+        // 初始化4x4游戏板（已展平16并取log2）
+        this.board = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    }
+    reset() {
+        this.board = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        this.board[Math.floor(Math.random()*16)]=1+Math.floor(Math.random()*2);
+	do{
+		var index=Math.floor(Math.random()*16)
+		if(this.board[index]==0){
+			this.board[index]=1+Math.floor(Math.random()*2)
+			break;
+		}
+	}while(true)
+        return this._getState();
+    }
+    step(action) {
+        var b = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+        //第一排0000，第二排0000……，0是左，1是上，2时右，3是下
+	switch(action){
+		case 0:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[i][j]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 2:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[i][3-j]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 1:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[j][i]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 3:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[j][3-i]=this.board[i*4+j]
+				}
+			}
+		break;
+	}
+	b.forEach((_,row) => {
+		b[row]=b[row].filter(n=>n!=0)
+        switch(b[row].length){
+            case 0:
+                b[row]=[0,0,0,0]
+                break;
+            case 1:
+                b[row]=[b[row][0],0,0,0]
+                break;
+            case 2:
+                if(b[row][0]==b[row][1]){
+                    b[row]=[b[row][0]+1,0,0,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],0,0]
+                }
+                break;
+            case 3:
+                if(b[row][0]==b[row][1]){
+                    b[row]=[b[row][0]+1,b[row][2],0,0]
+                }else if(b[row][1]==b[row][2]){
+                    b[row]=[b[row][0],b[row][1]+1,0,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],b[row][2],0]
+                }
+                break;
+            case 4:
+                if(b[row][0]==b[row][1]){
+                    if(b[row][2]==b[row][3]){
+                        b[row]=[b[row][0]+1,b[row][2]+1,0,0]
+                    }else{
+                        b[row]=[b[row][0]+1,b[row][2],b[row][3],0]
+                    }
+                }else if(b[row][1]==b[row][2]){
+                    b[row]=[b[row][0],b[row][1]+1,b[row][3],0]
+                    }else if(b[row][2]==b[row][3]){
+                    b[row]=[b[row][0],b[row][1],b[row][2]+1,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],b[row][2],b[row][3]]
+                }
+                break;
+        }
+	});
+    var newBoard = [];
+	switch(action){
+		case 0:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[i][j]
+				}
+			}
+		break;
+		case 2:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[i][3-j]
+				}
+			}
+		break;
+		case 1:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[j][i]
+				}
+			}
+		break;
+		case 3:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[j][3-i]
+				}
+			}
+		break;
+	}
+
+    var reward = 0;
+    var done=true;
+    const zeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0);
+    const maxCount=Math.max(...this.board);
+    reward+=newBoard.reduce((s, n) => s + score[n], 0) - this.board.reduce((s, n) => s + score[n], 0);//数字定制打分
+    done=((this.board+"")!==(newBoard+""));//没有变化就拒绝，让done=false
+    this.board=newBoard;
+    //reward
+    const moreZeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0)-zeroCount;
+    //reward+=0.005*(moreZeroCount)*(16-zeroCount)**2;
+    reward+=Math.min((moreZeroCount-1),0)*0.01*((16-zeroCount)**2)*SpaceReward;
+    const moreMaxCount=Math.max(...this.board)-maxCount;
+    reward+=moreMaxCount*maxCount;
+
+    //放入随机方块
+    var zero2=this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0)
+    if(zero2<16 && done){
+        var index=1+Math.floor(Math.random()*zero2)
+        for(var i=0;i<16;i++){
+            if(this.board[i]==0){
+                    index--;
+                if(index==0){
+                    this.board[i]=1+Math.floor(Math.random()*2)
+                    break;
+                }
+            }
+        }
+    }else{done=false}
+
+        // - 返回{ nextState, reward, done }
+        return { 
+            nextState: this._getState(),
+            reward: reward,
+            done: done
+        };
+    }
+    _getState() {
+    const maxCount=Math.max(...this.board);
+    const zeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0);
+
+        return {
+            grid:this.board,
+            features: [maxCount, zeroCount] // 特征向量,用高级特征训练ai可以加速学习。
+        };
+    }
+}
+
+
+
+        // ================ 游戏控制器 ================
+        class GameController {
+            constructor() {
+                this.env = new Game2048Env();
+                this.model = null;
+                this.targetModel = null;
+                this.moves = 0;
+                this.score = 0;
+                this.maxTile = 0;
+                this.autoPlayInterval = null;
+                
+                // 初始化UI
+                this.initUI();
+                this.loadModels();
+            }
+            
+            async loadModels() {
+                try {
+                    // 这里应该替换为你的模型URL
+                    const modelName = 1;
+					const modelUrl = `https://wzj-901.github.io/2048/models/2048-${modelName}`;
+                    
+					this.model = await tf.loadLayersModel(modelUrl+"-m.json",{weightUrlConverter: (url) => {return modelUrl+"-m.bin";}})
+					
+                    this.targetModel = await tf.loadLayersModel(modelUrl+"-tm.json",{weightUrlConverter: (url) => {return modelUrl+"-tm.bin";}})
+                    
+                    console.log('Models loaded successfully');
+                    document.getElementById('resetBtn').disabled = false;
+                    document.getElementById('stepBtn').disabled = false;
+                    document.getElementById('autoPlayBtn').disabled = false;
+                    
+                    this.resetGame();
+                } catch (error) {
+                    console.error('Error loading models:', error);
+                    alert('Failed to load models. Please check console for details.');
+                }
+            }
+            
+            initUI() {
+                this.boardElement = document.getElementById('board');
+                this.scoreElement = document.getElementById('score');
+                this.maxTileElement = document.getElementById('maxTile');
+                this.movesElement = document.getElementById('moves');
+                this.aiActionElement = document.getElementById('aiAction');
+                this.qValuesElement = document.getElementById('qValues');
+                
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+                document.getElementById('stepBtn').addEventListener('click', () => this.nextStep());
+                document.getElementById('autoPlayBtn').addEventListener('click', () => this.toggleAutoPlay());
+                
+                // 初始禁用按钮，直到模型加载完成
+                document.getElementById('resetBtn').disabled = true;
+                document.getElementById('stepBtn').disabled = true;
+                document.getElementById('autoPlayBtn').disabled = true;
+            }
+            
+            resetGame() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                    this.autoPlayInterval = null;
+                    document.getElementById('autoPlayBtn').textContent = 'Auto Play';
+                }
+                
+                this.env.reset();
+                this.moves = 0;
+                this.score = 0;
+                this.maxTile = 2;
+                this.updateUI();
+            }
+            
+			async nextStep() {
+				if (!this.model) return;
+
+				// 1. 获取当前棋盘状态
+				const currentBoard = [...this.env.board];
+
+				// 2. 预筛选有效动作（重大修复）
+				const validActions = [];
+				for (let a = 0; a < 4; a++) {
+					const testEnv = new Game2048Env();
+					testEnv.board = [...currentBoard];
+					if (testEnv.step(a).done) { // 检查动作是否有效
+						validActions.push(a);
+					}
+				}
+
+				// 3. 无有效动作时结束游戏
+				if (validActions.length === 0) {
+					//alert(`游戏结束！得分: ${this.score}`);
+					document.getElementById('maxs').textContent +=this.score+" ";
+					this.resetGame();
+					return;
+				}
+
+				// 4. 仅在有效动作中选择（核心修改）
+				const state = this.env._getState().grid;
+				const input = tf.tensor([state]).reshape([1, 4, 4, 1]);
+				const qValues = (await this.model.predict(input).array())[0];
+				input.dispose();
+
+				// 筛选有效动作的Q值
+				const validQValues = validActions.map(a => qValues[a]);
+				const bestActionIndex = validQValues.indexOf(Math.max(...validQValues));
+				const action = validActions[bestActionIndex];
+
+				// 5. 执行动作并验证有效性（关键修复）
+				const { nextState, reward, done } = this.env.step(action);
+				
+				// 只有真正改变棋盘时才更新（修复步数错误增加）
+				if (done) {
+					this.moves++;
+					this.score += reward;
+					this.maxTile = Math.max(this.maxTile, Math.max(...nextState.grid));
+				}
+
+				// 6. 更新界面信息
+				this.aiActionElement.textContent = `${['左', '上', '右', '下'][action]} (${action})`;
+				this.qValuesElement.textContent = validQValues.map((v, i) => 
+					`${validActions[i]}:${v.toFixed(2)}`
+				).join(', ');
+				this.updateUI();
+
+				// 7. 全局游戏结束检测（增强逻辑）
+				if (this.checkGlobalGameOver()) {
+					setTimeout("alert(`游戏结束！\n最终得分: "+`${this.score}\n最大方块: ${Math.pow(2, this.maxTile)}\n总步数: ${this.moves}`+"`);this.resetGame();",0)
+				}
+			}
+
+			// 新增全局游戏结束检测方法
+			checkGlobalGameOver() {
+				// 检查是否有空格
+				if (this.env.board.some(cell => cell === 0)) return false;
+				
+				// 检查所有方向是否可合并
+				for (let a = 0; a < 4; a++) {
+					const testEnv = new Game2048Env();
+					testEnv.board = [...this.env.board];
+					if (testEnv.step(a).done) return false;
+				}
+				return true;
+			}
+
+			// 修改后的自动播放逻辑
+			toggleAutoPlay() {
+				if (this.autoPlayInterval) {
+					clearInterval(this.autoPlayInterval);
+					this.autoPlayInterval = null;
+					document.getElementById('autoPlayBtn').textContent = 'Auto Play';
+				} else {
+					this.autoPlayInterval = setInterval(async () => {
+						await this.nextStep();
+						// 自动检测全局结束状态
+						if (this.checkGlobalGameOver()) {
+							clearInterval(this.autoPlayInterval);
+							this.autoPlayInterval = null;
+							document.getElementById('autoPlayBtn').textContent = 'Auto Play';
+						}
+					}, 200);
+					document.getElementById('autoPlayBtn').textContent = 'Stop';
+				}
+			}
+
+			// 保持原有updateUI不变
+
+            updateUI() {
+                // 更新统计信息
+                this.scoreElement.textContent = this.score.toFixed(2);
+                this.maxTileElement.textContent = Math.pow(2, this.maxTile);
+                this.movesElement.textContent = this.moves;
+                
+                // 更新游戏板
+                this.boardElement.innerHTML = '';
+                this.env.board.forEach((value, index) => {
+                    const tile = document.createElement('div');
+                    tile.className = `tile tile-${value}`;
+                    tile.textContent = value === 0 ? '' : Math.pow(2, value);
+                    this.boardElement.appendChild(tile);
+                });
+            }
+        }
+
+        // 初始化游戏控制器
+        document.addEventListener('DOMContentLoaded', () => {
+            tf.setBackend('webgl').then(() => {
+                new GameController();
+            });
+        });
+    </script>
+</body>
+</html>
