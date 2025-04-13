@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>2048 DQN Trainer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.5.1/dist/tfjs-vis.umd.min.js"></script>
+
+    <script>
+const Adam=[4e-5,0.9,0.999,1e-6];
+
+const decayLength=2e3;
+const MaxExploration=0.9;
+const MinExploration=0.05;
+
+const Steps=2e4;
+const TrainStart=1000;
+const BatchSize=200;
+const TrainInterval=10;
+const UpdateRate=0.05;
+
+const SpaceReward=2;
+const DieReward=-3;
+const RewardSpread=0.9;
+const rewards=[0,0,0.1,0.4,0.5,0.9,1.7,3,4, 4, 4, 4, 4, 4]
+//             1 2  3   4   5   6   7  8 9  10 11 12 13 14
+
+const score = Array(14).fill(0); 
+for (let k = 3; k <= 13; k++) score[k] = 2 * score[k - 1] + (rewards[k] || 0);
+
+
+
+
+class Game2048Env {
+    constructor() {
+        // 初始化4x4游戏板（已展平16并取log2）
+        this.board = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    }
+    reset() {
+        this.board = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        this.board[Math.floor(Math.random()*16)]=1+Math.floor(Math.random()*2);
+	do{
+		var index=Math.floor(Math.random()*16)
+		if(this.board[index]==0){
+			this.board[index]=1+Math.floor(Math.random()*2)
+			break;
+		}
+	}while(true)
+        return this._getState();
+    }
+    step(action) {
+        var b = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+        //第一排0000，第二排0000……，0是左，1是上，2时右，3是下
+	switch(action){
+		case 0:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[i][j]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 2:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[i][3-j]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 1:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[j][i]=this.board[i*4+j]
+				}
+			}
+		break;
+		case 3:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					b[j][3-i]=this.board[i*4+j]
+				}
+			}
+		break;
+	}
+	b.forEach((_,row) => {
+		b[row]=b[row].filter(n=>n!=0)
+        switch(b[row].length){
+            case 0:
+                b[row]=[0,0,0,0]
+                break;
+            case 1:
+                b[row]=[b[row][0],0,0,0]
+                break;
+            case 2:
+                if(b[row][0]==b[row][1]){
+                    b[row]=[b[row][0]+1,0,0,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],0,0]
+                }
+                break;
+            case 3:
+                if(b[row][0]==b[row][1]){
+                    b[row]=[b[row][0]+1,b[row][2],0,0]
+                }else if(b[row][1]==b[row][2]){
+                    b[row]=[b[row][0],b[row][1]+1,0,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],b[row][2],0]
+                }
+                break;
+            case 4:
+                if(b[row][0]==b[row][1]){
+                    if(b[row][2]==b[row][3]){
+                        b[row]=[b[row][0]+1,b[row][2]+1,0,0]
+                    }else{
+                        b[row]=[b[row][0]+1,b[row][2],b[row][3],0]
+                    }
+                }else if(b[row][1]==b[row][2]){
+                    b[row]=[b[row][0],b[row][1]+1,b[row][3],0]
+                    }else if(b[row][2]==b[row][3]){
+                    b[row]=[b[row][0],b[row][1],b[row][2]+1,0]
+                }else{
+                    b[row]=[b[row][0],b[row][1],b[row][2],b[row][3]]
+                }
+                break;
+        }
+	});
+    var newBoard = [];
+	switch(action){
+		case 0:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[i][j]
+				}
+			}
+		break;
+		case 2:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[i][3-j]
+				}
+			}
+		break;
+		case 1:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[j][i]
+				}
+			}
+		break;
+		case 3:
+			for(var i=0;i<4;i++){
+				for(var j=0;j<4;j++){
+					//n=i+j*4
+					newBoard[i*4+j]=b[j][3-i]
+				}
+			}
+		break;
+	}
+
+    var reward = 0;
+    var done=true;
+    const zeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0);
+    const maxCount=Math.max(...this.board);
+    reward+=newBoard.reduce((s, n) => s + score[n], 0) - this.board.reduce((s, n) => s + score[n], 0);//数字定制打分
+    done=((this.board+"")!==(newBoard+""));//没有变化就拒绝，让done=false
+    this.board=newBoard;
+    //reward
+    const moreZeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0)-zeroCount;
+    //reward+=0.005*(moreZeroCount)*(16-zeroCount)**2;
+    reward+=Math.min((moreZeroCount-1),0)*0.01*((16-zeroCount)**2)*SpaceReward;
+    const moreMaxCount=Math.max(...this.board)-maxCount;
+    reward+=moreMaxCount*maxCount;
+
+    //放入随机方块
+    var zero2=this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0)
+    if(zero2<16 && done){
+        var index=1+Math.floor(Math.random()*zero2)
+        for(var i=0;i<16;i++){
+            if(this.board[i]==0){
+                    index--;
+                if(index==0){
+                    this.board[i]=1+Math.floor(Math.random()*2)
+                    break;
+                }
+            }
+        }
+    }else{done=false}
+
+        // - 返回{ nextState, reward, done }
+        return { 
+            nextState: this._getState(),
+            reward: reward,
+            done: done
+        };
+    }
+    _getState() {
+    const maxCount=Math.max(...this.board);
+    const zeroCount = this.board.reduce((sum, cell) => sum + (cell === 0 ? 1 : 0), 0);
+
+        return {
+            grid:this.board,
+            features: [maxCount, zeroCount] // 特征向量,用高级特征训练ai可以加速学习。
+        };
+    }
+}
+
+
+// ================ 经验池 ================
+class PrioritizedReplayBuffer {
+    constructor(capacity) {
+        // [待实现] 需要存储以下内容：
+        // - states: 根据buffer大小预分配内存
+        // - actions/rewards等: 使用TypedArray优化
+        // - priorities: 样本优先级
+        this.pool=[];
+        this.size=0;
+        this.steps=0;
+        this.times=0;
+        this.capacity=capacity;
+    }
+    add(state, action, reward, nextState,isSpread) {
+        var weight=5;var trained=0;var history=[];var history2=[];var times=[]
+        if(this.pool.length<this.capacity){
+            this.pool.push([state, action, reward, nextState,weight,trained,history,history2,times]);
+            this.steps++;
+            this.size=this.pool.length;
+            if(isSpread){
+                if(this.steps>30){
+                    for(var i=0;i<10;i++){
+                        this.pool[this.size-i-2][2]+=reward*0.6*(RewardSpread**(i+1));
+                    }}}
+            if(nextState===null){this.steps=0}
+        }else{}
+    }
+    sample(batchSize) {
+        //随机采样batchSize个样本，权重越高越容易被选中
+        function twoStageSample(batch, pool) {
+            const candidates = new Set(); // 使用Set来确保不重复
+            const n = pool.length-10;
+            const maxCandidates = Math.min(10 * batch, pool.length * 0.9);
+            
+            // 收集不重复的候选者
+            while (candidates.size < maxCandidates && candidates.size < n) {
+                candidates.add(Math.floor(Math.random() * n));
+            }
+            
+            const candidateArray = Array.from(candidates);
+            const candidateWeights = candidateArray.map(i => pool[i][4] || 0);
+            const total = candidateWeights.reduce((s, w) => s + w, 0);
+            
+            const cumulative = [];
+            let sum = 0;
+            for (const w of candidateWeights) {
+                sum += w;
+                cumulative.push(sum);
+            }
+            
+            const results = new Set(); // 使用Set确保结果不重复
+            while (results.size < batch && results.size < candidateArray.length) {
+                const rand = Math.random() * sum;
+                let low = 0, high = cumulative.length - 1;
+                while (low < high) {
+                    const mid = (low + high) >> 1;
+                    cumulative[mid] < rand ? low = mid + 1 : high = mid;
+                }
+                results.add(candidateArray[low]);
+            }
+            
+            return Array.from(results);
+        }console.log(1)
+        var total=twoStageSample(batchSize,this.pool);console.log(2)
+        total.map(i=>{this.pool[i][5]++});
+        return {
+            indexes:total,
+            states: total.map(i=>this.pool[i][0]),
+            actions: total.map(i=>this.pool[i][1]),
+            rewards: total.map(i=>this.pool[i][2]),
+            nextStates: total.map(i=>this.pool[i][3]),
+            dones: total.map(i=>this.pool[i][3]===null),
+            weights:total.map(i=>this.pool[i][4])     // 重要性采样权重
+        };
+    }
+    sampleBack(indexes,Qtds,Qtds2){
+        //更新样本优先级
+        this.times++;
+        function f(Qtd){
+            return Math.abs(Qtd)*0.1+0.1;
+        }
+        indexes.forEach((index,i) => {this.pool[index][4]=f(Qtds[i]);this.pool[index][6].push(Qtds[i]);this.pool[index][7].push(Qtds2[i]);this.pool[index][8].push(this.times)});
+    }
+}
+
+// ================ 训练流程核心 ================ 
+function createDQNModel() {
+    //这里是Q值的计算，所以最后一层不用tanh激活了，毕竟Q没有上下界限制。
+    //上卷积层更好，特别是同时使用不同尺度卷积核
+    const model = tf.sequential({
+        layers: [
+            tf.layers.conv2d({filters: 16, kernelSize: [2, 2], activation: 'relu', inputShape: [4, 4, 1]}),
+            tf.layers.conv2d({filters: 32, kernelSize: [2, 2], activation: 'relu'}),
+            tf.layers.flatten(),
+            tf.layers.dense({units: 80, activation: 'relu'}),
+            tf.layers.dense({units: 70, activation: 'relu'}),
+            tf.layers.dense({units: 60, activation: 'relu'}),
+            tf.layers.dense({units: 50, activation: 'relu'}),
+            tf.layers.dense({units: 4})    
+        ]
+    });
+    //这里adam()默认1e-3，这里比监督学习更容易震荡，调小一点
+    //Huber损失（更稳定）：误差小，平方；误差大，线性防炸
+    //之前用的交叉熵，那个是Σ-yi*log(pi),这里pi都没有肯定不适用。
+    model.compile({
+        optimizer: tf.train.adam(...Adam),
+        loss: tf.losses.huberLoss
+    });
+    return model;
+}
+
+function run(){
+    const model = createDQNModel();window.model=model;
+    const targetModel = createDQNModel();window.targetModel=targetModel;
+    targetModel.setWeights(model.getWeights()); // 目标网络权重初始化为模型权重
+    train(model, targetModel);
+}
+function showIt(c){
+    console.log(c[0]+" "+c[1]+" "+c[2]+" "+c[3])
+    console.log(c[4]+" "+c[5]+" "+c[6]+" "+c[7])
+    console.log(c[8]+" "+c[9]+" "+c[10]+" "+c[11])
+    console.log(c[12]+" "+c[13]+" "+c[14]+" "+c[15])
+}const tau = UpdateRate; // 混合比例 (0.001~0.1)
+
+function softUpdate() {
+  const modelWeights = model.getWeights();
+  const targetWeights = targetModel.getWeights();
+  targetModel.setWeights(modelWeights.map((modelWeight, i) => {
+    return tf.add(
+      tf.mul(modelWeight, tau),
+      tf.mul(targetWeights[i], 1 - tau)
+    );
+  }));
+}
+
+
+async function train(model, targetModel) {
+    const env = new Game2048Env();window.env=env;
+    const buffer = new PrioritizedReplayBuffer(1e8);window.buffer=buffer;
+    const schedule = {
+        getEpsilon : (step)=>Math.max(MinExploration, MaxExploration * Math.exp(-step / decayLength))//实现epsilon的退火策略（根据训练次数决定试错概率，不低于5%）
+    };
+    // 训练循环
+    var s=[];var lifes=0;var i=0;var trains=0;var gains=[];
+    //可视化
+    var metrics = ['loss'];
+    var container = {name: 'Model Training', tab: 'Model', styles: { height: '1000px' }};
+    var fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+
+    var listMax=[];window.listMax=listMax;
+    for (var episode = 0; episode < Steps; episode++) {
+        if(s.length==0){
+            listMax.push(env._getState().features[0]);
+            var state = env.reset().grid;lifes++;
+        }else{
+            state=Nstate;
+        }
+        //预测：
+        showIt(state)
+        var  input=tf.tensor([env._getState().grid]).reshape([1, 4, 4, 1]);
+        var qValues =( await model.predict(input).array())[0];
+        //console.log(qValues)
+        var  indexedArr = qValues.map((value, index) => ({ value, index }));
+        indexedArr.sort((a, b) => b.value - a.value);
+        var s = indexedArr.map(item => item.index);
+        //console.log(s)
+        do{
+            // 动作选择：epsilon-greedy策略
+            var action = schedule.getEpsilon(episode) < Math.random() ? s[0] : Math.floor(Math.random() * 4);
+            // 环境-Go
+            var { nextState, reward, done } = env.step(action);
+            var Nstate=nextState.grid;
+            if(!done){
+                s=s.filter(i=>i!=action);
+            }
+        }while(!done && s.length>0)
+        console.log((action==0?"左":action==2?"右":action==1?"上":action==3?"下":"")+"            "+episode+"         "+lifes+"         "+reward)
+        gains.push(reward || 0);
+        if(s.length==0){nextState=null;reward=DieReward;}//死亡惩罚
+        buffer.add(state, action, reward, nextState,true); //死亡nextstate=null
+        if(gains.length>500){gains.shift()}
+        console.log(gains.reduce((a,b)=>a+b,0)/gains.length);
+        
+        i--;
+        // 确保缓冲区relay buffer足够大了才开始训练，避免过度依赖近期数据
+        if (buffer.size > TrainStart && i<0) {
+            i=TrainInterval;trains++;
+            // [建议] 实现TD误差计算
+            var batch = buffer.sample(BatchSize);
+            var validIndices = [];
+            var nextStates = [];
+            var invalidPositions = [];
+            batch.nextStates.forEach((experience, idx) => {
+                if (experience && experience.grid) {  // 检查第四项是否存在且包含grid
+                    validIndices.push(idx);
+                    nextStates.push(experience.grid);
+                } else {
+                    invalidPositions.push(idx);
+                    nextStates.push(new Array(16).fill(0)); // 无效位置填充零数组
+                }
+            });
+            var input2 = tf.tensor(nextStates, [batch.nextStates.length, 16]).reshape([batch.nextStates.length, 4, 4, 1]);
+            var rawQValues = await targetModel.predict(input2).array();
+            input2.dispose();
+            var qValues2 = rawQValues.map((q, idx) => {
+                return invalidPositions.includes(idx) ? [0, 0, 0, 0] : q;
+            });
+            //反推batch的Q值训练model
+            var targets = qValues2.map((q, index) => batch.rewards[index]+RewardSpread*Math.max(...q)); 
+            
+            var Q;
+            var Q2;
+            // 模型更新
+            tf.tidy(() => {
+                const actions = tf.tensor(batch.actions,[batch.actions.length] ,'int32');
+                const onehot_actions=tf.oneHot(actions,4);
+                const {value:lossValue,grads}=tf.variableGrads(()=>{
+                    const predictions = model.apply(tf.tensor(batch.states).reshape([batch.states.length, 4, 4, 1]),{training:true});//console.log(predictions.array());console.log(actions.array())
+                    const selectedQValues = tf.sum(tf.mul(predictions, onehot_actions), 1);//console.log(selectedQValues.array())
+                    const targ=tf.tensor(targets)
+                    const loss = tf.losses.huberLoss(targ, selectedQValues,);
+                    Q = targ.sub(selectedQValues).array();
+                    return loss.mean();
+                });
+                model.optimizer.applyGradients(grads);
+                console.log(Q)
+
+
+//仅仅调试使用，浪费性能，用后删除
+                // const predi = model.predict(tf.tensor(batch.states).reshape([batch.states.length, 4, 4, 1]));//console.log(predictions.array());console.log(actions.array())
+                // const selectedQV = tf.sum(tf.mul(predi, onehot_actions), 1);//console.log(selectedQValues.array())
+                // Q2 = tf.tensor(targets).sub(selectedQV).array();
+                // console.log(Q2)
+
+
+
+
+                // 目标网络软更新
+                softUpdate();console.log(trains);
+                fitCallbacks.onBatchEnd(trains,{loss:lossValue.dataSync()[0]});
+            }); 
+            console.log("已学习")
+
+            Q=await Q;Q2=Q;
+            // Q2=await Q2;
+            buffer.sampleBack(batch.indexes,Q,Q2); // 更新样本优先级
+
+        }
+        
+    }
+    console.log(buffer.pool)
+    console.log(listMax)
+}
+
+// ================ 新增可视化模块 ================
+function renderGameBoard(canvasId, gridData) {
+    // [可选] 实现实时游戏棋盘绘制
+}
+
+// ================ 初始化执行 ================
+document.addEventListener('DOMContentLoaded', () => {
+    tf.setBackend('webgl').then(() => run());
+});
+
+</script>
+</head>
+
+<body>
+    <!-- [建议] 添加可视化元素 -->
+    <div style="display: flex">
+        <div style="width: 60%">
+            <canvas id="gameView" width="400" height="400"></canvas>
+        </div>
+        <div id="tfjsVisor"></div>
+    </div>
+</body>
+</html>
