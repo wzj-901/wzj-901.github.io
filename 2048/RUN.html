@@ -54,6 +54,10 @@
     
     <script>
         // ================ 游戏环境 ================
+const model_name=2.1;
+
+
+
 const Adam=[4e-5,0.9,0.999,1e-6];
 
 const decayLength=2e3;
@@ -301,7 +305,7 @@ class Game2048Env {
             async loadModels() {
                 try {
                     // 这里应该替换为你的模型URL
-                    const modelName = 1;
+                    const modelName = model_name;
 					const modelUrl = `https://wzj-901.github.io/2048/models/2048-${modelName}`;
                     
 					this.model = await tf.loadLayersModel(modelUrl+"-m.json",{weightUrlConverter: (url) => {return modelUrl+"-m.bin";}})
