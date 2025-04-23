@@ -100,7 +100,7 @@ function addSentence() {
       setTimeout("fetching()", 2000);
 
 
-  }else{notices.innerHTML="已阻止请求。(请输入15字符以上的纯英文语句)";}
+  }else{notices.innerHTML="已阻止请求。"+(updating?"(正在等待上一个请求的响应)":"(请输入15字符以上的纯英文语句)");}
 }
 
 function fetching() {
