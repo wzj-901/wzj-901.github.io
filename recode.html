@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Reviews Table</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 确保长文本换行 */
+        .break-words {
+            word-break: break-word;
+        }
+        /* 限制表格最大宽度，适合超宽屏幕 */
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4 text-center">Movie Reviews</h1>
+        <div class="table-container">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-4 border-b text-left">Created At</th>
+                        <th class="py-2 px-4 border-b text-left">Sentences</th>
+                        <th class="py-2 px-4 border-b text-left">Answer</th>
+                        <th class="py-2 px-4 border-b text-left">Identify</th>
+                    </tr>
+                </thead>
+                <tbody id="reviews-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 电影评论数据
+const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
+
+const { createClient } = supabase
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+function replaceInprivateTags(dataArray) {
+    return dataArray.map(item => ({
+        ...item,
+        sentences: item.sentences.includes('<inprivate>') ? '<inprivate>' : item.sentences    }));
+}
+async function fetchReviews() {
+	try {
+		const { data, error } = await supabaseClient.from("ai1").select("*");
+
+		if (error) {
+		console.error('Error fetching data:', error);
+		return "";
+		}
+	console.log('Fetched messages:',data);
+
+	renderReviewsTable(replaceInprivateTags(data));
+    return data;
+	}catch (error) {
+		console.error('Error fetching data:', error);
+		return "";
+	}
+  } 
+        // 加工函数：将数组渲染为表格
+        function renderReviewsTable(reviews) {
+            const tbody = document.getElementById('reviews-table');
+            reviews.forEach(review => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                
+                // Created At
+                const createdAtCell = document.createElement('td');
+                createdAtCell.className = 'py-2 px-4 break-words';
+                createdAtCell.textContent = new Date(review.created_at).toLocaleString();
+                row.appendChild(createdAtCell);
+
+                // Sentences
+                const sentencesCell = document.createElement('td');
+                sentencesCell.className = 'py-2 px-4 break-words max-w-md';
+                sentencesCell.textContent = review.sentences;
+                row.appendChild(sentencesCell);
+
+                // Answer
+                const answerCell = document.createElement('td');
+                answerCell.className = 'py-2 px-4 break-words';
+                answerCell.textContent = review.answer || 'NULL';
+                row.appendChild(answerCell);
+
+                // Identify
+                const identifyCell = document.createElement('td');
+                identifyCell.className = 'py-2 px-4 break-words';
+                identifyCell.textContent = review.identify;
+                row.appendChild(identifyCell);
+
+                tbody.appendChild(row);
+            });
+        }
+fetchReviews();
+    </script>
+</body>
+</html>

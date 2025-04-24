@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Recognition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        #chat-container::-webkit-scrollbar { width: 6px; }
+        #chat-container::-webkit-scrollbar-track { background: #2d2d2d; }
+        #chat-container::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 3px; }
+        #chat-container::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        textarea::-webkit-scrollbar { width: 6px; }
+        textarea::-webkit-scrollbar-track { background: #2d2d2d; }
+        textarea::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 3px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        #input-container { position: sticky; bottom: 0; background: #2d2d2d; z-index: 10; }
+        .thinking::after { content: '.'; animation: dots 1.5s infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
+        .pill-button { border-radius: 9999px; transition: background-color 0.3s, color 0.3s; }
+        #sentences { background: transparent !important; }
+		.message-content { overflow-wrap: break-word; }
+    </style>
+</head>
+<body class="bg-[#1a1a1a] font-sans text-gray-300">
+    <div class="flex flex-col h-screen max-w-2xl mx-auto">
+        <header id="header" class="bg-[#1a1a1a] p-4 hidden">
+            <h1 class="text-xl font-bold text-center text-gray-300" style="user-select: none;">AI Emotion Recognition</h1>
+        </header>
+        <div id="cover" class="flex-1 flex flex-col items-center justify-center p-4">
+            <h1 class="text-2xl font-bold text-gray-300 mb-4" style="user-select: none;">AI Emotion Recognition</h1>
+            <a href="https://wzj-901.github.io/recode.html" class="flex items-center bg-[#2d2d2d] text-gray-300 px-4 py-2 pill-button">
+                <span>今日已识别<span id="visit-times-cover">0</span>次</span>
+                <svg class="w-5 h-5 ml-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+        </div>
+        <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 hidden"></div>
+        <div id="input-container" class="p-4 bg-[#2d2d2d]">
+            <div class="flex flex-col space-y-2">
+                <textarea id="sentences" rows="3" maxlength="999" class="flex-1 p-2 text-gray-300 focus:outline-none focus:ring-0 resize-none placeholder-gray-500" placeholder="Input English text..."></textarea>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <button id="inprivate" class="bg-[#2d2d2d] text-gray-500 px-4 py-1 pill-button border border-gray-500" style="user-select: none;">inprivate</button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span id="char-count" class="text-sm text-gray-500"></span>
+                        <button id="btn" onclick="addSentence()" class="bg-[#e07b39] text-white w-10 h-10 rounded-full flex items-center justify-center disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-[#2d2d2d] p-4 rounded-lg max-w-sm w-full">
+            <p id="popup-message" class="text-gray-300"></p>
+            <button onclick="closePopup()" class="mt-4 bg-[#e07b39] text-white px-4 py-2 rounded-lg hover:bg-[#b35920]">OK</button>
+        </div>
+    </div>
+    <script>
+const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
+
+const { createClient } = supabase
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+
+        async function fetchTab(id) {
+            try {
+                const { data, error } = await supabaseClient.from("ai1").select("answer").eq("identify", id).single();
+                if (error) { console.error('Error fetching data:', error); return ""; }
+                console.log('Fetched messages:', data);
+                return data;
+            } catch (err) { console.error('Unexpected error:', err); return ""; }
+        }
+
+        async function insertTab(data) {
+            try {
+                const { data: insertedData, error } = await supabaseClient.from("ai1").insert(data).select();
+                if (error) { console.error('Error inserting data:', error); return null; }
+                console.log('Inserted data:', insertedData[0]);
+                return insertedData[0];
+            } catch (err) { console.error('Unexpected error:', err); return null; }
+        }
+
+        async function updateTab(table, column, value, field, updateData) {
+            try {
+                const { data, error } = await supabaseClient.from(table).update({ [field]: updateData }).eq(column, value).select(field).single();
+                if (error) { console.error('Error updating data:', error); return null; }
+                console.log('Updated data:', data);
+                return data;
+            } catch (err) { console.error('Unexpected error:', err); return null; }
+        }
+
+        async function getTableCount() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from("ai1")
+                    .select('*', { count: 'exact', head: true });
+                if (error) {
+                    console.error('Error fetching table count:', error);
+                    appendMessage("Failed to fetch visit count. Please try again later.", 'ai', null, false, true);
+                    return null;
+                }
+                console.log(`Table has ${count} records`);
+                return count;
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                appendMessage("Failed to fetch visit count. Please try again later.", 'ai', null, false, true);
+                return null;
+            }
+        }
+
+        function isStrictASCII(text) {
+            return /^[\x00-\x7F]*$/.test(text);
+        }
+
+        let updating = false;
+        let waiting_download = false;
+        let download_id = null;
+        let send_times = 0;
+        let last_message_id = 0;
+        let hasSentFirstMessage = false;
+        let inprivateActive = false;
+
+        function appendMessage(content, type, id = null, inprivate = false, showIcons = false) {
+            const chatContainer = document.getElementById("chat-container");
+            const messageDiv = document.createElement("div");
+            messageDiv.id = id ? `message-${id}` : `message-${++last_message_id}`;
+            messageDiv.className = `chat-message ${type === 'user' ? 'user-message flex justify-end' : 'ai-message'}`;
+            const messageContent = document.createElement("div");
+			messageContent.className = `p-3 rounded-lg max-w-[80%] message-content ${
+    type === 'user' ? 'bg-[#e07b39] text-white' : 'bg-[#2d2d2d] text-gray-300'
+} ${type === 'ai' && content.includes('thinking') ? 'thinking' : ''}`;
+            messageContent.textContent = content;
+            if (inprivate) {
+                const tag = document.createElement("span");
+                tag.className = "text-gray-500 text-sm ml-2";
+                tag.textContent = "<inprivate>";
+                messageContent.appendChild(tag);
+            }
+            messageDiv.appendChild(messageContent);
+            if (showIcons) {
+                const iconsDiv = document.createElement("div");
+                iconsDiv.className = "flex space-x-2 mt-1";
+                iconsDiv.innerHTML = `
+                    <button id="copy-${last_message_id}" onclick="copyText('${content}', ${last_message_id})" class="text-gray-500 hover:text-[#e07b39]"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
+                    <button id="like-${last_message_id}" onclick="toggleLike(${last_message_id})" class="text-gray-500 hover:text-[#e07b39]"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
+                    <button id="dislike-${last_message_id}" onclick="toggleDislike(${last_message_id})" class="text-gray-500 hover:text-[#e07b39]"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                `;
+                messageDiv.appendChild(iconsDiv);
+            }
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showPopup(message) {
+            document.getElementById("popup-message").textContent = message;
+            document.getElementById("popup").classList.remove("hidden");
+        }
+
+        function closePopup() {
+            document.getElementById("popup").classList.add("hidden");
+        }
+
+        function copyText(text, id) {
+            navigator.clipboard.writeText(text);
+            const copyButton = document.getElementById(`copy-${id}`);
+            copyButton.innerHTML = `<svg class="w-4 h-4 text-[#e07b39]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+        }
+
+        function toggleLike(id) {
+            const likeButton = document.getElementById(`like-${id}`);
+            const dislikeButton = document.getElementById(`dislike-${id}`);
+            const isLiked = likeButton.classList.contains('text-[#e07b39]');
+            likeButton.classList.toggle('text-[#e07b39]', !isLiked);
+            if (!isLiked) dislikeButton.classList.remove('text-[#e07b39]');
+        }
+
+        function toggleDislike(id) {
+            const likeButton = document.getElementById(`like-${id}`);
+            const dislikeButton = document.getElementById(`dislike-${id}`);
+            const isDisliked = dislikeButton.classList.contains('text-[#e07b39]');
+            dislikeButton.classList.toggle('text-[#e07b39]', !isDisliked);
+            if (!isDisliked) likeButton.classList.remove('text-[#e07b39]');
+        }
+
+        function updateCharCount() {
+            const sentences = document.getElementById("sentences");
+            const charCount = document.getElementById("char-count");
+            const btn = document.getElementById("btn");
+            const len = sentences.value.length;
+            if (!isStrictASCII(sentences.value)) {
+                charCount.textContent = "请输入英文字符";
+                btn.classList.add("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                btn.disabled = true;
+            } else if (len === 0) {
+                charCount.textContent = "";
+                btn.classList.add("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                btn.disabled = true;
+            } else if (len <= 15) {
+                charCount.textContent = "字数不足";
+                btn.classList.add("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                btn.disabled = true;
+            } else {
+                charCount.textContent = `${len} / 999`;
+                if (!updating) {
+                    btn.classList.remove("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        function addSentence() {
+            const sentences = document.getElementById("sentences");
+            const btn = document.getElementById("btn");
+            const text = sentences.value;
+            if (text.length > 999) {
+                showPopup(`您的文本"${text.slice(0, 20)}..."超过999字符限制！`);
+                return;
+            }
+            if (!isStrictASCII(text)) {
+                const invalidChars = text.match(/[^\x00-\x7F]/g) || [];
+                showPopup(`您的文本"${text.slice(0, 20)}..."含有非法字符"${invalidChars.join(', ')}"！`);
+                return;
+            }
+            if (text.length > 15 && !updating) {
+                if (!hasSentFirstMessage) {
+                    hasSentFirstMessage = true;
+                    document.getElementById("cover").classList.add("hidden");
+                    document.getElementById("header").classList.remove("hidden");
+                    document.getElementById("chat-container").classList.remove("hidden");
+                }
+                btn.disabled = true;
+                btn.classList.add("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                updating = true;
+                waiting_download = true;
+                send_times = 0;
+                download_id = ("00000000" + Math.floor(Math.random() * 1e7)).slice(-8);
+                appendMessage(text, 'user', download_id, inprivateActive);
+                insertTab({ identify: download_id, sentences: text });
+                appendMessage("thinking...", 'ai');
+                setTimeout(fetching, 2000);
+                sentences.value = '';
+                updateCharCount();
+            } else {
+                appendMessage(updating ? "正在等待上一个请求的响应" : "请输入15字符以上的纯英文语句", 'ai', null, false, true);
+            }
+        }
+
+        function fetching() {
+            fetchTab(download_id).then(async Data => {
+                const ans = Data?.answer;
+                if (send_times === 0 && !hasSentFirstMessage) { counting(false); }
+                send_times++;
+                if (ans && ans !== "NULL") {
+                    if (inprivateActive) {
+                        await updateTab("ai1", "identify", download_id, "sentences", document.getElementById(`message-${download_id}`).querySelector(".chat-message.user-message div").textContent + " <inprivate>");
+                    }
+                    const thinkingMessage = document.querySelector('.thinking');
+                    if (thinkingMessage) thinkingMessage.remove();
+                    appendMessage("识别成功", 'ai');
+                    appendMessage(ans, 'ai', null, false, true);
+                    //document.getElementById("btn").classList.remove("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                    //document.getElementById("btn").disabled = false;
+                    updating = false;
+                    waiting_download = false;
+                    download_id = null;
+                } else if (send_times < 3) {
+                    console.log("waiting...");
+                    setTimeout(fetching, 2000);
+                } else {
+                    console.log("timeout!");
+                    const thinkingMessage = document.querySelector('.thinking');
+                    if (thinkingMessage) thinkingMessage.remove();
+                    appendMessage("The server is busy, please try again later", 'ai', null, false, true);
+                    //document.getElementById("btn").classList.remove("disabled:bg-gray-600", "disabled:cursor-not-allowed", "disabled:pointer-events-none");
+                    //document.getElementById("btn").disabled = false;
+                    updating = false;
+                    waiting_download = false;
+                    download_id = null;
+                }
+            });
+        }
+
+        function counting(n) {
+            getTableCount().then(count => {
+                if (count) {
+                    document.getElementById("visit-times-cover").textContent = count;
+                } else {
+                    console.log("counting error!");
+                }
+                if (n && !hasSentFirstMessage) setTimeout(() => counting(true), 15000);
+            });
+        }
+
+        document.getElementById("sentences").addEventListener("input", updateCharCount);
+        document.getElementById("inprivate").addEventListener("click", () => {
+            inprivateActive = !inprivateActive;
+            const inprivateBtn = document.getElementById("inprivate");
+            inprivateBtn.classList.toggle("bg-[#000000]");
+            inprivateBtn.classList.toggle("text-gray-300");
+            inprivateBtn.classList.toggle("border-gray-500");
+        });
+        updateCharCount();
+        counting(true);
+    </script>
+</body>
+</html>
