@@ -16,6 +16,145 @@
         textarea {box-sizing: border-box;font-size: 20px;font-family: Arial;font-family: "Consolas", "Monaco", "Courier New", monospace;
         width: 100%; height: 100%; padding: 10px; resize: none; border: none; }
         canvas { position: absolute; top: 0; left: 0; }
+
+        
+        /* 新增样式 */
+        #settingsBtn {
+            position: absolute;
+            left: 5px;
+            top: 460px;
+            font-size: 30px;
+            background: rgba(0, 0, 0, 0);
+            border: 0px solid #999;
+            cursor: pointer;
+            opacity: 0;
+            z-index: 100;
+            color:#777;
+            transition: all 0.3s linear;
+            font-weight:bold;
+            padding: 0px;
+            line-height: 25.3px;
+        }
+        #settingsBtn.mobile {
+            left: 470px;
+        }
+        #myCanvas:hover~#settingsBtn {
+            opacity: 0.6;
+        }
+        
+        #settingsBtn:hover {
+            opacity: 1;
+        }
+        
+/* 基础容器 */
+.settings-panel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 260px;
+    height: 300px;
+    display: none;
+    background: #86cca055;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    padding: 12px;
+    z-index: 1000;
+    font-size: 17px;
+}
+.settings-panel.mobile {
+    right: 10px;
+    top: -3px;
+    left: unset;
+}
+.settings-panel *{
+    background-color: #0000;
+    font-family: "微软雅黑";
+    line-height:0.5;
+}
+
+/* 每个 div 独占一行，并添加间距 */
+.settings-panel > div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+/* 输入框样式 */
+.settings-panel input:not([type="checkbox"]) {
+    width: 40px;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0 -5px;
+    color: #333;
+    border-bottom: 1.5px solid transparent; /* 初始透明下划线 */
+    transition: border-bottom 0.2s ease;
+    font-size: 17px;
+}
+.settings-panel input:not([type="checkbox"]):hover{
+    border-bottom: 1.5px solid #0c49a0; /* 蓝色下划线 */
+    color:#0c49a0;
+    box-shadow: none;
+    
+}
+#num3 input,#num4 input {width:82px}
+/* 复选框样式 */
+.settings-panel input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
+
+/* 下拉选择框样式 */
+.settings-panel select {
+    width: calc(100% - 60px);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 标签文字样式 */
+.settings-panel p {
+    margin: 0 5px;
+    color: #333;
+}
+
+/* 最后一个 div 不需要下边距 */
+.settings-panel > div:last-child {
+    margin-bottom: 0;
+}
+
+#num0{
+    user-select: none;
+}
+#num0:hover p{
+    color: #0c49a0;
+}
+#num5 input{
+    width: 50px;
+}
+#num6{
+    position: flex;user-select: none;
+    align-items: center;
+    width: 82px;
+    margin-left: 10px;
+}
+#num6 span{
+    position: relative;
+    top:-2px;
+    left:-5px
+}
+
+
     </style>
 </head>
 <body>
@@ -35,6 +174,7 @@ x=>开头批量操作 eg: x=>⌊0.5*I⌋ ，y=>ln(y) "></textarea>
         <div id="bottomArea">
             <div id="imageArea">
                 <canvas id="myCanvas"></canvas>
+                <button id="settingsBtn">⚙</button>
             </div>
             <div id="settingsArea">
 				<textarea id="inputText2"></textarea></div>
@@ -90,6 +230,146 @@ x=>开头批量操作 eg: x=>⌊0.5*I⌋ ，y=>ln(y) "></textarea>
     </script>
     
 <script>
+// 新增配置参数
+let viewportConfig = {
+    fixed: false,
+    autoPadding: { left: 5, right: 5, bottom: 5, top: 5 },
+    fixedRange: { xMin: 0, xMax: 10, yMin: 0, yMax: 10 },
+    fitType: 'linear',fitType_B:3,lineIt:false
+};
+
+// 添加设置面板HTML
+const settingsPanel = document.createElement('div');
+settingsPanel.id = 'settingsPanel';
+settingsPanel.className = 'settings-panel';
+settingsPanel.innerHTML = `
+    <div id="num0" onclick='fixedViewport.checked=!fixedViewport.checked;viewportConfig.fixed=fixedViewport.checked;toggleRangeInputs()'><input type="checkbox" id="fixedViewport"><p>固定视窗</p></div>
+    <div id="num1"><p>外拓-X：</p><input class="padding-left"><p>%，</p><input class="padding-right"><p>%</p></div>
+    <div id="num2"><p>　　-Y：</p><input class="padding-top"><p>%，</p><input class="padding-bottom"><p>%</p></div>
+    <div id="num3"><p>X轴：(</p><input class="range-xMin"><p>，</p><input class="range-xMax"><p>)</p></div>
+    <div id="num4"><p>Y轴：(</p><input class="range-yMin"><p>，</p><input class="range-yMax"><p>)</p></div>
+    <div><select id="fitType"><option value="linear">线性拟合</option><option value="expX">指数X拟合</option><option value="expY">指数Y拟合</option><option value="logX">对数X拟合</option><option value="logY">对数Y拟合</option><option value="B">B样条拟合</option><option value="No">不拟合</option></select>
+        
+    <div id="num6" onclick='lineIt.checked=!lineIt.checked;viewportConfig.lineIt=lineIt.checked;toggleRangeInputs()'><p><input type="checkbox" id="lineIt"><span>连线</span></p></div>
+        </div>
+    <div id="num5"><p>关联近邻：</p><input type="number" min="1" max="30" value="3" step="1" class="B-r"></div>
+    `;
+document.getElementById('settingsArea').appendChild(settingsPanel);
+
+// 面板显示控制
+document.getElementById('settingsBtn').addEventListener('click', function(e) {
+  const panel = document.getElementById('settingsPanel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  e.stopPropagation();
+});
+
+// 响应式定位
+function updatePanelPosition() {
+  const panel = document.getElementById('settingsPanel');
+  const btn = document.getElementById('settingsBtn');
+  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+  panel.className = `settings-panel ${isPortrait ? 'mobile' : ''}`;
+  btn.className = `settingsBtn ${isPortrait ? 'mobile' : ''}`;
+}
+window.addEventListener('resize', updatePanelPosition);
+updatePanelPosition();
+
+
+
+
+
+// 获取DOM元素
+const fixedViewport = document.getElementById('fixedViewport');
+const fitType = document.getElementById('fitType');
+const num1 = document.getElementById('num1');
+const num2 = document.getElementById('num2');
+const num3 = document.getElementById('num3');
+const num4 = document.getElementById('num4');
+const num5 = document.getElementById('num5');
+
+// 初始化表单值
+function initForm() {
+    fixedViewport.checked = viewportConfig.fixed;
+    fitType.value = viewportConfig.fitType;
+    
+    document.querySelector('.padding-left').value = viewportConfig.autoPadding.left;
+    document.querySelector('.padding-right').value = viewportConfig.autoPadding.right;
+    document.querySelector('.padding-top').value = viewportConfig.autoPadding.top;
+    document.querySelector('.padding-bottom').value = viewportConfig.autoPadding.bottom;
+    
+    document.querySelector('.range-xMin').value = viewportConfig.fixedRange.xMin;
+    document.querySelector('.range-xMax').value = viewportConfig.fixedRange.xMax;
+    document.querySelector('.range-yMin').value = viewportConfig.fixedRange.yMin;
+    document.querySelector('.range-yMax').value = viewportConfig.fixedRange.yMax;
+    
+    toggleRangeInputs();
+}
+
+// 切换输入框显示
+function toggleRangeInputs() {
+    if (fixedViewport.checked) {
+        num1.style.display = 'none';
+        num2.style.display = 'none';
+        num3.style.display = 'flex';
+        num4.style.display = 'flex';
+    } else {
+        num1.style.display = 'flex';
+        num2.style.display = 'flex';
+        num3.style.display = 'none';
+        num4.style.display = 'none';
+    }
+    if(viewportConfig.fitType=="B"){
+        num5.style.display="flex";
+    }else{
+        num5.style.display="none";
+    }
+}
+
+// 绑定事件监听器
+fixedViewport.addEventListener('change', function() {
+    viewportConfig.fixed = this.checked;
+    toggleRangeInputs();
+});
+
+fitType.addEventListener('change', function() {
+    viewportConfig.fitType = this.value;
+    toggleRangeInputs();
+});
+
+// 自动padding输入监听
+document.querySelectorAll('.padding-left, .padding-right, .padding-top, .padding-bottom').forEach(input => {
+    input.addEventListener('input', function() {
+        viewportConfig.autoPadding[this.className.split('-')[1]] = parseFloat(this.value) || 0;
+        this.style.color="#333";
+        if(!parseFloat(this.value) && this.value!="0"){this.style.color="rgb(255, 0, 0)"}
+    });
+});
+
+// 固定范围输入监听
+document.querySelectorAll('.range-xMin, .range-xMax, .range-yMin, .range-yMax').forEach(input => {
+    input.addEventListener('input', function() {
+        const [axis, type] = this.className.split('-');
+        viewportConfig.fixedRange[type] = parseFloat(this.value) || 0;
+        this.style.color="#333";
+        if(!parseFloat(this.value) && this.value!="0"){this.style.color="rgb(255, 0, 0)"}
+    });
+});
+// 固定范围输入监听
+document.querySelectorAll('.B-r').forEach(input => {
+    input.addEventListener('input', function() {
+        viewportConfig.fitType_B = parseInt(this.value) || 3;
+        this.style.color="#333";
+        if(!parseInt(this.value) || this.value<1 || this.value>30){this.style.color="rgb(255, 0, 0)"}
+    });
+});
+
+// 初始化
+initForm();
+
+
+
+
+    
 let a = [[, "x", "y", "扩展"]];
 for(let i=0;i<200;i++){a.push(["","","",""])}
 function initTable() {
@@ -246,24 +526,24 @@ function Paint(){
 		const outputBuilder = [];
 		if (xStats) {
 			outputBuilder.push(`
-		【X统计】------------------
-		n      : ${xStats.n}
-		Σx     : ${xStats.sum}
-		x̄      : ${xStats.mean}
-		Σx²    : ${xStats.sumSq}
-		Σ(x-x̄)²: ${xStats.sumSquaredDiff}
-		σ_x    : ${xStats.stdDev}`.trim());
+【X统计】------------------
+n      : ${xStats.n}
+Σx     : ${xStats.sum}
+x̄      : ${xStats.mean}
+Σx²    : ${xStats.sumSq}
+Σ(x-x̄)²: ${xStats.sumSquaredDiff}
+σ_x    : ${xStats.stdDev}`.trim());
 		}
 
 		if (yStats) {
 			outputBuilder.push(`
-		【Y统计】------------------
-		n      : ${yStats.n}
-		Σy     : ${yStats.sum}
-		ȳ      : ${yStats.mean}
-		Σy²    : ${yStats.sumSq}
-		Σ(y-ȳ)²: ${yStats.sumSquaredDiff}
-		σ_y    : ${yStats.stdDev}`.trim());
+【Y统计】------------------
+n      : ${yStats.n}
+Σy     : ${yStats.sum}
+ȳ      : ${yStats.mean}
+Σy²    : ${yStats.sumSq}
+Σ(y-ȳ)²: ${yStats.sumSquaredDiff}
+σ_y    : ${yStats.stdDev}`.trim());
 		}
 
 		// 输出到文本域（空数据集时显示提示）
@@ -275,16 +555,25 @@ function Paint(){
     var Xmin2=a2[0][0];
     var Xmax2=a2[a2.length-1][0];
     delX=Xmax2-Xmin2;
-    Xmin=Xmin2-delX*0.05;
-    Xmax=Xmax2+delX*0.05;
     Psize=4;
     var  a3 = JSON.parse(JSON.stringify(a2));
     a3.sort((a, b) => a[1] - b[1]);
     var Ymin2=a3[0][1];
     var Ymax2=a3[a3.length-1][1];
     delY=Ymax2-Ymin2;
-    Ymin=Ymin2-delY*0.05;
-    Ymax=Ymax2+delY*0.05;
+
+    if(viewportConfig.fixed){
+        Xmin=viewportConfig.fixedRange.xMin;
+        Xmax=viewportConfig.fixedRange.xMax;
+        Ymin=viewportConfig.fixedRange.yMin;
+        Ymax=viewportConfig.fixedRange.yMax;
+    }else{
+        Xmin=Xmin2-delX*0.01*viewportConfig.autoPadding.left;
+        Xmax=Xmax2+delX*0.01*viewportConfig.autoPadding.right;
+        Ymin=Ymin2-delY*0.01*viewportConfig.autoPadding.top;
+        Ymax=Ymax2+delY*0.01*viewportConfig.autoPadding.bottom;
+    }
+    
     function changeXY(x,y){
         return [(x-Xmin)/(Xmax-Xmin)*340+100,(Ymax-y)/(Ymax-Ymin)*340+100];
     }
@@ -318,31 +607,37 @@ function Paint(){
     // 恢复之前的上下文状态
     ctx.restore();
 
-    //线性拟合
-    var Result=linearRegression(a2);
-    var k=Result.k;
-    var b=Result.b;
-    var r=Result.r;
-    var SE_k=Result.SE_k;
-    var SE_b=Result.SE_b;
+    switch(viewportConfig.fitType){
+        case "linear":
+            //线性拟合
+            var Result=linearRegression(a2);
+            var k=Result.k;
+            var b=Result.b;
+            var r=Result.r;
+            var SE_k=Result.SE_k;
+            var SE_b=Result.SE_b;
 
-    ctx.beginPath();
-    ctx.font = '15px Arial'; // 设置字体大小和字体类型
-    ctx.fillStyle = '#555'; // 设置填充颜色
-    ctx.textAlign = 'center'; // 文本对齐方式
-    ctx.textBaseline = 'top'; // 文本垂直对齐方式
-    let text=`y=k*x+b\nk=${k.toPrecision(8)}±${SE_k.toPrecision(4)}\nb=${b.toPrecision(8)}±${SE_b.toPrecision(4)}\nr=${r.toPrecision(10)}`
-    text=text.split(/\n/g)
-    text.forEach((t,i) => {ctx.fillText(t, 300, 10+i*20)}) // 绘制文本
+            ctx.beginPath();
+            ctx.font = '15px Arial'; // 设置字体大小和字体类型
+            ctx.fillStyle = '#555'; // 设置填充颜色
+            ctx.textAlign = 'center'; // 文本对齐方式
+            ctx.textBaseline = 'top'; // 文本垂直对齐方式
+            let text=`y=k*x+b\nk=${k.toPrecision(8)}±${SE_k.toPrecision(4)}\nb=${b.toPrecision(8)}±${SE_b.toPrecision(4)}\nr=${r.toPrecision(10)}`
+            text=text.split(/\n/g)
+            text.forEach((t,i) => {ctx.fillText(t, 300, 10+i*20)}) // 绘制文本
 
-    
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#f00';
-    ctx.moveTo(...changeXY(Xmin2,k*Xmin2+b));
-    ctx.lineTo(...changeXY(Xmax2,k*Xmax2+b));
-    ctx.stroke();
-
+            
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#f00';
+            ctx.moveTo(...changeXY(Xmin2,k*Xmin2+b));
+            ctx.lineTo(...changeXY(Xmax2,k*Xmax2+b));
+            ctx.stroke();
+            break;
+        case "B":
+            //B样条拟合
+            break;
+    }
     indexs1=calculateAxisTicks(Xmin,Xmax);
     indexs2=calculateAxisTicks(Ymin,Ymax);
     for(let i=0;i<indexs1.length;i++){
@@ -370,7 +665,7 @@ function Paint(){
         ctx.font = '15px Arial'; // 设置字体大小和字体类型
         ctx.fillStyle = '#555'; // 设置填充颜色
         ctx.textAlign = 'right'; // 文本对齐方式
-        ctx.textBaseline = 'center'; // 文本垂直对齐方式
+        ctx.textBaseline = 'middle'; // 文本垂直对齐方式
         ctx.fillText(indexs2[i],95,changeXY(0,indexs2[i])[1]);
     }
 }}
@@ -478,13 +773,16 @@ console.log(calculateAxisTicks(0, 11));
 var xSeted=false;
 var ySeted=false;
 var xyLast="x";
-var paintType="linear";
+var paintType=viewportConfig.fitType;
 // 示例函数
 function fill(x) {
     console.log('执行内容:', x);
     var lines=x.split("\n");
     lines.forEach(dealIt);
     setALL();
+    viewportConfig.fitType=paintType;
+    initForm();
+
 }
 function dealIt(x,i){
     if(x.startsWith("##")){return;}
@@ -499,6 +797,10 @@ function dealIt(x,i){
     else if(x.startsWith("对数x")){paintType="lnX";return;}
     else if(x.startsWith("指数y")){paintType="expY";return;}
     else if(x.startsWith("对数y")){paintType="lnY";return;}
+    else if(x.startsWith("B拟合")){paintType="B";return;}
+    else if(x.startsWith("B样条")){paintType="B";return;}
+    else if(x.startsWith("b拟合")){paintType="B";return;}
+    else if(x.startsWith("b样条")){paintType="B";return;}
     
     if(!xSeted){Dox(x);return;}
     if(!ySeted){Doy(x);return;}
