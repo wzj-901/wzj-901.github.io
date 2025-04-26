@@ -36,68 +36,6 @@
         </div>
     </div>
 
-    <script>
-        // 电影评论数据
-const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
-
-const { createClient } = supabase
-const supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
-const fetchMessages=(x)=> x.map(item => ({...item,sentences: item.sentences.includes('<inprivate>') ? '<inprivate>' : item.sentences    }));
-
-async function fetchReviews() {
-	try {
-		const { data, error } = await supabaseClient.from("ai1").select("*");
-
-		if (error) {
-		console.error('Error fetching data:', error);
-		return "";
-		}
-		// Sort data by created_at in descending order (latest first)
-		const sorted  = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-		renderReviewsTable(fetchMessages(data));
-		return data;
-	} catch (error) {
-		console.error('Error fetching data:', error);
-		return "";
-	}
-} 
-        // 加工函数：将数组渲染为表格
-        function renderReviewsTable(reviews) {
-            const tbody = document.getElementById('reviews-table');
-            reviews.forEach(review => {
-                const row = document.createElement('tr');
-                row.className = 'border-b hover:bg-gray-50';
-                
-                // Created At
-                const createdAtCell = document.createElement('td');
-                createdAtCell.className = 'py-2 px-4 break-words';
-                createdAtCell.textContent = new Date(review.created_at).toLocaleString();
-                row.appendChild(createdAtCell);
-
-                // Sentences
-                const sentencesCell = document.createElement('td');
-                sentencesCell.className = 'py-2 px-4 break-words max-w-md';
-                sentencesCell.textContent = review.sentences;
-                row.appendChild(sentencesCell);
-
-                // Answer
-                const answerCell = document.createElement('td');
-                answerCell.className = 'py-2 px-4 break-words';
-                answerCell.textContent = review.answer || 'NULL';
-                row.appendChild(answerCell);
-
-                // Identify
-                const identifyCell = document.createElement('td');
-                identifyCell.className = 'py-2 px-4 break-words';
-                identifyCell.textContent = review.identify;
-                row.appendChild(identifyCell);
-
-                tbody.appendChild(row);
-            });
-        }
-fetchReviews();
-    </script>
+    <script>const X=o;(function(q,Y){const Z=o,F=q();while(!![]){try{const V=-parseInt(Z(0x125))/0x1+parseInt(Z(0x122))/0x2+-parseInt(Z(0x11a))/0x3+parseInt(Z(0x11d))/0x4*(parseInt(Z(0x115))/0x5)+parseInt(Z(0x11c))/0x6+-parseInt(Z(0x119))/0x7*(parseInt(Z(0x126))/0x8)+parseInt(Z(0x127))/0x9*(-parseInt(Z(0x128))/0xa);if(V===Y)break;else F['push'](F['shift']());}catch(H){F['push'](F['shift']());}}}(b,0xcffa6));function o(s,j){const W=b();return o=function(g,N){g=g-0x111;let M=W[g];return M;},o(s,j);}const s=X(0x130),j=X(0x12b),{createClient:W}=supabase,g=W(s,j),N=q=>q[X(0x111)](Y=>({...Y,'sentences':Y[X(0x118)][X(0x120)](X(0x121))?X(0x121):Y['sentences']}));async function M(){const Q=X;try{const {data:q,error:Y}=await g[Q(0x11e)]('ai1')[Q(0x12e)]('*');if(Y)return console[Q(0x12c)](Q(0x132),Y),'';const F=q[Q(0x124)]((V,H)=>new Date(H[Q(0x12f)])-new Date(V[Q(0x12f)]));return i(N(q)),q;}catch(V){return console['error'](Q(0x132),V),'';}}function b(){const G=['<inprivate>','3272320IzKOMZ','toLocaleString','sort','814907hjkQfM','1170744ZwvifV','98811mDjCmz','470uqTaRf','identify','textContent','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU','error','className','select','created_at','https://bflqilyverogmjwsxlys.supabase.co','createElement','Error\x20fetching\x20data:','map','py-2\x20px-4\x20break-words','reviews-table','appendChild','130OYULxR','forEach','getElementById','sentences','7lpqIzN','890514LnnfIS','NULL','2986926ZDKcsH','75692sQpdOs','from','answer','includes'];b=function(){return G;};return b();}function i(q){const R=X,Y=document[R(0x117)](R(0x113));q[R(0x116)](F=>{const S=R,V=document[S(0x131)]('tr');V[S(0x12d)]='border-b\x20hover:bg-gray-50';const H=document[S(0x131)]('td');H[S(0x12d)]=S(0x112),H[S(0x12a)]=new Date(F['created_at'])[S(0x123)](),V[S(0x114)](H);const z=document[S(0x131)]('td');z['className']='py-2\x20px-4\x20break-words\x20max-w-md',z[S(0x12a)]=F[S(0x118)],V[S(0x114)](z);const D=document[S(0x131)]('td');D[S(0x12d)]=S(0x112),D[S(0x12a)]=F[S(0x11f)]||S(0x11b),V['appendChild'](D);const f=document[S(0x131)]('td');f[S(0x12d)]=S(0x112),f[S(0x12a)]=F[S(0x129)],V[S(0x114)](f),Y['appendChild'](V);});}M();   </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9352f085794f4529',t:'MTc0NTQ2OTgwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
