@@ -86,7 +86,7 @@
     // Supabase 配置（直接使用你的提供）
     const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
-    const { createClient } = Supabase;
+    const { createClient } = supabase;
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
     // 解析 URL 参数
