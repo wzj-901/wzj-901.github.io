@@ -89,215 +89,240 @@
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
     const { createClient } = supabase;
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+// 解析 URL 参数
+let deviceId = '';
+let key = '';
+const params = new URLSearchParams(window.location.search);
+const param = params.keys().next().value || '';
+if (param.length === 11 && /^[a-zA-Z]\d{10}$/.test(param)) {
+  deviceId = param[0];
+  key = param.slice(1);
+} else {
+  showPopup('无效 URL 参数：格式为 ?[设备ID][10位数字密钥]，如 ?a1234567890');
+}
 
-    // 解析 URL 参数
-    let deviceId = '';
-    let key = '';
-    const params = new URLSearchParams(window.location.search);
-    const param = params.keys().next().value || '';
-    if (param.length === 11 && /^[a-zA-Z]\d{10}$/.test(param)) {
-      deviceId = param[0];
-      key = param.slice(1);
+// 加密
+function encrypt(text, key) {
+  try {
+    return CryptoJS.AES.encrypt(text, key).toString();
+  } catch (e) {
+    console.error('加密失败:', e);
+    return null;
+  }
+}
+
+// 解密
+function decrypt(ciphertext, key) {
+  try {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    return decrypted && /^[\p{L}\p{N}\p{P}\p{Z}]*$/u.test(decrypted) ? decrypted : null;
+  } catch (e) {
+    console.error('解密失败:', e);
+    return null;
+  }
+}
+
+// 插入数据
+async function insertTab(data) {
+  try {
+    const { data: insertedData, error } = await supabaseClient.from('clipboard').insert(data).select();
+    if (error) {
+      console.error('Error inserting data:', error);
+      return null;
+    }
+    console.log('Inserted data:', insertedData[0]);
+    return insertedData[0];
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null;
+  }
+}
+
+// 查询数据
+async function fetchTab() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('clipboard')
+      .select('*')
+      .not('uploaded_by', 'eq', deviceId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (error) {
+      console.error('Error fetching data:', error);
+      return [];
+    }
+    console.log('Fetched messages:', data);
+    if (data.length && !decrypt(data[0].content, key)) {
+      console.error('Decryption failed for content:', data[0].content, 'with key:', key);
+    }
+    return data;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return [];
+  }
+}
+
+// 更新已复制设备
+async function updateTab(id, deviceId) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('clipboard')
+      .select('copied_by')
+      .eq('id', id)
+      .single();
+    if (error) {
+      console.error('Error fetching copied_by:', error);
+      return null;
+    }
+    const newCopiedBy = (data.copied_by || '') + deviceId;
+    const { error: updateError } = await supabaseClient
+      .from('clipboard')
+      .update({ copied_by: newCopiedBy })
+      .eq('id', id);
+    if (updateError) {
+      console.error('Error updating copied_by:', updateError);
+      return null;
+    }
+    console.log('Updated copied_by:', newCopiedBy);
+    return true;
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return null;
+  }
+}
+
+// 上传剪贴板
+async function uploadClipboard() {
+  if (!deviceId || !key) return;
+  try {
+    const text = await navigator.clipboard.readText();
+    const size = new TextEncoder().encode(text).length;
+    if (size > 30 * 1024) {
+      showPopup('内容超过 30KB，无法上传');
+      return;
+    }
+    const encrypted = encrypt(text, key);
+    if (!encrypted) {
+      showPopup('加密失败');
+      return;
+    }
+    const result = await insertTab({
+      content: encrypted,
+      uploaded_by: deviceId,
+      copied_by: '',
+      size
+    });
+    if (result) {
+      const btn = document.getElementById('upload-btn');
+      btn.textContent = '已上传';
+      btn.classList.add('active');
+      setTimeout(() => {
+        btn.textContent = '上传';
+        btn.classList.remove('active');
+      }, 3000);
     } else {
-      showPopup('无效 URL 参数：格式为 ?[设备ID][10位数字密钥]，如 ?a1234567890');
+      showPopup('上传失败');
     }
+  } catch (e) {
+    console.error('剪贴板错误:', e);
+    showPopup('无法读取剪贴板');
+  }
+}
 
-    // 加密
-    function encrypt(text, key) {
-      try {
-        return CryptoJS.AES.encrypt(text, key).toString();
-      } catch (e) {
-        console.error('加密失败:', e);
-        return null;
-      }
+// 复制剪贴板
+async function copyClipboard() {
+  if (!deviceId || !key) return;
+  const data = await fetchTab();
+  if (!data.length) {
+    showPopup('无新内容可复制');
+    return;
+  }
+  const decrypted = decrypt(data[0].content, key);
+  if (!decrypted) {
+    showPopup('解密失败');
+    return;
+  }
+  await navigator.clipboard.writeText(decrypted);
+  await updateTab(data[0].id, deviceId);
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = '已复制';
+  btn.classList.add('active');
+  setTimeout(() => {
+    btn.textContent = '复制';
+    btn.classList.remove('active');
+  }, 3000);
+}
+
+// 检查未复制内容
+async function checkPendingClipboard() {
+  if (!deviceId || !key) return;
+  const data = await fetchTab();
+  if (data.length) {
+    const decrypted = decrypt(data[0].content, key);
+    if (decrypted) {
+      await navigator.clipboard.writeText(decrypted);
+      await updateTab(data[0].id, deviceId);
+      showPopup('已自动复制新内容');
     }
+  }
+}
 
-    // 解密
-    function decrypt(ciphertext, key) {
-      try {
-        const bytes = CryptoJS.AES.decrypt(ciphertext, key);
-        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-        return decrypted && /^[\p{L}\p{N}\p{P}\p{Z}]*$/u.test(decrypted) ? decrypted : null;
-      } catch (e) {
-        console.error('解密失败:', e);
-        return null;
-      }
-    }
-
-    // 插入数据
-    async function insertTab(data) {
-      try {
-        const { data: insertedData, error } = await supabaseClient.from('clipboard').insert(data).select();
-        if (error) {
-          console.error('Error inserting data:', error);
-          return null;
-        }
-        console.log('Inserted data:', insertedData[0]);
-        return insertedData[0];
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        return null;
-      }
-    }
-
-    // 查询数据
-    async function fetchTab() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('clipboard')
-          .select('*')
-          .not('uploaded_by', 'eq', deviceId)
-          .not('copied_by', 'ilike', `%${deviceId}%`)
-          .order('created_at', { ascending: false })
-          .limit(1);
-        if (error) {
-          console.error('Error fetching data:', error);
-          return [];
-        }
-        console.log('Fetched messages:', data);
-        return data;
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        return [];
-      }
-    }
-
-    // 更新已复制设备
-    async function updateTab(id, deviceId) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('clipboard')
-          .select('copied_by')
-          .eq('id', id)
-          .single();
-        if (error) {
-          console.error('Error fetching copied_by:', error);
-          return null;
-        }
-        const newCopiedBy = (data.copied_by || '') + deviceId;
-        const { error: updateError } = await supabaseClient
-          .from('clipboard')
-          .update({ copied_by: newCopiedBy })
-          .eq('id', id);
-        if (updateError) {
-          console.error('Error updating copied_by:', updateError);
-          return null;
-        }
-        console.log('Updated copied_by:', newCopiedBy);
-        return true;
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        return null;
-      }
-    }
-
-    // 上传剪贴板
-    async function uploadClipboard() {
-      if (!deviceId || !key) return;
-      try {
-        const text = await navigator.clipboard.readText();
-        const size = new TextEncoder().encode(text).length;
-        if (size > 30 * 1024) {
-          showPopup('内容超过 30KB，无法上传');
-          return;
-        }
-        const encrypted = encrypt(text, key);
-        if (!encrypted) {
-          showPopup('加密失败');
-          return;
-        }
-        const result = await insertTab({
-          content: encrypted,
-          uploaded_by: deviceId,
-          copied_by: '',
-          size
-        });
-        if (result) {
-          const btn = document.getElementById('upload-btn');
-          btn.textContent = '已上传';
+// 实时监听
+if (deviceId && key) {
+  const channel = supabaseClient
+    .channel('clipboard_channel')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'clipboard',
+        filter: `uploaded_by=neq.${deviceId}`,
+      },
+      async (payload) => {
+        if (payload.new.copied_by.includes(deviceId)) return;
+        const decrypted = decrypt(payload.new.content, key);
+        if (decrypted) {
+          await navigator.clipboard.writeText(decrypted);
+          await updateTab(payload.new.id, deviceId);
+          const btn = document.getElementById('copy-btn');
+          btn.textContent = '已复制';
           btn.classList.add('active');
           setTimeout(() => {
-            btn.textContent = '上传';
+            btn.textContent = '复制';
             btn.classList.remove('active');
           }, 3000);
         } else {
-          showPopup('上传失败');
+          console.error('WebSocket decryption failed for content:', payload.new.content, 'with key:', key);
         }
-      } catch (e) {
-        console.error('剪贴板错误:', e);
-        showPopup('无法读取剪贴板');
       }
-    }
+    )
+    .subscribe((status) => {
+      console.log('WebSocket status:', status);
+    });
+  setInterval(() => {
+    channel.send({ type: 'heartbeat' }).then(({ status }) => {
+      console.log('Heartbeat:', status);
+    });
+  }, 10000);
+  // 页面加载时检查
+  checkPendingClipboard();
+}
 
-    // 复制剪贴板
-    async function copyClipboard() {
-      if (!deviceId || !key) return;
-      const data = await fetchTab();
-      if (!data.length) {
-        showPopup('无新内容可复制');
-        return;
-      }
-      const decrypted = decrypt(data[0].content, key);
-      if (!decrypted) {
-        showPopup('解密失败');
-        return;
-      }
-      await navigator.clipboard.writeText(decrypted);
-      await updateTab(data[0].id, deviceId);
-      const btn = document.getElementById('copy-btn');
-      btn.textContent = '已复制';
-      btn.classList.add('active');
-      setTimeout(() => {
-        btn.textContent = '复制';
-        btn.classList.remove('active');
-      }, 3000);
-    }
+// 弹出框
+function showPopup(message) {
+  document.getElementById('popup-message').textContent = message;
+  document.getElementById('popup').style.display = 'flex';
+}
 
-    // 实时监听
-    if (deviceId && key) {
-      const channel = supabaseClient
-        .channel('clipboard_channel')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'clipboard',
-            filter: `uploaded_by=neq.${deviceId}`,
-          },
-          async (payload) => {
-            if (payload.new.copied_by.includes(deviceId)) return;
-            const decrypted = decrypt(payload.new.content, key);
-            if (decrypted) {
-              await navigator.clipboard.writeText(decrypted);
-              await updateTab(payload.new.id, deviceId);
-              const btn = document.getElementById('copy-btn');
-              btn.textContent = '已复制';
-              btn.classList.add('active');
-              setTimeout(() => {
-                btn.textContent = '复制';
-                btn.classList.remove('active');
-              }, 3000);
-            }
-          }
-        )
-        .subscribe();
-      setInterval(() => channel.send({ type: 'heartbeat' }), 10000);
-    }
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
 
-    // 弹出框
-    function showPopup(message) {
-      document.getElementById('popup-message').textContent = message;
-      document.getElementById('popup').style.display = 'flex';
-    }
-
-    function closePopup() {
-      document.getElementById('popup').style.display = 'none';
-    }
-
-    // 绑定按钮
-    document.getElementById('upload-btn').onclick = uploadClipboard;
-    document.getElementById('copy-btn').onclick = copyClipboard;
+// 绑定按钮
+document.getElementById('upload-btn').onclick = uploadClipboard;
+document.getElementById('copy-btn').onclick = copyClipboard;
   </script>
 </body>
 </html>
