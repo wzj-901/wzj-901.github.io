@@ -83,7 +83,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // Supabase 配置（直接使用你的提供）
+    // Supabase 配置
     const supabaseUrl = 'https://bflqilyverogmjwsxlys.supabase.co';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmbHFpbHl2ZXJvZ21qd3N4bHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Njc1MDQsImV4cCI6MjA1NzU0MzUwNH0.73o9lq_RkWzgW5QENCTBMkZkITw-Dn_eSVc7dfFp6zU';
     const { createClient } = supabase;
@@ -123,7 +123,7 @@
       }
     }
 
-    // 插入数据（复用 AI Emotion Recognition 的 insertTab）
+    // 插入数据
     async function insertTab(data) {
       try {
         const { data: insertedData, error } = await supabaseClient.from('clipboard').insert(data).select();
@@ -139,14 +139,14 @@
       }
     }
 
-    // 查询数据（复用 五子棋游戏 的 fetchTab）
+    // 查询数据
     async function fetchTab() {
       try {
         const { data, error } = await supabaseClient
           .from('clipboard')
           .select('*')
           .not('uploaded_by', 'eq', deviceId)
-          .not('copied_by', 'cs', `{${deviceId}}`)
+          .not('copied_by', 'ilike', `%${deviceId}%`)
           .order('created_at', { ascending: false })
           .limit(1);
         if (error) {
@@ -161,7 +161,7 @@
       }
     }
 
-    // 更新已复制设备（复用 AI Emotion Recognition 的 updateTab）
+    // 更新已复制设备
     async function updateTab(id, deviceId) {
       try {
         const { data, error } = await supabaseClient
@@ -173,15 +173,16 @@
           console.error('Error fetching copied_by:', error);
           return null;
         }
+        const newCopiedBy = (data.copied_by || '') + deviceId;
         const { error: updateError } = await supabaseClient
           .from('clipboard')
-          .update({ copied_by: [...data.copied_by, deviceId] })
+          .update({ copied_by: newCopiedBy })
           .eq('id', id);
         if (updateError) {
           console.error('Error updating copied_by:', updateError);
           return null;
         }
-        console.log('Updated copied_by');
+        console.log('Updated copied_by:', newCopiedBy);
         return true;
       } catch (err) {
         console.error('Unexpected error:', err);
@@ -207,7 +208,7 @@
         const result = await insertTab({
           content: encrypted,
           uploaded_by: deviceId,
-          copied_by: [],
+          copied_by: '',
           size
         });
         if (result) {
@@ -251,7 +252,7 @@
       }, 3000);
     }
 
-    // 实时监听（复用 五子棋游戏 的 channel）
+    // 实时监听
     if (deviceId && key) {
       const channel = supabaseClient
         .channel('clipboard_channel')
