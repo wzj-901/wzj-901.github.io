@@ -1,0 +1,161 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Clipboard Sharing</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        button {
+            padding: 20px 40px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <button id="uploadBtn">上传</button>
+    <button id="copyBtn">复制</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        const deviceId = new URLSearchParams(window.location.search).get('id') || 'unknown';
+        const key = deviceId.slice(1, 11); // Use 10-digit key from query param
+        const identifier = deviceId.charAt(0); // Device identifier (e.g., 'a', 'b')
+
+        async function encrypt(text) {
+            if (!text) return '';
+            return CryptoJS.AES.encrypt(text, key).toString();
+        }
+
+        async function decrypt(ciphertext) {
+            if (!ciphertext) return '';
+            try {
+                const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                if (!decrypted) throw new Error('Decryption failed');
+                return decrypted;
+            } catch (e) {
+                return ''; // Return empty if decryption fails
+            }
+        }
+
+        async function uploadText() {
+            const text = await navigator.clipboard.readText();
+            if (text.length > 30 * 1024) {
+                alert('内容超过30KB，无法上传');
+                return;
+            }
+            const encrypted = await encrypt(text);
+            const response = await fetch('/api/clipboard', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encrypted, identifier })
+            });
+            if (response.ok) {
+                document.getElementById('uploadBtn').textContent = '已上传';
+                document.getElementById('uploadBtn').disabled = true;
+                setTimeout(() => {
+                    document.getElementById('uploadBtn').textContent = '上传';
+                    document.getElementById('uploadBtn').disabled = false;
+                }, 2000);
+                checkForNewContent();
+            }
+        }
+
+        async function copyText() {
+            const response = await fetch(`/api/clipboard?identifier=${identifier}`);
+            const entries = await response.json();
+            const nonSelfEntries = entries.filter(e => e.uploader !== identifier && !e.copiedBy.includes(identifier));
+            const latest = nonSelfEntries[0];
+            if (latest) {
+                const decrypted = await decrypt(latest.encrypted);
+                if (decrypted) {
+                    await navigator.clipboard.writeText(decrypted);
+                    await fetch(`/api/clipboard/${latest.id}/copy`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ identifier })
+                    });
+                    document.getElementById('copyBtn').textContent = '已复制';
+                    document.getElementById('copyBtn').disabled = true;
+                    setTimeout(() => {
+                        document.getElementById('copyBtn').textContent = '复制';
+                        document.getElementById('copyBtn').disabled = false;
+                    }, 2000);
+                }
+            }
+        }
+
+        async function checkForNewContent() {
+            const response = await fetch(`/api/clipboard?identifier=${identifier}`);
+            const entries = await response.json();
+            const nonSelfEntries = entries.filter(e => e.uploader !== identifier && !e.copiedBy.includes(identifier));
+            if (nonSelfEntries.length > 0) {
+                copyText();
+            }
+        }
+
+        document.getElementById('uploadBtn').addEventListener('click', uploadText);
+        document.getElementById('copyBtn').addEventListener('click', copyText);
+
+        // Periodically check for new content
+        setInterval(checkForNewContent, 5000);
+    </script>
+</body>
+</html>
