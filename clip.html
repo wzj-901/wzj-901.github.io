@@ -359,8 +359,8 @@ if (deviceId && key) {
         console.log('WebSocket 已连接');
         isReconnecting = false;
       } else if (!isReconnecting) {
-        console.log('WebSocket 断开，准备重连...');
-        setTimeout(reconnect, 1000); // 延迟1秒重连
+        console.log('WebSocket 断开，但不触发重连。');
+        //setTimeout(reconnect, 1000); // 延迟1秒重连
       }
     });
     return newChannel;
