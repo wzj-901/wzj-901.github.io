@@ -321,24 +321,9 @@
             event: 'INSERT',
             schema: 'public',
             table: 'clipboard',
-            filter: `uploaded_by=neq.${deviceId}`,
+            //filter: `uploaded_by=neq.${deviceId}`,
           },
-          async (payload) => {
-            if (payload.new.copied_by.includes(deviceId)) return;
-            const decrypted = await decrypt(payload.new.content, key);
-            if (decrypted) {
-              await navigator.clipboard.writeText(decrypted);
-              await updateTab(payload.new.id, deviceId);
-              const btn = document.getElementById('copy-btn');
-              btn.textContent = '已复制';
-              btn.classList.add('active');
-              setTimeout(() => {
-                btn.textContent = '复制';
-                btn.classList.remove('active');
-              }, 3000);
-            } else {
-              console.error('WebSocket decryption failed for content:', payload.new.content, 'with key:', key);
-            }
+          (payload) => {console.log('Received:', payload);
           }
         )
         .subscribe((status) => {
