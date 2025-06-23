@@ -372,13 +372,13 @@ if (deviceId && key) {
     isReconnecting = true;
     setTimeout(() => {
     isReconnecting = false; // 2秒后重置，允许下次重连
-    }, 15000);
+    }, 5000);
     if (channel) {
       channel.unsubscribe();
       supabaseClient.removeChannel(channel); // 彻底移除旧通道
     }
     channel = createChannel();
-    supabaseClient.realtime.connect(); // 初始化底层连接
+    //supabaseClient.realtime.connect(); // 初始化底层连接
     console.log('重新订阅新通道');
   }
 
