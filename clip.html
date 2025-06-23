@@ -310,58 +310,81 @@
         }
       }
     }
+
+    
+    // WebSocket 实时监听
 if (deviceId && key) {
-  const channel = supabaseClient
-    .channel('clipboard_channel')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'clipboard',
-        filter: `uploaded_by=neq.${deviceId}`, // neq: not equal，非当前设备上传
-      },
-      async (payload) => {
-        console.log('WebSocket 收到消息:', payload); // 调试：打印完整消息
-        if (payload.new.copied_by.includes(deviceId)) {
-          console.log('跳过已复制内容，copied_by:', payload.new.copied_by);
-          return;
+  let channel;
+
+  // 创建新通道并订阅
+  function createChannel() {
+    return supabaseClient
+      .channel('clipboard_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'clipboard',
+          filter: `uploaded_by=neq.${deviceId}`, // neq: 不等于，非当前设备上传
+        },
+        async (payload) => {
+          console.log('WebSocket 收到消息:', payload);
+          if (payload.new.copied_by.includes(deviceId)) {
+            console.log('跳过已复制内容，copied_by:', payload.new.copied_by);
+            return;
+          }
+          const decrypted = await decrypt(payload.new.content, key);
+          if (decrypted) {
+            await navigator.clipboard.writeText(decrypted);
+            await updateTab(payload.new.id, deviceId);
+            console.log('WebSocket 自动复制成功，ID:', payload.new.id);
+            const btn = document.getElementById('copy-btn');
+            btn.textContent = '已复制';
+            btn.classList.add('active');
+            setTimeout(() => {
+              btn.textContent = '复制';
+              btn.classList.remove('active');
+            }, 3000);
+          } else {
+            console.error('WebSocket 解密失败，内容:', payload.new.content, '密钥:', key);
+          }
         }
-        const decrypted = await decrypt(payload.new.content, key);
-        if (decrypted) {
-          await navigator.clipboard.writeText(decrypted);
-          await updateTab(payload.new.id, deviceId);
-          console.log('WebSocket 自动复制成功，ID:', payload.new.id);
-          const btn = document.getElementById('copy-btn');
-          btn.textContent = '已复制';
-          btn.classList.add('active');
-          setTimeout(() => {
-            btn.textContent = '复制';
-            btn.classList.remove('active');
-          }, 3000);
+      )
+      .subscribe((status) => {
+        console.log('WebSocket 状态:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('WebSocket 已连接');
         } else {
-          console.error('WebSocket 解密失败，内容:', payload.new.content, '密钥:', key);
+          console.log('WebSocket 断开，创建新通道...');
+          reconnect();
         }
-      }
-    )
-    .subscribe((status) => {
-      console.log('WebSocket 状态:', status);
-      if (status != 'SUBSCRIBED') {
-        console.log('WebSocket 断开，尝试重连...');
-        supabaseClient.realtime.connect();channel.subscribe();
-      }
-    });
+      });
+  }
+
+  // 重连逻辑
+  function reconnect() {
+    if (channel) channel.unsubscribe(); // 清理旧通道
+    channel = createChannel(); // 创建新通道
+    supabaseClient.realtime.connect(); // 初始化底层连接
+    console.log('重新订阅新通道');
+  }
+
+  // 初始通道
+  channel = createChannel();
+
+  // 心跳检查
   setInterval(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
-    if (channel.state != "joined") {
-      console.log('WebSocket 未连接，尝试重连...');
-      supabaseClient.realtime.connect();channel.subscribe();  
-      }
+    if (channel.state != 'joined') {
+      console.log('WebSocket 未连接，创建新通道...');
+      reconnect();
+    }
   }, 10000);
+
   checkPendingClipboard();
 }
-
 
     // 弹出框
     function showPopup(message) {
