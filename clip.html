@@ -313,12 +313,14 @@
 
     
     // WebSocket 实时监听
+// WebSocket 实时监听
 if (deviceId && key) {
   let channel;
+  let isReconnecting = false;
 
   // 创建新通道并订阅
   function createChannel() {
-    return supabaseClient
+    const newChannel = supabaseClient
       .channel('clipboard_channel')
       .on(
         'postgres_changes',
@@ -350,22 +352,29 @@ if (deviceId && key) {
             console.error('WebSocket 解密失败，内容:', payload.new.content, '密钥:', key);
           }
         }
-      )
-      .subscribe((status) => {
-        console.log('WebSocket 状态:', status);
-        if (status === 'SUBSCRIBED') {
-          console.log('WebSocket 已连接');
-        } else {
-          console.log('WebSocket 断开，创建新通道...');
-          reconnect();
-        }
-      });
+      );
+    newChannel.subscribe((status) => {
+      console.log('WebSocket 状态:', status);
+      if (status === 'SUBSCRIBED') {
+        console.log('WebSocket 已连接');
+        isReconnecting = false;
+      } else if (!isReconnecting) {
+        console.log('WebSocket 断开，准备重连...');
+        setTimeout(reconnect, 1000); // 延迟1秒重连
+      }
+    });
+    return newChannel;
   }
 
   // 重连逻辑
   function reconnect() {
-    if (channel) channel.unsubscribe(); // 清理旧通道
-    channel = createChannel(); // 创建新通道
+    if (isReconnecting) return;
+    isReconnecting = true;
+    if (channel) {
+      channel.unsubscribe();
+      supabaseClient.removeChannel(channel); // 彻底移除旧通道
+    }
+    channel = createChannel();
     supabaseClient.realtime.connect(); // 初始化底层连接
     console.log('重新订阅新通道');
   }
@@ -377,15 +386,14 @@ if (deviceId && key) {
   setInterval(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
-    if (channel.state != 'joined') {
-      console.log('WebSocket 未连接，创建新通道...');
+    if (channel.state != 'joined' && !isReconnecting) {
+      console.log('WebSocket 未连接，准备重连...');
       reconnect();
     }
   }, 10000);
 
   checkPendingClipboard();
 }
-
     // 弹出框
     function showPopup(message) {
       document.getElementById('popup-message').textContent = message;
@@ -400,7 +408,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.0")
+    console.log("version: 1.0.1")
   </script>
 </body>
 </html>
