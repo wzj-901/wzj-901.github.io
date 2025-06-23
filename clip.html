@@ -346,7 +346,7 @@ if (deviceId && key) {
     )
     .subscribe((status) => {
       console.log('WebSocket 状态:', status);
-      if (status === 'CLOSED') {
+      if (status != 'SUBSCRIBED') {
         console.log('WebSocket 断开，尝试重连...');
         supabaseClient.realtime.connect();
       }
@@ -354,6 +354,10 @@ if (deviceId && key) {
   setInterval(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
+    if (channel.state != "joined") {
+      console.log('WebSocket 未连接，尝试重连...');
+      supabaseClient.realtime.connect();    
+      }
   }, 10000);
   checkPendingClipboard();
 }
@@ -372,6 +376,8 @@ if (deviceId && key) {
     // 绑定按钮
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
+
+    console.log("version: 1.0.0")
   </script>
 </body>
 </html>
