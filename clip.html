@@ -377,9 +377,9 @@ if (deviceId && key) {
       channel.unsubscribe();
       supabaseClient.removeChannel(channel); // 彻底移除旧通道
     }
-    channel = createChannel();
+    setTimeout('channel = createChannel();console.log("重新订阅新通道");', 2000); // 1秒后创建新通道
     //supabaseClient.realtime.connect(); // 初始化底层连接
-    console.log('重新订阅新通道');
+    
   }
 
   // 初始通道
