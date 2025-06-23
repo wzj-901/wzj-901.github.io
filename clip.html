@@ -369,7 +369,7 @@ if (deviceId && key) {
   // 重连逻辑
   function reconnect() {
     if (isReconnecting) return;
-    isReconnecting = true;
+    isReconnecting = false;
     if (channel) {
       channel.unsubscribe();
       supabaseClient.removeChannel(channel); // 彻底移除旧通道
@@ -408,7 +408,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.1")
+    console.log("version: 1.0.2")
   </script>
 </body>
 </html>
