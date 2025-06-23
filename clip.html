@@ -303,7 +303,7 @@
       const data = await fetchTab();
       if (data.length) {
         const decrypted = await decrypt(data[0].content, key);
-        if (decrypted) {
+        if (decrypted && (data[0].copied_by.indexOf(deviceId) === -1)) {
           await navigator.clipboard.writeText(decrypted);
           await updateTab(data[0].id, deviceId);
           showPopup('已自动复制新内容');
