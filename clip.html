@@ -372,7 +372,7 @@ if (deviceId && key) {
     isReconnecting = true;
     setTimeout(() => {
     isReconnecting = false; // 2秒后重置，允许下次重连
-    }, 5000);
+    }, 15000);
     if (channel) {
       channel.unsubscribe();
       supabaseClient.removeChannel(channel); // 彻底移除旧通道
@@ -411,7 +411,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.3")
+    console.log("version: 1.0.4")
   </script>
 </body>
 </html>
