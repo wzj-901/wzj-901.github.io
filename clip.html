@@ -348,7 +348,7 @@ if (deviceId && key) {
       console.log('WebSocket 状态:', status);
       if (status != 'SUBSCRIBED') {
         console.log('WebSocket 断开，尝试重连...');
-        supabaseClient.realtime.connect();
+        supabaseClient.realtime.connect();channel.subscribe();
       }
     });
   setInterval(() => {
@@ -356,7 +356,7 @@ if (deviceId && key) {
     console.log('心跳包发送，通道状态:', channel.state);
     if (channel.state != "joined") {
       console.log('WebSocket 未连接，尝试重连...');
-      supabaseClient.realtime.connect();    
+      supabaseClient.realtime.connect();channel.subscribe();  
       }
   }, 10000);
   checkPendingClipboard();
