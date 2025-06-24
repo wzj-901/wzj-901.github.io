@@ -306,7 +306,15 @@
         if (decrypted && (data[0].copied_by.indexOf(deviceId) === -1)) {
           await navigator.clipboard.writeText(decrypted);
           await updateTab(data[0].id, deviceId);
+          console.log('检查是否有新内容 自动复制成功，ID:', data[0].id);
           isShowPopup && showPopup('已自动复制新内容');
+          const btn = document.getElementById('copy-btn');
+          btn.textContent = '已复制';
+          btn.classList.add('active');
+          setTimeout(() => {
+          btn.textContent = '复制';
+          btn.classList.remove('active');
+          }, 3000);
         }
       }
     }
@@ -421,7 +429,7 @@ window.addEventListener('focus', function() {
 });
 var firstcheckcolor=true;
 function checkPool(){
-  checkPendingClipboard(false);
+  try{checkPendingClipboard(false);}catch(e){console.log(e)}
 }
 function checkColor(){
   if(document.body.style.backgroundColor!="#dffef6" && document.body.style.backgroundColor!='rgb(223, 254, 246)'){
@@ -445,7 +453,7 @@ function checkColor(){
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.2.0")
+    console.log("version: 1.2.1")
   </script>
 </body>
 </html>
