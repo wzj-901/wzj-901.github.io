@@ -358,6 +358,7 @@ if (deviceId && key) {
       console.log('WebSocket 状态:', status);
       if (status === 'SUBSCRIBED') {
         console.log('WebSocket 已连接');
+        document.body.style.backgroundColor="#dffef6";
         isReconnecting = false;
       } else if (!isReconnecting) {
         console.log('WebSocket 断开，但不触发重连。');
@@ -371,6 +372,7 @@ if (deviceId && key) {
   function reconnect() {
     if (isReconnecting) return;
     isReconnecting = true;
+    document.body.style.backgroundColor="#f0f0f0";
     setTimeout(() => {
       isReconnecting = false; // 2秒后重置，允许下次重连
     }, 5000);
@@ -420,7 +422,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.8")
+    console.log("version: 1.1.0")
   </script>
 </body>
 </html>
