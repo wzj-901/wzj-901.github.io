@@ -298,7 +298,7 @@
     }
 
     // 检查未复制内容
-    async function checkPendingClipboard() {
+    async function checkPendingClipboard(isShowPopup = true) {console.log("检查是否有新内容，显示弹窗："+isShowPopup);
       if (!deviceId || !key) return;
       const data = await fetchTab();
       if (data.length) {
@@ -306,7 +306,7 @@
         if (decrypted && (data[0].copied_by.indexOf(deviceId) === -1)) {
           await navigator.clipboard.writeText(decrypted);
           await updateTab(data[0].id, deviceId);
-          showPopup('已自动复制新内容');
+          isShowPopup && showPopup('已自动复制新内容');
         }
       }
     }
@@ -358,6 +358,7 @@ if (deviceId && key) {
       console.log('WebSocket 状态:', status);
       if (status === 'SUBSCRIBED') {
         console.log('WebSocket 已连接');
+        checkColor();
         document.body.style.backgroundColor="#dffef6";
         isReconnecting = false;
       } else if (!isReconnecting) {
@@ -398,6 +399,10 @@ if (deviceId && key) {
   var heartBeatInterval = setInterval(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
+    if (channel.state == 'joined'){
+        checkColor();
+        document.body.style.backgroundColor="#dffef6";
+      }
     if (channel.state != 'joined' && !isReconnecting) {
       console.log('WebSocket 未连接，准备重连...');
       reconnect();
@@ -408,6 +413,24 @@ if (deviceId && key) {
   
   checkPendingClipboard();
 }
+
+window.addEventListener('focus', function() {
+    console.log('窗口已获得焦点！');
+    // 在这里编写当窗口获得焦点时你想执行的代码
+    checkPool();
+});
+var firstcheckcolor=true;
+function checkPool(){
+  checkPendingClipboard(false);
+}
+function checkColor(){
+  if(document.body.style.backgroundColor!="#dffef6"){
+    console.log("连接刚刚恢复，检查是否有新内容")
+    if(firstcheckcolor){firstcheckcolor=false;return;}else{checkPool();}
+  }
+}
+
+
     // 弹出框
     function showPopup(message) {
       document.getElementById('popup-message').textContent = message;
@@ -422,7 +445,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.1.0")
+    console.log("version: 1.2.0")
   </script>
 </body>
 </html>
