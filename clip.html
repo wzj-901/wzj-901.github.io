@@ -383,7 +383,7 @@ if (deviceId && key) {
       setTimeout(()=>{
         channel = createChannel();console.log("重新订阅新通道");
         isRemovingChannel = false;console.log("重新订阅新通道完成")
-      }, 2000); // 1秒后创建新通道
+      }, 1000); // 1秒后创建新通道
     }
     //supabaseClient.realtime.connect(); // 初始化底层连接
     
@@ -393,14 +393,24 @@ if (deviceId && key) {
   channel = createChannel();
 
   // 心跳检查
-  setInterval(() => {
+  var heartBeatInterval = setInterval(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
     if (channel.state != 'joined' && !isReconnecting) {
       console.log('WebSocket 未连接，准备重连...');
       reconnect();
+      clearInterval(heartBeatInterval);
     }
   }, 10000);
+setTimeOut(() => {
+    channel.send({ type: 'heartbeat' });
+    console.log('心跳包发送，通道状态:', channel.state);
+    if (channel.state != 'joined' && !isReconnecting) {
+      console.log('WebSocket 未连接，准备重连...');
+      reconnect();
+      clearInterval(heartBeatInterval);
+    }
+  }, 5000);
 
   checkPendingClipboard();
 }
@@ -418,7 +428,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.8")
+    console.log("version: 1.0.9")
   </script>
 </body>
 </html>
