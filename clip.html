@@ -424,7 +424,7 @@ function checkPool(){
   checkPendingClipboard(false);
 }
 function checkColor(){
-  if(document.body.style.backgroundColor!="#dffef6"){
+  if(document.body.style.backgroundColor!="#dffef6" && document.body.style.backgroundColor!='rgb(223, 254, 246)'){
     console.log("连接刚刚恢复，检查是否有新内容")
     if(firstcheckcolor){firstcheckcolor=false;return;}else{checkPool();}
   }
