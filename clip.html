@@ -361,8 +361,7 @@ if (deviceId && key) {
         isReconnecting = false;
       } else if (!isReconnecting) {
         console.log('WebSocket 断开，但不触发重连。');
-    //  setTimeout(reconnect,1000);
-      //clearInterval(heartBeatInterval);
+        //setTimeout(reconnect, 1000); // 延迟1秒重连
       }
     });
     return newChannel;
@@ -384,7 +383,7 @@ if (deviceId && key) {
       setTimeout(()=>{
         channel = createChannel();console.log("重新订阅新通道");
         isRemovingChannel = false;console.log("重新订阅新通道完成")
-      }, 1000); // 1秒后创建新通道
+      }, 2000); // 1秒后创建新通道
     }
     //supabaseClient.realtime.connect(); // 初始化底层连接
     
@@ -421,7 +420,7 @@ if (deviceId && key) {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.1.1")
+    console.log("version: 1.0.8")
   </script>
 </body>
 </html>
