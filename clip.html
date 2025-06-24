@@ -361,7 +361,8 @@ if (deviceId && key) {
         isReconnecting = false;
       } else if (!isReconnecting) {
         console.log('WebSocket 断开，但不触发重连。');
-        //setTimeout(reconnect, 1000); // 延迟1秒重连
+      setTimeout(reconnect,1000);
+      clearInterval(heartBeatInterval);
       }
     });
     return newChannel;
@@ -401,17 +402,9 @@ if (deviceId && key) {
       reconnect();
       clearInterval(heartBeatInterval);
     }
-  }, 10000);
-setTimeout(() => {
-    channel.send({ type: 'heartbeat' });
-    console.log('心跳包发送，通道状态:', channel.state);
-    if (channel.state != 'joined' && !isReconnecting) {
-      console.log('WebSocket 未连接，准备重连...');
-      reconnect();
-      clearInterval(heartBeatInterval);
-    }
-  }, 5000);
+  }, 8000);
 
+  
   checkPendingClipboard();
 }
     // 弹出框
