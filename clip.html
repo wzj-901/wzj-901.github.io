@@ -402,7 +402,7 @@ if (deviceId && key) {
       clearInterval(heartBeatInterval);
     }
   }, 10000);
-setTimeOut(() => {
+setTimeout(() => {
     channel.send({ type: 'heartbeat' });
     console.log('心跳包发送，通道状态:', channel.state);
     if (channel.state != 'joined' && !isReconnecting) {
@@ -428,7 +428,7 @@ setTimeOut(() => {
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
 
-    console.log("version: 1.0.9")
+    console.log("version: 1.1.0")
   </script>
 </body>
 </html>
