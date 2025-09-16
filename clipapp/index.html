@@ -68,12 +68,47 @@
       color: white;
       margin-top: 10px;
     }
-  </style>
+  #new-input {
+    position: absolute;
+    width: 170px;
+    height: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(50% + 100px);
+    padding: 0 15px;
+    font-size: 30px;
+    letter-spacing: 3px;
+    text-align: center;
+    background: 
+      linear-gradient(to right, #4a90e2, #4a90e2) no-repeat,
+      rgba(255, 255, 255, 0.1);
+    background-size: 0% 2px;
+    background-position: center bottom;
+    color: #333;border:0px;
+    border-bottom: 1px solid #122d345d;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  #new-input::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  #new-input:focus {
+    background: 
+      linear-gradient(to right, #4a90e2, #4a90e2) no-repeat,
+      rgba(255, 255, 255, 0.3);
+    background-size: 100% 2px;
+    background-position: center bottom;
+  }
+  
+</style>
 </head>
 <body>
   <div class="container">
     <button id="upload-btn">上传</button>
     <button id="copy-btn">复制</button>
+    <input type="text" id="new-input">
   </div>
   <div id="popup">
     <div class="popup-content">
@@ -92,6 +127,7 @@
     // 解析 URL 参数
     let deviceId = 'P';
     let key = '2700646391';
+
 
     // 加密（Web Crypto API）
     async function encrypt(text, key) {
@@ -228,10 +264,11 @@
     }
 
     // 上传剪贴板
-    async function uploadClipboard() {
+    async function uploadClipboard(inputText = null) {
       if (!deviceId || !key) return;
       try {
-        const text = await navigator.clipboard.readText();
+        // 如果有传入 inputText，优先使用它
+        const text = inputText !== null ? inputText : await navigator.clipboard.readText();
         const size = new TextEncoder().encode(text).length;
         if (size > 30 * 1024) {
           showPopup('内容超过 30KB，无法上传');
@@ -252,6 +289,10 @@
           const btn = document.getElementById('upload-btn');
           btn.textContent = '已上传';
           btn.classList.add('active');
+          // 如果当前文本与上传的一致，则清空
+          if (inputText !== null && document.getElementById('new-input').value.trim() === lastUploadedText) {
+            document.getElementById('new-input').value = '';
+          }
           setTimeout(() => {
             btn.textContent = '上传';
             btn.classList.remove('active');
@@ -444,6 +485,24 @@ function checkColor(){
     // 绑定按钮
     document.getElementById('upload-btn').onclick = uploadClipboard;
     document.getElementById('copy-btn').onclick = copyClipboard;
+
+let isUploading = false; // 标记是否正在上传
+let lastUploadedText = ''; // 记录最近上传的文本
+document.getElementById('new-input').addEventListener('blur', async function() {
+  if (isUploading) return;
+  
+  const inputText = this.value.trim();
+  if (!inputText) return;
+  
+  isUploading = true;
+  lastUploadedText = inputText;
+  try {
+    await uploadClipboard(inputText); // 直接调用修改后的函数
+  } finally {
+    isUploading = false;
+  }
+
+});
 
     console.log("version: 1.2.1")
   </script>
