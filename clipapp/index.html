@@ -268,7 +268,7 @@
       if (!deviceId || !key) return;
       try {
         // 如果有传入 inputText，优先使用它
-        const text = inputText !== null ? inputText : await navigator.clipboard.readText();alert(text)
+        const text = inputText !== null ? inputText : await navigator.clipboard.readText();
         const size = new TextEncoder().encode(text).length;
         if (size > 30 * 1024) {
           showPopup('内容超过 30KB，无法上传');
