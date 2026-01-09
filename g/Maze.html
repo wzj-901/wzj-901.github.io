@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>弹珠滚迷宫</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #0a0a1a;
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .maze {
+    width: 400px;
+    height: 400px;
+    background: #1a1a2e;
+    border-radius: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border: 2px solid #667eea;
+  }
+
+  .marble {
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 30% 30%, #fff, #667eea);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.7);
+    transition: transform 0.1s linear;
+  }
+
+  .wall {
+    background: #764ba2;
+    position: absolute;
+  }
+
+  .info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="maze" id="maze">
+    <div class="marble" id="marble"></div>
+    <!-- 迷宫墙壁将通过JS生成 -->
+  </div>
+  <div class="info" id="info">
+    <div>倾斜设备控制弹珠移动</div>
+    <div>X轴加速度: <span id="accelX">0</span></div>
+    <div>Y轴加速度: <span id="accelY">0</span></div>
+  </div>
+</div>
+
+<script>
+// 平滑滤波参数
+let smoothPitch = 0;
+let smoothRoll = 0;
+const alpha = 0.9; // 0~1，越小越平滑
+
+// 弹珠位置
+let marbleX = 200;
+let marbleY = 200;
+
+const marbleSpeed = 4; // 弹珠移动速度
+const marbleRadius = 5; // 弹珠半径
+
+// 迷宫墙壁数据 [x, y, width, height]
+// 更大的迷宫墙壁数据 [x, y, width, height]
+const walls = [
+  // 外框
+  [20, 20, 260, 10],   // 上墙
+  [20, 20, 10, 260],   // 左墙
+  [20, 270, 260, 10],  // 下墙
+  [270, 20, 10, 260],  // 右墙
+  
+  // 内部复杂迷宫结构
+  [50, 50, 100, 10],
+  [50, 50, 10, 80],
+  [140, 50, 10, 100],
+  [80, 120, 70, 10],
+  [50, 150, 100, 10],
+  [50, 150, 10, 50],
+  [140, 150, 10, 50],
+  [80, 180, 70, 10],
+  [50, 210, 100, 10],
+  
+  // 右侧区域
+  [180, 80, 70, 10],
+  [180, 80, 10, 100],
+  [240, 80, 10, 100],
+  [180, 160, 70, 10],
+  [180, 220, 70, 10],
+  [180, 220, 10, 40],
+  [240, 220, 10, 40],
+  
+  // 中间障碍
+  [120, 100, 10, 60],
+  [160, 120, 10, 60],
+  [200, 100, 10, 60]
+];
+
+// 创建迷宫墙壁
+const maze = document.getElementById('maze');
+walls.forEach(wall => {
+  const wallElement = document.createElement('div');
+  wallElement.className = 'wall';
+  wallElement.style.left = wall[0] + 'px';
+  wallElement.style.top = wall[1] + 'px';
+  wallElement.style.width = wall[2] + 'px';
+  wallElement.style.height = wall[3] + 'px';
+  maze.appendChild(wallElement);
+});
+
+// 检测碰撞
+function checkCollision(newX, newY) {
+  // 检查边界碰撞
+  if (newX - marbleRadius < 0 || newX + marbleRadius > 400 ||
+      newY - marbleRadius < 0 || newY + marbleRadius > 400) {
+    return true;
+  }
+  
+  // 检查墙壁碰撞
+  for (const wall of walls) {
+    const [wx, wy, ww, wh] = wall;
+    
+    // 检查弹珠是否与墙壁矩形相交
+    const closestX = Math.max(wx, Math.min(newX, wx + ww));
+    const closestY = Math.max(wy, Math.min(newY, wy + wh));
+    
+    const distanceX = newX - closestX;
+    const distanceY = newY - closestY;
+    
+    if (distanceX * distanceX + distanceY * distanceY < marbleRadius * marbleRadius) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+window.addEventListener('devicemotion', e => {
+  const g = e.accelerationIncludingGravity;
+  if (!g?.x && !g?.y && !g?.z) return;
+
+  // 计算 pitch（前后俯仰）和 roll（左右翻滚）
+  const pitch = Math.max(-Math.atan2(-g.y, Math.sqrt(g.x*g.x + g.z*g.z)) * 180 / Math.PI-10,-90);
+  const roll  = -Math.atan2(g.x, g.z) * 180 / Math.PI;
+
+  // 平滑
+  smoothPitch = smoothPitch * alpha + pitch * (1 - alpha);
+  smoothRoll  = smoothRoll  * alpha + roll  * (1 - alpha);
+
+  // 更新信息显示
+  document.getElementById('accelX').textContent = smoothRoll.toFixed(2);
+  document.getElementById('accelY').textContent = smoothPitch.toFixed(2);
+
+  // 计算弹珠移动方向
+  // 注意：这里将倾斜方向映射到弹珠移动方向
+  const deltaX = smoothRoll / 10;  // 将倾斜角度缩小以便控制
+  const deltaY = smoothPitch / 10;
+  
+  // 计算新位置
+  let newX = marbleX + deltaX * marbleSpeed;
+  let newY = marbleY + deltaY * marbleSpeed;
+  
+  // 检查碰撞
+  if (!checkCollision(newX, newY)) {
+    marbleX = newX;
+    marbleY = newY;
+  } else {
+    // 如果发生碰撞，尝试只移动X或Y方向
+    if (!checkCollision(newX, marbleY)) {
+      marbleX = newX;
+    }
+    if (!checkCollision(marbleX, newY)) {
+      marbleY = newY;
+    }
+  }
+  
+  // 更新弹珠位置
+  const marble = document.getElementById('marble');
+  marble.style.left = marbleX + 'px';
+  marble.style.top = marbleY + 'px';
+}, true);
+
+// 初始化弹珠位置
+const marble = document.getElementById('marble');
+marble.style.left = marbleX + 'px';
+marble.style.top = marbleY + 'px';
+</script>
+</body>
+</html>

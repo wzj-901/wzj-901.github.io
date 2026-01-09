@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>正方形抵抗前后左右倾斜（只有2自由度）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #0a0a1a;
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 1200px; /* 3D 透视感 */
+  }
+
+  .square {
+    width: 220px;
+    height: 220px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+    transition: transform 0.12s ease-out;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .square::before {
+    content: "正面";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 3rem;
+    color: white;
+    font-weight: bold;
+    backface-visibility: hidden;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="square" id="square"></div>
+</div>
+
+<script>
+// 平滑滤波参数
+let smoothPitch = 0;
+let smoothRoll = 0;
+const alpha = 0.9; // 0~1，越小越平滑
+
+window.addEventListener('devicemotion', e => {
+  const g = e.accelerationIncludingGravity;
+  if (!g?.x && !g?.y && !g?.z) return;
+
+  // 计算 pitch（前后俯仰）和 roll（左右翻滚）
+  const pitch = Math.atan2(-g.y, Math.sqrt(g.x*g.x + g.z*g.z)) * 180 / Math.PI;
+  const roll  = -Math.atan2(g.x, g.z) * 180 / Math.PI;   // 注意符号取决于坐标系
+
+  // 平滑
+  smoothPitch = smoothPitch * alpha + pitch * (1 - alpha);
+  smoothRoll  = smoothRoll  * alpha + roll  * (1 - alpha);
+
+  // 应用到正方形：反向旋转，让它“抵抗”设备的倾斜
+  // 注意：这里完全不处理 yaw（绕重力轴旋转）
+  const square = document.getElementById('square');
+  
+  square.style.transform = 
+    `translate(-50%, -50%) ` +
+    `rotateX(${-smoothPitch}deg) ` +     // 前后抵抗
+    `rotateY(${-smoothRoll}deg) `;       // 左右抵抗
+    // 故意不加 rotateZ()，因为我们没有可靠的 yaw 数据！
+}, true);
+</script>
+</body>
+</html>
