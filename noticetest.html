@@ -1,160 +1,201 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>通知测试</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知调试页面</title>
 </head>
 <body>
-    <h2>系统通知测试</h2>
-    <div id="status">状态: 等待</div>
-    <div id="count">通知次数: 0</div>
-    <div id="error" style="color:red"></div>
+    <h1>通知调试页面 - 所有信息直接显示在页面上</h1>
     
-    <button onclick="ask()">请求权限</button>
-    <button onclick="test()">测试</button>
+    <button onclick="requestPermission()">1. 请求通知权限</button>
+    <button onclick="registerServiceWorker()">2. 注册 Service Worker</button>
+    <button onclick="testNotification()">3. 立即测试发送通知</button>
+    <button onclick="clearLog()">清空日志</button>
+
+    <h2>当前状态</h2>
+    <pre id="status">初始化中...</pre>
+
+    <h2>详细日志</h2>
+    <pre id="log" style="background:#000;color:#0f0;padding:10px;height:400px;overflow:auto;font-family:monospace;white-space:pre-wrap;"></pre>
 
     <script>
-        let count = 0;
-        let timer = null;
-        
-        // 显示错误
-        function showError(msg) {
-            document.getElementById("error").textContent = "错误: " + msg;
-            console.error(msg);
+        let swRegistration = null;
+        let timeoutId = null;
+
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
+
+        function log(message, isError = false) {
+            const time = new Date().toLocaleTimeString();
+            const prefix = isError ? '[ERROR] ' : '[INFO]  ';
+            logEl.textContent += `${time} ${prefix}${message}\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message); // 仍然输出到控制台以防万一
         }
-        
-        // 检查通知支持
-        function checkSupport() {
-            if (!("Notification" in window)) {
-                showError("浏览器不支持通知");
-                return false;
-            }
-            return true;
+
+        function updateStatus(text) {
+            statusEl.textContent = text;
         }
-        
-        // 请求权限
-        function ask() {
-            if (!checkSupport()) return;
-            
-            try {
-                // 在移动端，必须在用户交互中调用requestPermission
-                Notification.requestPermission().then(p => {
-                    document.getElementById("status").textContent = "状态: " + p;
-                }).catch(e => {
-                    showError("请求权限失败: " + e.message);
-                });
-            } catch (e) {
-                showError("请求权限异常: " + e.message);
-            }
-        }
-        
-        // 测试通知
-        function test() {
-            if (!checkSupport()) return;
-            
-            if (Notification.permission !== "granted") {
-                showError("没有通知权限");
+
+        async function requestPermission() {
+            log('开始请求通知权限...');
+            if (!('Notification' in window)) {
+                log('浏览器不支持 Notification API', true);
+                updateStatus('不支持 Notification API');
                 return;
             }
-            
+
             try {
-                // 移动端必须通过服务工作者发送通知
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.showNotification("测试", {
-                            body: "这是通过Service Worker发送的通知",
-                            icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwMDc4RDAiLz48L3N2Zz4="
-                        });
-                        count++;
-                        document.getElementById("count").textContent = "通知次数: " + count;
-                    }).catch(e => {
-                        showError("Service Worker错误: " + e.message);
-                    });
-                } else {
-                    // 桌面端直接使用Notification
-                    new Notification("测试", {body: "这是直接发送的通知"});
-                    count++;
-                    document.getElementById("count").textContent = "通知次数: " + count;
-                }
-            } catch (e) {
-                showError("发送通知失败: " + e.message);
+                const permission = await Notification.requestPermission();
+                log(`权限请求结果: ${permission}`);
+                updateStatus(`权限状态: ${permission}`);
+            } catch (err) {
+                log(`权限请求失败: ${err.message}`, true);
             }
         }
-        
-        // 页面隐藏检测
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                // 页面隐藏
-                timer = setTimeout(function() {
-                    if (document.hidden && Notification.permission === "granted" && checkSupport()) {
-                        test(); // 调用测试函数，它会处理移动端的兼容性
+
+        async function registerServiceWorker() {
+            log('开始注册 Service Worker...');
+            if (!('serviceWorker' in navigator)) {
+                log('浏览器不支持 Service Worker', true);
+                return;
+            }
+
+            try {
+                // 使用内联 Service Worker（避免额外文件）
+                const swCode = `
+                    self.addEventListener('activate', event => {
+                        event.waitUntil(self.clients.claim());
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'text/javascript' });
+                const swURL = URL.createObjectURL(blob);
+
+                swRegistration = await navigator.serviceWorker.register(swURL, { scope: './' });
+                log(`Service Worker 注册成功，状态: ${swRegistration.active ? 'active' : 'installing'}`);
+                updateStatus(`SW 已注册 (${swRegistration.active ? '活跃' : '等待激活'})`);
+
+                // 等待激活
+                if (swRegistration.installing) {
+                    swRegistration.installing.addEventListener('statechange', () => {
+                        log(`SW 状态变化: ${swRegistration.installing.state}`);
+                    });
+                }
+            } catch (err) {
+                log(`Service Worker 注册失败: ${err.message}`, true);
+            }
+        }
+
+        async function showNotificationViaSW() {
+            if (!swRegistration) {
+                log('Service Worker 未注册，无法使用 showNotification', true);
+                return false;
+            }
+
+            try {
+                await swRegistration.showNotification("页面已隐藏", {
+                    body: "页面已经隐藏超过 3 秒了！点击返回页面。",
+                    icon: "https://via.placeholder.com/128/667eea/ffffff?text=回来",
+                    tag: "focus-lost-debug",
+                    requireInteraction: false
+                });
+                log('通过 Service Worker 成功发送通知');
+                return true;
+            } catch (err) {
+                log(`SW showNotification 失败: ${err.message}`, true);
+                return false;
+            }
+        }
+
+        async function showNotificationFallback() {
+            if (Notification.permission !== "granted") {
+                log('没有通知权限，无法发送', true);
+                return;
+            }
+
+            try {
+                const notification = new Notification("页面已隐藏（回退方式）", {
+                    body: "尝试使用 new Notification()",
+                    tag: "focus-lost-fallback"
+                });
+                log('通过 new Notification() 成功创建');
+                notification.onclick = () => window.focus();
+                return true;
+            } catch (err) {
+                log(`new Notification() 失败: ${err.message}`, true);
+                if (err.message.includes('Illegal constructor')) {
+                    log('浏览器要求必须使用 Service Worker 方式', true);
+                }
+                return false;
+            }
+        }
+
+        async function testNotification() {
+            log('=== 开始立即测试通知 ===');
+            clearTimeout(timeoutId);
+
+            if (Notification.permission !== "granted") {
+                log('权限未授予，请先点击请求权限按钮', true);
+                return;
+            }
+
+            const swSuccess = await showNotificationViaSW();
+            if (!swSuccess) {
+                log('尝试回退到 new Notification()...');
+                await showNotificationFallback();
+            }
+        }
+
+        function handleVisibilityChange() {
+            clearTimeout(timeoutId);
+            const isHidden = document.visibilityState === "hidden";
+            
+            log(`visibilitychange 事件触发，页面状态: ${isHidden ? '隐藏' : '可见'}`);
+
+            if (isHidden) {
+                log('页面已隐藏，3秒后尝试发送通知...');
+                timeoutId = setTimeout(async () => {
+                    log('3秒延迟结束，开始发送通知');
+                    const swSuccess = await showNotificationViaSW();
+                    if (!swSuccess) {
+                        await showNotificationFallback();
                     }
                 }, 3000);
-            } else {
-                // 页面显示
-                if (timer) clearTimeout(timer);
             }
-        });
-        
-        // 页面卸载清理
-        window.addEventListener("beforeunload", function() {
-            if (timer) clearTimeout(timer);
-        });
-        
-        // 初始化
-        window.onload = function() {
-            if (checkSupport()) {
-                document.getElementById("status").textContent = "状态: " + Notification.permission;
-                if (Notification.permission === "default") {
-                    // 不自动请求权限，让用户手动点击
-                }
-                
-                // 尝试注册Service Worker
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('sw.js').catch(e => {
-                        console.log("Service Worker注册失败: ", e);
-                    });
-                }
-            }
-        };
-        
-        // 简单的Service Worker
-        const swContent = `
-        self.addEventListener('install', event => {
-            self.skipWaiting();
-        });
-        
-        self.addEventListener('activate', event => {
-            event.waitUntil(clients.claim());
-        });
-        
-        self.addEventListener('notificationclick', event => {
-            event.notification.close();
-            event.waitUntil(
-                clients.matchAll({type: 'window'}).then(clientList => {
-                    for (let client of clientList) {
-                        if (client.url === '/' && 'focus' in client) {
-                            return client.focus();
-                        }
-                    }
-                    if (clients.openWindow) {
-                        return clients.openWindow('/');
-                    }
-                })
-            );
-        });
-        `;
-        
-        // 创建并注册Service Worker
-        if ('serviceWorker' in navigator) {
-            const blob = new Blob([swContent], {type: 'application/javascript'});
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).then(registration => {
-                console.log('Service Worker注册成功');
-            }).catch(error => {
-                console.log('Service Worker注册失败:', error);
-            });
         }
+
+        function clearLog() {
+            logEl.textContent = '';
+            log('日志已清空');
+        }
+
+        // 初始化
+        function init() {
+            log('页面初始化完成');
+            updateStatus('就绪 - 请依次点击上方按钮');
+
+            if (!('Notification' in window)) {
+                log('浏览器不支持 Notification API', true);
+            } else {
+                log(`Notification 权限当前状态: ${Notification.permission}`);
+            }
+
+            if ('serviceWorker' in navigator) {
+                log('浏览器支持 Service Worker');
+            } else {
+                log('浏览器不支持 Service Worker', true);
+            }
+
+            // 监听可见性变化
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+
+            log('已监听 visibilitychange 事件');
+            log('提示：切换标签页或最小化窗口即可触发 3 秒后通知');
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
