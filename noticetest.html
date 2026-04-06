@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面失焦通知</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .status {
+            margin-top: 30px;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>页面失去焦点通知演示</h1>
+    <p>请切换到其他标签页或最小化浏览器窗口，等待 3 秒后将弹出通知</p>
+    <div class="status" id="status">当前状态：页面已获得焦点</div>
+
+    <script>
+        let timeoutId = null;
+        const statusEl = document.getElementById('status');
+
+        // 请求通知权限
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("你的浏览器不支持桌面通知");
+                return false;
+            }
+            
+            if (Notification.permission === "granted") {
+                return true;
+            } 
+            else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        console.log("通知权限已允许");
+                    }
+                });
+            }
+            return Notification.permission === "granted";
+        }
+
+        // 显示通知
+        function showNotification() {
+            if (Notification.permission === "granted") {
+                const notification = new Notification("页面已失去焦点", {
+                    body: "您已经离开此页面 3 秒以上了！",
+                    icon: "https://via.placeholder.com/128", // 可以换成你自己的图标
+                    tag: "focus-lost-notification"
+                });
+
+                // 点击通知时回到当前页面
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+            }
+        }
+
+        // 页面获得焦点
+        function onFocus() {
+            clearTimeout(timeoutId);
+            statusEl.textContent = "当前状态：页面已获得焦点";
+            statusEl.style.background = "rgba(0, 255, 0, 0.3)";
+        }
+
+        // 页面失去焦点
+        function onBlur() {
+            statusEl.textContent = "当前状态：页面已失去焦点，3秒后将发送通知...";
+            statusEl.style.background = "rgba(255, 165, 0, 0.3)";
+
+            // 3秒后发送通知
+            timeoutId = setTimeout(() => {
+                showNotification();
+            }, 3000);
+        }
+
+        // 初始化
+        function init() {
+            // 先请求通知权限
+            requestNotificationPermission();
+
+            // 监听焦点事件
+            window.addEventListener('focus', onFocus);
+            window.addEventListener('blur', onBlur);
+
+            // 页面加载时检查当前焦点状态
+            if (document.hasFocus()) {
+                onFocus();
+            } else {
+                onBlur();
+            }
+        }
+
+        // 启动
+        window.onload = init;
+    </script>
+</body>
+</html>
