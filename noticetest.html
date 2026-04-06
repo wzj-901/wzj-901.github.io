@@ -1,97 +1,65 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>系统通知测试</title>
+    <title>通知测试</title>
 </head>
 <body>
-    <h1>系统通知测试页面</h1>
-    <p>离开页面（切换标签页或最小化）3秒后将发送系统通知</p>
-    
+    <h2>系统通知测试</h2>
+    <div id="status">状态: 等待</div>
+    <div id="count">通知次数: 0</div>
+    <button onclick="ask()">请求权限</button>
+    <button onclick="test()">测试</button>
+
     <script>
-        // 检查浏览器是否支持通知功能
-        if (!("Notification" in window)) {
-            alert("您的浏览器不支持系统通知功能");
-        } else if (Notification.permission === "granted") {
-            // 已经获得权限
-            console.log("已获得通知权限");
-        } else if (Notification.permission !== "denied") {
-            // 请求权限
-            Notification.requestPermission().then(function(permission) {
-                console.log("权限状态:", permission);
+        let count = 0;
+        
+        // 自动请求权限
+        window.onload = function() {
+            if ("Notification" in window && Notification.permission === "default") {
+                ask();
+            }
+        };
+        
+        // 请求权限
+        function ask() {
+            if (!("Notification" in window)) {
+                alert("不支持通知");
+                return;
+            }
+            Notification.requestPermission().then(p => {
+                document.getElementById("status").textContent = "状态: " + p;
             });
         }
-
-        // 页面失去焦点时间戳
-        let blurTime = 0;
-        let notificationTimer = null;
-
-        // 页面失去焦点事件
-        window.addEventListener('blur', function() {
-            blurTime = Date.now();
-            console.log('页面失去焦点，开始计时...');
-            
-            // 清除之前的定时器（如果有）
-            if (notificationTimer) {
-                clearTimeout(notificationTimer);
+        
+        // 测试通知
+        function test() {
+            if (Notification.permission !== "granted") {
+                alert("没权限");
+                return;
             }
-            
-            // 3秒后发送通知
-            notificationTimer = setTimeout(sendNotification, 3000);
-        });
-
-        // 页面重新获得焦点事件
-        window.addEventListener('focus', function() {
-            console.log('页面重新获得焦点，取消通知发送');
-            
-            // 清除定时器，避免发送通知
-            if (notificationTimer) {
-                clearTimeout(notificationTimer);
-                notificationTimer = null;
-            }
-            
-            // 计算失去焦点的时长（可选）
-            if (blurTime > 0) {
-                const blurDuration = Date.now() - blurTime;
-                console.log(`页面失去焦点时长: ${blurDuration}ms`);
-            }
-        });
-
-        // 发送系统通知的函数
-        function sendNotification() {
-            if (Notification.permission === "granted") {
-                const notification = new Notification("系统通知测试", {
-                    body: "您已离开页面3秒钟，这是一个测试通知",
-                    icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwMDc4RDAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk48L3RleHQ+PC9zdmc+",
-                    tag: "test-notification"
-                });
-
-                // 通知被点击时关闭
-                notification.onclick = function() {
-                    window.focus();
-                    notification.close();
-                };
-                
-                // 5秒后自动关闭通知
-                setTimeout(() => notification.close(), 5000);
-                
-                console.log("系统通知已发送");
-            } else {
-                console.log("没有通知权限");
-            }
-            
-            // 重置定时器
-            notificationTimer = null;
+            new Notification("测试", {body: "这是测试通知"});
+            count++;
+            document.getElementById("count").textContent = "通知次数: " + count;
         }
-
-        // 页面卸载时清理定时器
-        window.addEventListener('beforeunload', function() {
-            if (notificationTimer) {
-                clearTimeout(notificationTimer);
+        
+        // 页面隐藏检测
+        let timer = null;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                // 页面隐藏
+                timer = setTimeout(function() {
+                    if (document.hidden && Notification.permission === "granted") {
+                        new Notification("离开页面", {body: "你已经离开3秒了"});
+                        count++;
+                        document.getElementById("count").textContent = "通知次数: " + count;
+                    }
+                }, 3000);
+            } else {
+                // 页面显示
+                if (timer) clearTimeout(timer);
             }
         });
-
-        console.log("系统通知测试已启动");
     </script>
 </body>
 </html>
