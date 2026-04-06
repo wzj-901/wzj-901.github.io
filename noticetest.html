@@ -37,6 +37,7 @@
             if (!checkSupport()) return;
             
             try {
+                // 在移动端，必须在用户交互中调用requestPermission
                 Notification.requestPermission().then(p => {
                     document.getElementById("status").textContent = "状态: " + p;
                 }).catch(e => {
@@ -57,9 +58,24 @@
             }
             
             try {
-                new Notification("测试", {body: "这是测试通知"});
-                count++;
-                document.getElementById("count").textContent = "通知次数: " + count;
+                // 移动端必须通过服务工作者发送通知
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification("测试", {
+                            body: "这是通过Service Worker发送的通知",
+                            icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwMDc4RDAiLz48L3N2Zz4="
+                        });
+                        count++;
+                        document.getElementById("count").textContent = "通知次数: " + count;
+                    }).catch(e => {
+                        showError("Service Worker错误: " + e.message);
+                    });
+                } else {
+                    // 桌面端直接使用Notification
+                    new Notification("测试", {body: "这是直接发送的通知"});
+                    count++;
+                    document.getElementById("count").textContent = "通知次数: " + count;
+                }
             } catch (e) {
                 showError("发送通知失败: " + e.message);
             }
@@ -71,13 +87,7 @@
                 // 页面隐藏
                 timer = setTimeout(function() {
                     if (document.hidden && Notification.permission === "granted" && checkSupport()) {
-                        try {
-                            new Notification("离开页面", {body: "你已经离开3秒了"});
-                            count++;
-                            document.getElementById("count").textContent = "通知次数: " + count;
-                        } catch (e) {
-                            showError("自动通知失败: " + e.message);
-                        }
+                        test(); // 调用测试函数，它会处理移动端的兼容性
                     }
                 }, 3000);
             } else {
@@ -96,10 +106,55 @@
             if (checkSupport()) {
                 document.getElementById("status").textContent = "状态: " + Notification.permission;
                 if (Notification.permission === "default") {
-                    ask();
+                    // 不自动请求权限，让用户手动点击
+                }
+                
+                // 尝试注册Service Worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js').catch(e => {
+                        console.log("Service Worker注册失败: ", e);
+                    });
                 }
             }
         };
+        
+        // 简单的Service Worker
+        const swContent = `
+        self.addEventListener('install', event => {
+            self.skipWaiting();
+        });
+        
+        self.addEventListener('activate', event => {
+            event.waitUntil(clients.claim());
+        });
+        
+        self.addEventListener('notificationclick', event => {
+            event.notification.close();
+            event.waitUntil(
+                clients.matchAll({type: 'window'}).then(clientList => {
+                    for (let client of clientList) {
+                        if (client.url === '/' && 'focus' in client) {
+                            return client.focus();
+                        }
+                    }
+                    if (clients.openWindow) {
+                        return clients.openWindow('/');
+                    }
+                })
+            );
+        });
+        `;
+        
+        // 创建并注册Service Worker
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([swContent], {type: 'application/javascript'});
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).then(registration => {
+                console.log('Service Worker注册成功');
+            }).catch(error => {
+                console.log('Service Worker注册失败:', error);
+            });
+        }
     </script>
 </body>
 </html>
