@@ -2,142 +2,96 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>页面隐藏后通知演示（推荐版）</title>
-    <style>
-        body {
-            font-family: "Microsoft YaHei", Arial, sans-serif;
-            text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        h1 { font-size: 2.6em; margin-bottom: 20px; }
-        p { font-size: 1.3em; max-width: 600px; opacity: 0.95; line-height: 1.6; }
-        .status {
-            margin-top: 40px;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.25);
-            min-width: 300px;
-        }
-        button {
-            margin-top: 30px;
-            padding: 12px 28px;
-            font-size: 1.1em;
-            background: rgba(255,255,255,0.9);
-            color: #333;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        button:hover { background: white; }
-    </style>
+    <title>系统通知测试</title>
 </head>
 <body>
-    <h1>页面隐藏后 3 秒通知</h1>
-    <p>切换到其他标签页、切换窗口 或 最小化浏览器，等待 3 秒后会弹出系统通知</p>
+    <h1>系统通知测试页面</h1>
+    <p>离开页面（切换标签页或最小化）3秒后将发送系统通知</p>
     
-    <div class="status" id="status">当前状态：页面可见</div>
-    <button onclick="requestPermission()">手动请求通知权限</button>
-
     <script>
-        let timeoutId = null;
-        const statusEl = document.getElementById('status');
-
-        function updateStatus(isHidden) {
-            if (isHidden) {
-                statusEl.textContent = "页面已隐藏 → 3秒后发送通知...";
-                statusEl.style.background = "rgba(255, 140, 0, 0.4)";
-            } else {
-                statusEl.textContent = "页面可见";
-                statusEl.style.background = "rgba(0, 200, 0, 0.4)";
-            }
+        // 检查浏览器是否支持通知功能
+        if (!("Notification" in window)) {
+            alert("您的浏览器不支持系统通知功能");
+        } else if (Notification.permission === "granted") {
+            // 已经获得权限
+            console.log("已获得通知权限");
+        } else if (Notification.permission !== "denied") {
+            // 请求权限
+            Notification.requestPermission().then(function(permission) {
+                console.log("权限状态:", permission);
+            });
         }
 
-        function showNotification() {
+        // 页面失去焦点时间戳
+        let blurTime = 0;
+        let notificationTimer = null;
+
+        // 页面失去焦点事件
+        window.addEventListener('blur', function() {
+            blurTime = Date.now();
+            console.log('页面失去焦点，开始计时...');
+            
+            // 清除之前的定时器（如果有）
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
+            }
+            
+            // 3秒后发送通知
+            notificationTimer = setTimeout(sendNotification, 3000);
+        });
+
+        // 页面重新获得焦点事件
+        window.addEventListener('focus', function() {
+            console.log('页面重新获得焦点，取消通知发送');
+            
+            // 清除定时器，避免发送通知
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
+                notificationTimer = null;
+            }
+            
+            // 计算失去焦点的时长（可选）
+            if (blurTime > 0) {
+                const blurDuration = Date.now() - blurTime;
+                console.log(`页面失去焦点时长: ${blurDuration}ms`);
+            }
+        });
+
+        // 发送系统通知的函数
+        function sendNotification() {
             if (Notification.permission === "granted") {
-                const notification = new Notification("您已离开页面", {
-                    body: "页面已经隐藏超过 3 秒了，快回来吧！",
-                    icon: "https://via.placeholder.com/128/667eea/ffffff?text=回来",
-                    tag: "leave-notification",   // 防止重复通知
-                    requireInteraction: false    // 可改为 true 让通知一直显示直到点击
+                const notification = new Notification("系统通知测试", {
+                    body: "您已离开页面3秒钟，这是一个测试通知",
+                    icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwMDc4RDAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk48L3RleHQ+PC9zdmc+",
+                    tag: "test-notification"
                 });
 
-                notification.onclick = () => {
+                // 通知被点击时关闭
+                notification.onclick = function() {
                     window.focus();
                     notification.close();
                 };
+                
+                // 5秒后自动关闭通知
+                setTimeout(() => notification.close(), 5000);
+                
+                console.log("系统通知已发送");
             } else {
-                console.warn("通知权限未授予，无法显示通知");
+                console.log("没有通知权限");
             }
+            
+            // 重置定时器
+            notificationTimer = null;
         }
 
-        function handleVisibilityChange() {
-            const isHidden = document.visibilityState === "hidden";
-
-            clearTimeout(timeoutId);
-
-            if (isHidden) {
-                // 页面隐藏后，3秒触发通知
-                timeoutId = setTimeout(() => {
-                    showNotification();
-                }, 3000);
-            } 
-            updateStatus(isHidden);
-        }
-
-        // 请求通知权限
-        function requestPermission() {
-            if (!("Notification" in window)) {
-                alert("您的浏览器不支持 Notification API");
-                return;
+        // 页面卸载时清理定时器
+        window.addEventListener('beforeunload', function() {
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
             }
+        });
 
-            if (Notification.permission === "default") {
-                Notification.requestPermission().then(permission => {
-                    console.log("通知权限结果：", permission);
-                    if (permission === "granted") {
-                        alert("通知权限已允许！现在可以测试了。");
-                    } else {
-                        alert("通知权限被拒绝，无法弹出通知。");
-                    }
-                });
-            } else if (Notification.permission === "granted") {
-                alert("通知权限已允许");
-            } else {
-                alert("通知权限已被拒绝，请在浏览器设置中手动允许此网站的通知");
-            }
-        }
-
-        // 初始化
-        function init() {
-            if (!("Notification" in window)) {
-                statusEl.textContent = "浏览器不支持 Notification API";
-                return;
-            }
-
-            // 监听页面可见性变化（推荐方式）
-            document.addEventListener("visibilitychange", handleVisibilityChange);
-
-            // 初始状态
-            updateStatus(document.visibilityState === "hidden");
-
-            // 页面加载时主动请求一次权限（可选，用户体验更好）
-            if (Notification.permission === "default") {
-                console.log("页面加载时请求通知权限...");
-                // 不自动弹出请求，用户点击按钮更友好
-            }
-        }
-
-        window.onload = init;
+        console.log("系统通知测试已启动");
     </script>
 </body>
 </html>
