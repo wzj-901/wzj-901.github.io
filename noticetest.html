@@ -8,51 +8,76 @@
     <h2>系统通知测试</h2>
     <div id="status">状态: 等待</div>
     <div id="count">通知次数: 0</div>
+    <div id="error" style="color:red"></div>
+    
     <button onclick="ask()">请求权限</button>
     <button onclick="test()">测试</button>
 
     <script>
         let count = 0;
+        let timer = null;
         
-        // 自动请求权限
-        window.onload = function() {
-            if ("Notification" in window && Notification.permission === "default") {
-                ask();
+        // 显示错误
+        function showError(msg) {
+            document.getElementById("error").textContent = "错误: " + msg;
+            console.error(msg);
+        }
+        
+        // 检查通知支持
+        function checkSupport() {
+            if (!("Notification" in window)) {
+                showError("浏览器不支持通知");
+                return false;
             }
-        };
+            return true;
+        }
         
         // 请求权限
         function ask() {
-            if (!("Notification" in window)) {
-                alert("不支持通知");
-                return;
+            if (!checkSupport()) return;
+            
+            try {
+                Notification.requestPermission().then(p => {
+                    document.getElementById("status").textContent = "状态: " + p;
+                }).catch(e => {
+                    showError("请求权限失败: " + e.message);
+                });
+            } catch (e) {
+                showError("请求权限异常: " + e.message);
             }
-            Notification.requestPermission().then(p => {
-                document.getElementById("status").textContent = "状态: " + p;
-            });
         }
         
         // 测试通知
         function test() {
+            if (!checkSupport()) return;
+            
             if (Notification.permission !== "granted") {
-                alert("没权限");
+                showError("没有通知权限");
                 return;
             }
-            new Notification("测试", {body: "这是测试通知"});
-            count++;
-            document.getElementById("count").textContent = "通知次数: " + count;
+            
+            try {
+                new Notification("测试", {body: "这是测试通知"});
+                count++;
+                document.getElementById("count").textContent = "通知次数: " + count;
+            } catch (e) {
+                showError("发送通知失败: " + e.message);
+            }
         }
         
         // 页面隐藏检测
-        let timer = null;
         document.addEventListener("visibilitychange", function() {
             if (document.hidden) {
                 // 页面隐藏
                 timer = setTimeout(function() {
-                    if (document.hidden && Notification.permission === "granted") {
-                        new Notification("离开页面", {body: "你已经离开3秒了"});
-                        count++;
-                        document.getElementById("count").textContent = "通知次数: " + count;
+                    if (document.hidden && Notification.permission === "granted" && checkSupport()) {
+                        try {
+                            new Notification("离开页面", {body: "你已经离开3秒了"});
+                            count++;
+                            document.getElementById("count").textContent = "通知次数: " + count;
+                        } catch (e) {
+                            showError("自动通知失败: " + e.message);
+                        }
                     }
                 }, 3000);
             } else {
@@ -60,6 +85,21 @@
                 if (timer) clearTimeout(timer);
             }
         });
+        
+        // 页面卸载清理
+        window.addEventListener("beforeunload", function() {
+            if (timer) clearTimeout(timer);
+        });
+        
+        // 初始化
+        window.onload = function() {
+            if (checkSupport()) {
+                document.getElementById("status").textContent = "状态: " + Notification.permission;
+                if (Notification.permission === "default") {
+                    ask();
+                }
+            }
+        };
     </script>
 </body>
 </html>
